@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+//import { NavLink } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { useEffect, useState } from "react";
 
@@ -66,15 +66,15 @@ export const Navbar = () => {
 
                 {/* Links desktop */}
                 <div className="hidden lg:flex lg:gap-x-12 relative">
-                    <NavLink
-                        to="/"
-                        className={({ isActive }) =>
-                            `text-sm font-bold ${isActive ? "text-verde" : "text-blanco dark:text-blanco"
-                            }`
-                        }
-                    >
-                        Inicio
-                    </NavLink>
+                        <a
+                            href="#hero"
+                            className={`text-sm font-bold ${activeSection === "hero"
+                                ? "text-verde"
+                                : "text-blanco dark:text-blanco"
+                                }`}
+                        >
+                            Inicio
+                        </a>
 
                     {/* Servicios con dropdown */}
                     <div className="relative">
