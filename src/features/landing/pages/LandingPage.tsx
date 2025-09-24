@@ -1,5 +1,6 @@
 import { Navbar } from "../../../components/Navbar";
 import { Hero } from "../../../components/Hero";
+import { Footer } from "../../../components/Footer";
 import heroBg from "../../../assets/heroBg.jpg";
 
 export const LandingPage = () => {
@@ -193,17 +194,10 @@ export const LandingPage = () => {
 
 
       {/* Contactos */}
-      <section id="contactos" className="min-h-screen bg-gris2 flex flex-col items-center justify-center">
-        <h2 className="text-3xl font-bold text-azul-1">Contáctanos</h2>
-        <p className="mt-4 max-w-2xl text-gris-1 text-center">
-          Aquí irán formularios, imágenes o datos de contacto.
-        </p>
-      </section>
-
       {/* Footer */}
-      <footer className="py-6 text-center text-gris-1 text-sm">
-        © 2025 CanchaLic. Todos los derechos reservados.
-      </footer>
+      <section id="contactos" >
+        <Footer />
+      </section>
     </div>
   );
 };
