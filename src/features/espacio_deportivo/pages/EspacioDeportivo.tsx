@@ -92,7 +92,19 @@ export default function EspacioDeportivo() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {paginados.map((e: any) => (
             <div key={e.id_espacio} className="bg-white rounded-lg shadow-md p-4 text-center">
-              <div className="h-36 bg-gray-300 rounded-md mb-4" />
+              {/* Imagen del espacio */}
+              <div className="h-36 mb-4">
+                {e.imagen_principal ? (
+                  <img
+                    src={e.imagen_principal}
+                    alt={e.nombre}
+                    className="w-full h-full object-cover rounded-md"
+                  />
+                ) : (
+                  <div className="h-full bg-gray-300 rounded-md" />
+                )}
+              </div>
+
               <h3 className="text-lg font-semibold">{e.nombre}</h3>
               <p className="text-gray-600">{e.direccion}</p>
             </div>
