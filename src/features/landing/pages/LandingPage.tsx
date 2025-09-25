@@ -1,7 +1,10 @@
 import { Navbar } from "../../../components/Navbar";
 import { Hero } from "../../../components/Hero";
 import { Footer } from "../../../components/Footer";
-import heroBg from "../../../assets/heroBg.jpg";
+import heroBg from "../../../assets/heroBg.webp";
+import reservasLinea from "../../../assets/reservas_en_linea.webp";
+import accesoQR from "../../../assets/acceso_qr.webp";
+import elegirHora from "../../../assets/elegir_horario.webp";
 
 export const LandingPage = () => {
   return (
@@ -32,7 +35,7 @@ export const LandingPage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="rounded-lg shadow-lg overflow-hidden bg-blanco">
             <img
-              src={heroBg}
+              src={reservasLinea}
               alt="Reservas en linea"
               className="w-full h-56 object-cover"
             />
@@ -47,7 +50,7 @@ export const LandingPage = () => {
           {/* Card 2 */}
           <div className="rounded-lg shadow-lg overflow-hidden bg-blanco">
             <img
-              src={heroBg}
+              src={accesoQR}
               alt="Reservas en linea"
               className="w-full h-56 object-cover"
             />
@@ -61,7 +64,7 @@ export const LandingPage = () => {
           {/* Card 3 */}
           <div className="rounded-lg shadow-lg overflow-hidden bg-blanco">
             <img
-              src={heroBg}
+              src={elegirHora}
               alt="Reservas en linea"
               className="w-full h-56 object-cover"
             />
@@ -183,7 +186,7 @@ export const LandingPage = () => {
               <img
                 src={heroBg}
                 alt="Ilustración de objetivos"
-                className="relative w-full rounded-2xl shadow-xl object-cover"
+                className="bg-blanco relative w-full rounded-2xl shadow-xl object-cover"
               />
             </div>
 
