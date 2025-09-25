@@ -1,7 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Navbar } from "../../../components/Navbar";
 import { useEffect, useState } from 'react';
 import { obtenerEspaciosDeportivos, obtenerEspaciosPorDisciplina } from '../services/EspacioDeportivoService';
 import { Footer } from "../../../components/Footer";
+import { Funnel, Search } from 'lucide-react';
 
 export default function EspacioDeportivo() {
   const [espacios, setEspacios] = useState([]);
@@ -46,43 +48,49 @@ export default function EspacioDeportivo() {
 
   return (
     <>
-      <div className="pt-30 px-6 font-poppins font-medium">
+      <div className="pt-30 px-6 font-poppins">
         <Navbar />
 
         {/* Buscador y botón filtro */}
         <div className="flex justify-center gap-4 mb-6 relative">
-          <input
-            type="text"
-            placeholder="Buscar por nombre o dirección"
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            className="w-80 px-4 py-2 border border-gray-300 rounded-md shadow-sm font-medium"
-          />
+          <div className="relative w-80">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gris-300" size={16} />
+            <input
+              type="text"
+              placeholder="Buscar por nombre o dirección"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gris-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-1 focus:ring-azul-950"
+            />
+          </div>
+
 
           <div className="relative">
             <button
               onClick={() => setMostrarFiltro(!mostrarFiltro)}
-              className="px-4 py-2 bg-azul-1 text-white rounded-md hover:bg-blue-700 font-semibold"
+              className="flex items-center gap-2 px-4 py-2 bg-azul-950 hover:bg-azul-900 text-blanco-50 rounded-md font-semibold text-sm "
             >
-              Filtrar
+              <Funnel className="text-blanco-50" size={16} />
+              <span>Filtrar</span>
             </button>
 
+
             {mostrarFiltro && (
-              <div className="absolute top-full mt-1 left-0 bg-white border border-gray-200 rounded-md shadow-lg w-56 p-4 z-10">
-                <h3 className="font-bold text-gray-800 mb-2">DISCIPLINAS</h3>
+              <div className="absolute top-full mt-1 left-0 bg-blanco-50 border border-gris-200 rounded-md shadow-lg w-56 p-4 z-10">
+                <h3 className="font-bold text-azul-950 mb-2">DISCIPLINAS</h3>
                 <ul className="space-y-2">
-                  <li className="cursor-pointer text-gray-700 hover:text-green-600 font-medium" onClick={() => {
+                  <li className="cursor-pointer text-azul-900 hover:text-verde-600 font-medium" onClick={() => {
                     obtenerEspaciosDeportivos().then(res => {
                       if (res.success) setEspacios(res.data);
                       setPagina(1);
                       setMostrarFiltro(false);
                     });
                   }}>TODOS</li>
-                  <li className="cursor-pointer text-gray-700 hover:text-green-600 font-medium" onClick={() => filtrarPorDisciplina(1)}>Tenis</li>
-                  <li className="cursor-pointer text-gray-700 hover:text-green-600 font-medium" onClick={() => filtrarPorDisciplina(2)}>Futbol</li>
-                  <li className="cursor-pointer text-gray-700 hover:text-green-600 font-medium" onClick={() => filtrarPorDisciplina(3)}>Vóley</li>
-                  <li className="cursor-pointer text-gray-700 hover:text-green-600 font-medium" onClick={() => filtrarPorDisciplina(4)}>Baloncesto</li>
-                  <li className="cursor-pointer text-gray-700 hover:text-green-600 font-medium" onClick={() => filtrarPorDisciplina(5)}>Atletismo</li>
+                  <li className="cursor-pointer text-azul-900 hover:text-verde-600 font-medium" onClick={() => filtrarPorDisciplina(1)}>Tenis</li>
+                  <li className="cursor-pointer text-azul-900 hover:text-verde-600 font-medium" onClick={() => filtrarPorDisciplina(2)}>Futbol</li>
+                  <li className="cursor-pointer text-azul-900 hover:text-verde-600 font-medium" onClick={() => filtrarPorDisciplina(3)}>Vóley</li>
+                  <li className="cursor-pointer text-azul-900 hover:text-verde-600 font-medium" onClick={() => filtrarPorDisciplina(4)}>Baloncesto</li>
+                  <li className="cursor-pointer text-azul-900 hover:text-verde-600 font-medium" onClick={() => filtrarPorDisciplina(5)}>Atletismo</li>
                 </ul>
               </div>
             )}
@@ -93,7 +101,7 @@ export default function EspacioDeportivo() {
         {paginados.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {paginados.map((e: any) => (
-              <div key={e.id_espacio} className="bg-white rounded-lg shadow-md p-4 text-center">
+              <div key={e.id_espacio} className="bg-blanco-50 rounded-lg shadow-md p-4 text-center">
                 {/* Imagen del espacio */}
                 <div className="h-36 mb-4">
                   {e.imagen_principal ? (
@@ -103,17 +111,17 @@ export default function EspacioDeportivo() {
                       className="w-full h-full object-cover rounded-md"
                     />
                   ) : (
-                    <div className="h-full bg-gray-300 rounded-md" />
+                    <div className="h-full bg-gris-300 rounded-md" />
                   )}
                 </div>
 
                 <h3 className="text-lg font-semibold">{e.nombre}</h3>
-                <p className="text-gray-600">{e.direccion}</p>
+                <p className="text-azul-950">{e.direccion}</p>
               </div>
             ))}
           </div>
         ) : (
-          <p className="text-center text-gray-500 font-semibold mt-8">
+          <p className="text-center text-azul-900 font-semibold mt-8">
             No se encuentran espacios deportivos
           </p>
         )}
@@ -124,7 +132,7 @@ export default function EspacioDeportivo() {
             <button
               key={n}
               onClick={() => setPagina(n + 1)}
-              className={`px-3 py-1 rounded-md ${pagina === n + 1 ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-700'} font-medium`}
+              className={`px-3 py-1 rounded-md ${pagina === n + 1 ? 'bg-verde-600 text-blanco-50' : 'bg-gris-200 text-azul-900'} font-medium`}
             >
               {n + 1}
             </button>
@@ -134,10 +142,10 @@ export default function EspacioDeportivo() {
         {/* Modal emergente */}
         {mostrarModal && (
           <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
-            <div className="bg-white rounded-lg p-6 w-80 text-center shadow-lg pointer-events-auto font-medium">
+            <div className="bg-blanco-50 rounded-lg p-6 w-80 text-center shadow-lg pointer-events-auto font-medium">
               <p className="mb-4 font-semibold">{modalMensaje}</p>
               <button
-                className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-500 font-semibold"
+                className="px-4 py-2 bg-verde-600 text-blanco-50 rounded hover:bg-green-500 font-semibold"
                 onClick={() => setMostrarModal(false)}
               >
                 Aceptar

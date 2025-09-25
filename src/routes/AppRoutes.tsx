@@ -9,7 +9,6 @@ export const AppRoutes = () => (
   <BrowserRouter>
     <Routes>
       <Route path="/" element={<LandingPage />} />
-             {/* esto va en el buscador */}
       <Route path="/espacios" element={<EspacioDeportivo />} />
     </Routes>
   </BrowserRouter>

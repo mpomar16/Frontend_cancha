@@ -29,13 +29,13 @@ export const Navbar = () => {
     }, []);
 
     return (
-        <header className="fixed top-0 left-0 w-full bg-azul-1 dark:bg-azul-1 shadow-sm font-poppins z-50">
-            <nav className="bg-azul-1 mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
+        <header className="fixed top-0 left-0 w-full bg-azul-950 dark:bg-azul-950 shadow-sm font-poppins z-50">
+            <nav className="bg-azul-950 mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8">
                 {/* Logo */}
                 <div className="flex lg:flex-1">
                     <a href="#" className="-m-1.5 p-1.5 flex items-center">
                         <img src={logo} alt="Logo" className="h-10 w-auto" />
-                        <span className="ml-3 text-xl font-bold text-blanco dark:blanco">
+                        <span className="ml-3 text-xl font-bold text-blanco-50 dark:blanco-50">
                             PlayPass
                         </span>
                     </a>
@@ -46,7 +46,7 @@ export const Navbar = () => {
                     <button
                         type="button"
                         onClick={() => setMobileMenuOpen(true)}
-                        className="p-2 text-blanco dark:text-blanco"
+                        className="p-2 text-blanco-50 dark:text-blanco-50"
                     >
                         <svg
                             viewBox="0 0 24 24"
@@ -68,9 +68,9 @@ export const Navbar = () => {
                 <div className="hidden lg:flex lg:gap-x-12 relative">
                         <a
                             href="#hero"
-                            className={`text-sm font-bold ${activeSection === "hero"
-                                ? "text-verde"
-                                : "text-blanco dark:text-blanco"
+                            className={`transition delay-150 duration-300 ease-in-out hover:-translate-y-1 hover:scale-110 text-sm font-bold ${activeSection === "hero"
+                                ? "text-verde-600"
+                                : "text-blanco-50 dark:text-blanco-50"
                                 }`}
                         >
                             Inicio
@@ -80,13 +80,13 @@ export const Navbar = () => {
                     <div className="relative">
                         <button
                             onClick={() => setProductMenuOpen(!productMenuOpen)}
-                            className="flex items-center gap-x-1 text-sm font-bold text-blanco dark:text-blanco"
+                            className="flex items-center gap-x-1 text-sm font-bold text-blanco-50 dark:text-blanco-50"
                         >
                             Producto
                             <svg
                                 viewBox="0 -1 20 20"
                                 fill="currentColor"
-                                className={`w-5 h-5 text-blanco transition-transform ${productMenuOpen ? "rotate-180" : ""
+                                className={`w-5 h-5 text-blanco-50 transition-transform ${productMenuOpen ? "rotate-180" : ""
                                     }`}
                             >
                                 <path
@@ -98,17 +98,17 @@ export const Navbar = () => {
                         </button>
 
                         {productMenuOpen && (
-                            <div className="absolute left-0 mt-3 w-56 rounded-lg bg-azul-1 dark:azul-2 shadow-xl ring-3 ring-gris-1/10 outline-2 outline-azul-2">
+                            <div className="absolute left-0 mt-3 w-56 rounded-lg bg-azul-950 dark:azul-900 shadow-xl ring-3 ring-gris-300/10 outline-2 outline-azul-900">
                                 <div className="p-4 space-y-3">
                                     <a
                                         href="#"
-                                        className="block text-sm font-medium text-blanco dark:text-blanco hover:text-verde"
+                                        className="block text-sm font-medium text-blanco-50 dark:text-blanco-50 hover:text-verde-600"
                                     >
                                         Publicar Espacio Deportivo
                                     </a>
                                     <a
                                         href="#"
-                                        className="block text-sm font-medium text-blanco dark:text-blanco hover:text-verde"
+                                        className="block text-sm font-medium text-blanco-50 dark:text-blanco-50 hover:text-verde-600"
                                     >
                                         Reservar Cancha
                                     </a>
@@ -121,8 +121,8 @@ export const Navbar = () => {
                     <a
                         href="#compania"
                         className={`text-sm font-bold ${activeSection === "compania"
-                            ? "text-verde"
-                            : "text-blanco dark:text-blanco"
+                            ? "text-verde-600"
+                            : "text-blanco-50 dark:text-blanco-50"
                             }`}
                     >
                         Compañia
@@ -130,8 +130,8 @@ export const Navbar = () => {
                     <a
                         href="#contactos"
                         className={`text-sm font-bold ${activeSection === "contactos"
-                            ? "text-verde"
-                            : "text-blanco dark:text-blanco"
+                            ? "text-verde-600"
+                            : "text-blanco-50 dark:text-blanco-50"
                             }`}
                     >
                         Contactos
@@ -143,7 +143,7 @@ export const Navbar = () => {
                     {/* Sign In */}
                     <a
                         href="/login"
-                        className="text-sm font-semibold text-verde hover:text-verde/80 transition"
+                        className="text-sm font-semibold text-verde-600 hover:text-verde-600/80 transition"
                     >
                         Sign In
                     </a>
@@ -151,7 +151,7 @@ export const Navbar = () => {
                     {/* Sign Up */}
                     <a
                         href="/signup"
-                        className="text-sm font-semibold outline-2 outline-verde text-verde px-4 py-2 rounded-lg hover:opacity-90 transition"
+                        className="text-sm font-semibold outline-2 outline-verde-600 text-verde-600 px-4 py-2 rounded-lg hover:opacity-90 transition"
                     >
                         Sign Up <span aria-hidden="true">&rarr;</span>
                     </a>
@@ -161,14 +161,14 @@ export const Navbar = () => {
 
             {/* NabvarMovil */}
             {mobileMenuOpen && (
-                <div className="lg:hidden fixed inset-0 z-50 bg-azul-1 p-6 overflow-y-auto transition-all duration-300 ease-out">
+                <div className="lg:hidden fixed inset-0 z-50 bg-azul-950 p-6 overflow-y-auto transition-all duration-300 ease-out">
                     {/* Header móvil */}
                     <div className="flex items-center justify-between animate-fade-in">
-                        <span className="text-lg font-bold text-blanco">PlayPass</span>
+                        <span className="text-lg font-bold text-blanco-50">PlayPass</span>
                         <button
                             type="button"
                             onClick={() => setMobileMenuOpen(false)}
-                            className="p-2 text-blanco hover:text-verde transition-colors duration-200"
+                            className="p-2 text-blanco-50 hover:text-verde-600 transition-colors duration-200"
                         >
                             <svg
                                 viewBox="0 0 24 24"
@@ -192,17 +192,17 @@ export const Navbar = () => {
                         <a
                             href="#"
                             onClick={() => setMobileMenuOpen(false)}
-                            className="block text-base font-semibold text-blanco hover:text-verde px-4 py-2 rounded-lg transition-colors duration-300"
+                            className="block text-base font-semibold text-blanco-50 hover:text-verde-600 px-4 py-2 rounded-lg transition-colors duration-300"
                         >
                             Inicio
                         </a>
 
                         {/* Servicios */}
                         <details className="group">
-                            <summary className="flex justify-between items-center cursor-pointer px-4 py-2 rounded-lg text-base font-semibold text-blanco hover:text-verde transition-colors duration-300">
+                            <summary className="flex justify-between items-center cursor-pointer px-4 py-2 rounded-lg text-base font-semibold text-blanco-50 hover:text-verde-600 transition-colors duration-300">
                                 Servicios
                                 <svg
-                                    className="w-5 h-5 ml-2 text-blanco transition-transform duration-300 group-open:rotate-180 group-open:text-verde"
+                                    className="w-5 h-5 ml-2 text-blanco-50 transition-transform duration-300 group-open:rotate-180 group-open:text-verde-600"
                                     fill="none"
                                     stroke="currentColor"
                                     strokeWidth="2"
@@ -215,14 +215,14 @@ export const Navbar = () => {
                                 <a
                                     href="#"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="block text-base text-blanco hover:text-verde transition-colors duration-300"
+                                    className="block text-base text-blanco-50 hover:text-verde-600 transition-colors duration-300"
                                 >
                                     Reservar Cancha
                                 </a>
                                 <a
                                     href="#"
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className="block text-base text-blanco hover:text-verde transition-colors duration-300"
+                                    className="block text-base text-blanco-50 hover:text-verde-600 transition-colors duration-300"
                                 >
                                     Publicar Espacio Deportivo
                                 </a>
@@ -233,7 +233,7 @@ export const Navbar = () => {
                         <a
                             href="#compania"
                             onClick={() => setMobileMenuOpen(false)}
-                            className="block text-base font-semibold text-blanco hover:text-verde px-4 py-2 rounded-lg transition-colors duration-300"
+                            className="block text-base font-semibold text-blanco-50 hover:text-verde-600 px-4 py-2 rounded-lg transition-colors duration-300"
                         >
                             Compañía
                         </a>
@@ -242,7 +242,7 @@ export const Navbar = () => {
                         <a
                             href="#contactos"
                             onClick={() => setMobileMenuOpen(false)}
-                            className="block text-base font-semibold text-blanco hover:text-verde px-4 py-2 rounded-lg transition-colors duration-300"
+                            className="block text-base font-semibold text-blanco-50 hover:text-verde-600 px-4 py-2 rounded-lg transition-colors duration-300"
                         >
                             Contactos
                         </a>
@@ -253,14 +253,14 @@ export const Navbar = () => {
                         <a
                             href="/signin"
                             onClick={() => setMobileMenuOpen(false)}
-                            className="block text-center text-sm font-semibold px-4 py-2 rounded-lg bg-azul-1 text-verde hover:opacity-90 transition transition-all duration-300"
+                            className="block text-center text-sm font-semibold px-4 py-2 rounded-lg bg-azul-950 text-verde-600 hover:opacity-90 transition transition-all duration-300"
                         >
                             Sign In
                         </a>
                         <a
                             href="/signup"
                             onClick={() => setMobileMenuOpen(false)}
-                            className="block text-center text-sm font-semibold px-4 py-2 rounded-lg border border-verde text-verde hover:opacity-90 transition transition-all duration-300"
+                            className="block text-center text-sm font-semibold px-4 py-2 rounded-lg border border-verde-600 text-verde-600 hover:opacity-90 transition transition-all duration-300"
                         >
                             Sign Up <span aria-hidden="true">&rarr;</span>
                         </a>

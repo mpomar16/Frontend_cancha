@@ -3,16 +3,16 @@ import { Mail, MapPin, Phone } from 'lucide-react';
 
 export const Footer = () => {
   return (
-    <footer className="bg-azul-1 text-gris-2 pt-16 pb-8">
+    <footer className="bg-azul-950 text-gris-200 pt-16 pb-8">
       <div className="mx-auto max-w-7xl px-6 lg:px-8 grid gap-12 md:grid-cols-2 lg:grid-cols-5">
         {/* Logo + texto + redes */}
         <div className="col-span-2">
-          <div className="flex items-center gap-2 text-blanco text-lg font-bold">
+          <div className="flex items-center gap-2 text-blanco-50 text-lg font-bold">
             {/* Logo minimal (puedes cambiarlo) */}
             <img src={logo} alt="Logo" className="h-10 w-auto" />
             <span>PlayPass</span>
           </div>
-          <p className="text-sm text-blanco mt-4 max-w-xs">
+          <p className="text-sm text-blanco-50 mt-4 max-w-xs">
             Reserva online, accede con QR.
           </p>
 
@@ -20,7 +20,7 @@ export const Footer = () => {
           <div className="mt-16 flex space-x-4">
             <a
               href="#"
-              className="text-verde transition-colors"
+              className="text-verde-600 transition-colors"
             >
               {/* Facebook */}
               <svg
@@ -33,7 +33,7 @@ export const Footer = () => {
             </a>
             <a
               href="#"
-              className="text-verde transition-colors"
+              className="text-verde-600 transition-colors"
             >
               {/* X */}
               <svg
@@ -46,7 +46,7 @@ export const Footer = () => {
             </a>
             <a
               href="#"
-              className="text-verde hover:text-verde transition-colors"
+              className="text-verde-600 hover:text-verde-600 transition-colors"
             >
               {/* Instagram */}
               <svg
@@ -59,7 +59,7 @@ export const Footer = () => {
             </a>
             <a
               href="#"
-              className="text-verde hover:text-verde transition-colors"
+              className="text-verde-600 hover:text-verde-600 transition-colors"
             >
               {/* YouTube */}
               <svg
@@ -75,39 +75,39 @@ export const Footer = () => {
 
         {/* Columnas de links */}
         <div>
-          <h3 className="font-semibold text-blanco">Enlaces Rapidos</h3>
-          <ul className="mt-4 space-y-2 text-gris-2 text-sm">
-            <li><a href="#" className="hover:text-verde">Inicio</a></li>
-            <li><a href="#" className="hover:text-verde">Compañia</a></li>
-            <li><a href="#" className="hover:text-verde">Contactos</a></li>
+          <h3 className="font-semibold text-blanco-50">Enlaces Rapidos</h3>
+          <ul className="mt-4 space-y-2 text-gris-200 text-sm">
+            <li><a href="#" className="hover:text-verde-600">Inicio</a></li>
+            <li><a href="#" className="hover:text-verde-600">Compañia</a></li>
+            <li><a href="#" className="hover:text-verde-600">Contactos</a></li>
           </ul>
         </div>
 
         <div>
-          <h3 className="font-semibold text-blanco">Servicios</h3>
-          <ul className="mt-4 space-y-2 text-gris-2 text-sm">
-            <li><a href="#" className="hover:text-verde">Comenzar Reserva</a></li>
-            <li><a href="#" className="hover:text-verde">Publicar mi Espacio Deportivo</a></li>
+          <h3 className="font-semibold text-blanco-50">Servicios</h3>
+          <ul className="mt-4 space-y-2 text-gris-200 text-sm">
+            <li><a href="#" className="hover:text-verde-600">Comenzar Reserva</a></li>
+            <li><a href="#" className="hover:text-verde-600">Publicar mi Espacio Deportivo</a></li>
           </ul>
         </div>
 
         <div>
-          <h3 className="font-semibold text-blanco">Contactos</h3>
+          <h3 className="font-semibold text-blanco-50">Contactos</h3>
           <ul className="mt-4 space-y-2 text-gris2 text-sm">
             <li>
-              <a href="#" className="flex items-center gap-2 hover:text-verde">
+              <a href="#" className="flex items-center gap-2 hover:text-verde-600">
                 <Mail size={20} />
                 contact@company.com
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center gap-2 hover:text-verde">
+              <a href="#" className="flex items-center gap-2 hover:text-verde-600">
                 <Phone size={20} />
                 (591) 777-77-777
               </a>
             </li>
             <li>
-              <a href="#" className="flex items-center gap-2 hover:text-verde">
+              <a href="#" className="flex items-center gap-2 hover:text-verde-600">
                 <MapPin size={20} />
                 La Paz, Monoblock UMSA #1234
               </a>
@@ -118,7 +118,7 @@ export const Footer = () => {
       </div>
 
       {/* Línea inferior */}
-      <div className="mt-12 border-t border-verde/100 mx-25 pt-6 text-center text-sm text-gris-2">
+      <div className="mt-12 border-t border-verde-600/100 mx-25 pt-6 text-center text-sm text-gris-200">
         Copyright © 2025 PlayPass
       </div>
     </footer>
