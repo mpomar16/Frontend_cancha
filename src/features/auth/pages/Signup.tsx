@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useState } from "react";
-import { Eye, EyeClosed } from 'lucide-react';
-import { login } from "../services/authService";
+import { Eye, EyeClosed } from "lucide-react";
 import { Logo } from "../../../components/Logo";
+import { register } from "../services/authService";
 
-export default function Signin() {
+export default function SignUp() {
+    const [nombre, setNombre] = useState("");
     const [correo, setCorreo] = useState("");
     const [contraseña, setContraseña] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -11,18 +13,18 @@ export default function Signin() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setError("");
 
-        const res = await login(correo, contraseña);
+        const res = await register(nombre, correo, contraseña);
+
         if (!res.success) {
             setError(res.message);
             return;
         }
 
-        // Si login es correcto
-        console.log("Usuario logueado:", res.data?.persona);
-        window.location.href = "/espacios";
+        console.log("Usuario registrado:", res.data?.persona);
+        window.location.href = "/login";
     };
+
 
     return (
         <div className="font-poppins relative min-h-screen bg-azul-950">
@@ -41,27 +43,41 @@ export default function Signin() {
                             <Logo size="sm" showLogo={false} showText={true} color="text-verde-600" />
                         </div>
                         <p className="text-sm text-gris-300">
-                            ¿No tienes una cuenta?{" "}
-                            <a href="/signup" className="text-verde-600 font-medium hover:underline">
-                                Sign Up
+                            ¿Ya tienes una cuenta?{" "}
+                            <a href="/signin" className="text-verde-600 font-medium hover:underline">
+                                Sign In
                             </a>
                         </p>
                     </div>
 
-                    <h1 className="mb-6 text-3xl font-semibold text-azul-950">Sign In</h1>
+                    <h1 className="mb-6 text-3xl font-semibold text-azul-950">Sign Up</h1>
 
                     {/* Form */}
                     <form className="space-y-5" onSubmit={handleSubmit}>
-                        {/* Usuario */}
+                        {/* Nombre */}
                         <div>
                             <label className="block text-sm font-medium text-azul-950 mb-1">
-                                Correo
+                                Nombre de usuario*
+                            </label>
+                            <input
+                                type="text"
+                                value={nombre}
+                                onChange={(e) => setNombre(e.target.value)}
+                                placeholder="Nombre de Usuario"
+                                className="w-full rounded-lg border border-gris-300 focus:ring-1 focus:ring-verde-600 focus:outline-none px-4 py-3 text-sm"
+                            />
+                        </div>
+
+                        {/* Email */}
+                        <div>
+                            <label className="block text-sm font-medium text-azul-950 mb-1">
+                                Email*
                             </label>
                             <input
                                 type="email"
                                 value={correo}
                                 onChange={(e) => setCorreo(e.target.value)}
-                                placeholder="usuario@correo.com"
+                                placeholder="Email"
                                 className="w-full rounded-lg border border-gris-300 focus:ring-1 focus:ring-verde-600 focus:outline-none px-4 py-3 text-sm"
                             />
                         </div>
@@ -69,7 +85,7 @@ export default function Signin() {
                         {/* Contraseña */}
                         <div>
                             <label className="block text-sm font-medium text-azul-950 mb-1">
-                                Contraseña
+                                Contraseña*
                             </label>
                             <div className="relative">
                                 <input
@@ -87,14 +103,8 @@ export default function Signin() {
                                     {showPassword ? <EyeClosed size={20} /> : <Eye size={20} />}
                                 </button>
                             </div>
-                            <div className="mt-2 text-right">
-                                <a href="#" className="text-sm text-verde-600 hover:underline">
-                                    ¿Olvidaste tu contraseña?
-                                </a>
-                            </div>
                         </div>
 
-                        {/* Error */}
                         {error && <p className="text-red-700 text-sm">{error}</p>}
 
                         {/* Botón */}
@@ -102,13 +112,11 @@ export default function Signin() {
                             type="submit"
                             className="w-full bg-verde-600 text-blanco-50 font-semibold rounded-lg py-3 shadow-md hover:bg-verde-600/90 transition"
                         >
-                            Sign in
+                            Sign up
                         </button>
                     </form>
                 </div>
             </div>
         </div>
     );
-
-
 }
