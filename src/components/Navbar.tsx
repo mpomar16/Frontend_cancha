@@ -142,7 +142,7 @@ export const Navbar = () => {
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end items-center gap-4">
                     {/* Sign In */}
                     <a
-                        href="/login"
+                        href="/signin"
                         className="text-sm font-semibold text-verde-600 hover:text-verde-600/80 transition"
                     >
                         Sign In
