@@ -15,8 +15,16 @@ const handleUpload = (folder, fieldName = 'imagen') => {
       }
     },
     filename: (req, file, cb) => {
-      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-      cb(null, `${uniqueSuffix}-${file.originalname}`);
+      const ext = path.extname(file.originalname);
+
+      const baseName = req.body.nombre 
+        ? req.body.nombre.replace(/\s+/g, '_') 
+        : `user_${req.user.id_persona}`;
+
+      const now = new Date();
+      const timestamp = now.toISOString().replace(/T/, '_').replace(/:/g, '-').split('.')[0];
+
+      cb(null, `${baseName}-${timestamp}${ext}`);
     },
   });
 

@@ -1,6 +1,8 @@
 const express = require('express');
 const pool = require('../config/database');
+const bcrypt = require('bcrypt');
 const { verifyToken, checkRole } = require('../middleware/auth');
+const { handleUpload } = require('../middleware/multer');
 const path = require('path');
 const fs = require('fs').promises;
 
@@ -8,9 +10,10 @@ const fs = require('fs').promises;
 async function getAllAdministradores() {
   try {
     const query = `
-      SELECT a.id_admin, a.fecha_ingreso, a.direccion, p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
-      FROM ADMINISTRADOR_ESP_DEPORTIVO a
-      JOIN PERSONA p ON a.id_admin = p.id_persona
+      SELECT a.id_administrador, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil, p.usuario,
+             a.direccion, a.estado, a.ultimo_login, a.fecha_creacion
+      FROM ADMINISTRADOR a
+      JOIN PERSONA p ON a.id_administrador = p.id_persona
     `;
     const result = await pool.query(query);
     return result.rows;
@@ -22,10 +25,11 @@ async function getAllAdministradores() {
 async function getAdministradorById(id) {
   try {
     const query = `
-      SELECT a.id_admin, a.fecha_ingreso, a.direccion, p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
-      FROM ADMINISTRADOR_ESP_DEPORTIVO a
-      JOIN PERSONA p ON a.id_admin = p.id_persona
-      WHERE a.id_admin = $1
+      SELECT a.id_administrador, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil, p.usuario,
+             a.direccion, a.estado, a.ultimo_login, a.fecha_creacion
+      FROM ADMINISTRADOR a
+      JOIN PERSONA p ON a.id_administrador = p.id_persona
+      WHERE a.id_administrador = $1
     `;
     const result = await pool.query(query, [id]);
     return result.rows[0];
@@ -34,75 +38,118 @@ async function getAdministradorById(id) {
   }
 }
 
-async function getAdministradorByIdPersona(id_persona) {
+async function getAdministradorByCorreo(correo) {
   try {
     const query = `
-      SELECT a.id_admin, a.fecha_ingreso, a.direccion, p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
-      FROM ADMINISTRADOR_ESP_DEPORTIVO a
-      JOIN PERSONA p ON a.id_admin = p.id_persona
-      WHERE p.id_persona = $1
+      SELECT a.id_administrador, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil, p.usuario,
+             a.direccion, a.estado, a.ultimo_login, a.fecha_creacion
+      FROM ADMINISTRADOR a
+      JOIN PERSONA p ON a.id_administrador = p.id_persona
+      WHERE p.correo = $1
     `;
-    const result = await pool.query(query, [id_persona]);
+    const result = await pool.query(query, [correo]);
     return result.rows[0];
   } catch (error) {
-    throw new Error('Error al obtener administrador por id_persona: ' + error.message);
+    throw new Error('Error al obtener administrador por correo: ' + error.message);
   }
 }
 
-async function getPersonaByAdminId(id) {
+async function getAdministradoresByNombre(nombre) {
   try {
     const query = `
-      SELECT p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
-      FROM PERSONA p
-      JOIN ADMINISTRADOR_ESP_DEPORTIVO a ON p.id_persona = a.id_admin
-      WHERE a.id_admin = $1
+      SELECT a.id_administrador, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil, p.usuario,
+             a.direccion, a.estado, a.ultimo_login, a.fecha_creacion
+      FROM ADMINISTRADOR a
+      JOIN PERSONA p ON a.id_administrador = p.id_persona
+      WHERE p.nombre ILIKE $1
+      ORDER BY p.nombre ASC
+      LIMIT 10
     `;
-    const result = await pool.query(query, [id]);
-    return result.rows[0];
-  } catch (error) {
-    throw new Error('Error al obtener persona asociada al administrador: ' + error.message);
-  }
-}
-
-async function getEspaciosByAdminId(id) {
-  try {
-    const query = `
-      SELECT id_espacio, nombre, direccion, descripcion, latitud, longitud, horario_apertura, horario_cierre, id_admin
-      FROM ESPACIO_DEPORTIVO
-      WHERE id_admin = $1
-    `;
-    const result = await pool.query(query, [id]);
+    const values = [`%${nombre}%`];
+    const result = await pool.query(query, values);
     return result.rows;
   } catch (error) {
-    throw new Error('Error al listar espacios deportivos: ' + error.message);
+    throw new Error('Error al buscar administradores por nombre: ' + error.message);
   }
 }
 
-async function createAdministrador(fecha_ingreso, direccion, id_persona) {
+async function createAdministrador(nombre, apellido, contraseña, telefono, correo, sexo, usuario, direccion, imagen_perfil = null) {
   try {
-    const query = `
-      INSERT INTO ADMINISTRADOR_ESP_DEPORTIVO (id_admin, fecha_ingreso, direccion)
-      VALUES ($1, $2, $3)
-      RETURNING id_admin, fecha_ingreso, direccion
+    const hashedPassword = await bcrypt.hash(contraseña, 10);
+
+    // Generar latitud y longitud aleatorias dentro de La Paz
+    const latMin = -16.55, latMax = -16.49;
+    const lonMin = -68.20, lonMax = -68.12;
+    const latitud = Math.floor((Math.random() * (latMax - latMin) + latMin) * 1e6) / 1e6;
+    const longitud = Math.floor((Math.random() * (lonMax - lonMin) + lonMin) * 1e6) / 1e6;
+
+    // Insertar en PERSONA
+    const personaQuery = `
+      INSERT INTO PERSONA (nombre, apellido, contraseña, telefono, correo, sexo, imagen_perfil, usuario, latitud, longitud)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      RETURNING id_persona
     `;
-    const values = [id_persona, fecha_ingreso, direccion];
-    const result = await pool.query(query, values);
-    return result.rows[0];
+    const personaValues = [nombre, apellido, hashedPassword, telefono, correo, sexo, imagen_perfil, usuario, latitud, longitud];
+    const personaResult = await pool.query(personaQuery, personaValues);
+    const id = personaResult.rows[0].id_persona;
+
+    // Insertar en ADMINISTRADOR
+    const adminQuery = `
+      INSERT INTO ADMINISTRADOR (id_administrador, direccion)
+      VALUES ($1, $2)
+      RETURNING id_administrador, direccion, estado, ultimo_login, fecha_creacion
+    `;
+    const adminResult = await pool.query(adminQuery, [id, direccion]);
+
+    // Combinar resultados
+    return {
+      ...adminResult.rows[0],
+      nombre, apellido, telefono, correo, sexo, imagen_perfil, usuario
+    };
   } catch (error) {
     throw new Error('Error al crear administrador: ' + error.message);
   }
 }
 
-async function updateAdministrador(id, direccion) {
+async function updateAdministrador(id, nombre, apellido, contraseña, telefono, correo, sexo, usuario, direccion, estado, imagen_perfil) {
   try {
-    const query = `
-      UPDATE ADMINISTRADOR_ESP_DEPORTIVO
-      SET direccion = $1
-      WHERE id_admin = $2
-      RETURNING id_admin, fecha_ingreso, direccion
+    // Actualizar PERSONA
+    let personaQuery = `
+      UPDATE PERSONA
+      SET nombre = COALESCE($1, nombre),
+          apellido = COALESCE($2, apellido),
+          telefono = COALESCE($3, telefono),
+          correo = COALESCE($4, correo),
+          sexo = COALESCE($5, sexo),
+          usuario = COALESCE($6, usuario),
+          imagen_perfil = COALESCE($7, imagen_perfil)
     `;
-    const result = await pool.query(query, [direccion, id]);
-    return result.rows[0];
+    const personaValues = [nombre, apellido, telefono, correo, sexo, usuario, imagen_perfil];
+    let paramIndex = 8;
+
+    if (contraseña && contraseña.trim() !== "") {
+      const hashedPassword = await bcrypt.hash(contraseña, 10);
+      personaQuery += `, contraseña = $${paramIndex}`;
+      personaValues.push(hashedPassword);
+      paramIndex++;
+    }
+
+    personaQuery += ` WHERE id_persona = $${paramIndex}`;
+    personaValues.push(id);
+
+    await pool.query(personaQuery, personaValues);
+
+    // Actualizar ADMINISTRADOR
+    const adminQuery = `
+      UPDATE ADMINISTRADOR
+      SET direccion = COALESCE($1, direccion),
+          estado = COALESCE($2, estado)
+      WHERE id_administrador = $3
+    `;
+    await pool.query(adminQuery, [direccion, estado, id]);
+
+    // Obtener el registro actualizado
+    return await getAdministradorById(id);
   } catch (error) {
     throw new Error('Error al actualizar administrador: ' + error.message);
   }
@@ -110,18 +157,24 @@ async function updateAdministrador(id, direccion) {
 
 async function deleteAdministrador(id) {
   try {
-    const query = `
-      DELETE FROM ADMINISTRADOR_ESP_DEPORTIVO
-      WHERE id_admin = $1
-      RETURNING id_admin, fecha_ingreso, direccion
-    `;
-    const result = await pool.query(query, [id]);
-    return result.rows[0];
+    // Obtener imagen para eliminarla después
+    const admin = await getAdministradorById(id);
+    if (!admin) {
+      throw new Error('Administrador no encontrado');
+    }
+
+    // Eliminar de ADMINISTRADOR (no cascada a PERSONA)
+    await pool.query('DELETE FROM ADMINISTRADOR WHERE id_administrador = $1', [id]);
+
+    // Eliminar de PERSONA (cascada eliminará referencias si hay)
+    const personaQuery = 'DELETE FROM PERSONA WHERE id_persona = $1 RETURNING *';
+    const personaResult = await pool.query(personaQuery, [id]);
+
+    return { ...admin, deleted_from_persona: !!personaResult.rows[0] };
   } catch (error) {
     throw new Error('Error al eliminar administrador: ' + error.message);
   }
 }
-
 
 // ----------------------
 // ----------------------
@@ -156,15 +209,15 @@ const listarAdministradores = async (req, res) => {
           try {
             const filePath = path.join(__dirname, '../Uploads', admin.imagen_perfil.replace(/^\/*[uU]ploads\//, ''));
             await fs.access(filePath);
-            return admin;
           } catch (error) {
-            console.warn(`Imagen no encontrada para administrador ${admin.id_admin}: ${admin.imagen_perfil}`);
-            return { ...admin, imagen_perfil: null };
+            console.warn(`Imagen no encontrada para administrador ${admin.id_administrador}: ${admin.imagen_perfil}`);
+            admin.imagen_perfil = null;
           }
         }
         return admin;
       })
     );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Lista de administradores obtenida', administradoresConImagenValidada));
   } catch (error) {
     console.error('Error al listar administradores:', error);
@@ -176,109 +229,103 @@ const obtenerAdministradorPorId = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const administrador = await getAdministradorById(id);
-    if (!administrador) {
+    const admin = await getAdministradorById(id);
+    if (!admin) {
       return res.status(404).json(response(false, 'Administrador no encontrado'));
     }
-    if (administrador.imagen_perfil) {
+    if (admin.imagen_perfil) {
       try {
-        const filePath = path.join(__dirname, '../Uploads', administrador.imagen_perfil.replace(/^\/*[uU]ploads\//, ''));
+        const filePath = path.join(__dirname, '../Uploads', admin.imagen_perfil.replace(/^\/*[uU]ploads\//, ''));
         await fs.access(filePath);
       } catch (error) {
-        console.warn(`Imagen no encontrada para administrador ${administrador.id_admin}: ${administrador.imagen_perfil}`);
-        administrador.imagen_perfil = null;
+        console.warn(`Imagen no encontrada para administrador ${admin.id_administrador}: ${admin.imagen_perfil}`);
+        admin.imagen_perfil = null;
       }
     }
-    res.status(200).json(response(true, 'Administrador obtenido', administrador));
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
+    res.status(200).json(response(true, 'Administrador obtenido', admin));
   } catch (error) {
     console.error('Error al obtener administrador por ID:', error);
     res.status(500).json(response(false, 'Error interno del servidor'));
   }
 };
 
-const obtenerAdministradorPorIdPersona = async (req, res) => {
-  const { id_persona } = req.params;
+const obtenerAdministradorPorCorreo = async (req, res) => {
+  const { correo } = req.params;
 
   try {
-    const administrador = await getAdministradorByIdPersona(id_persona);
-    if (!administrador) {
+    const admin = await getAdministradorByCorreo(correo);
+    if (!admin) {
       return res.status(404).json(response(false, 'Administrador no encontrado'));
     }
-    if (administrador.imagen_perfil) {
+    if (admin.imagen_perfil) {
       try {
-        const filePath = path.join(__dirname, '../Uploads', administrador.imagen_perfil.replace(/^\/*[uU]ploads\//, ''));
+        const filePath = path.join(__dirname, '../Uploads', admin.imagen_perfil.replace(/^\/*[uU]ploads\//, ''));
         await fs.access(filePath);
       } catch (error) {
-        console.warn(`Imagen no encontrada para administrador ${administrador.id_admin}: ${administrador.imagen_perfil}`);
-        administrador.imagen_perfil = null;
+        console.warn(`Imagen no encontrada para administrador ${admin.id_administrador}: ${admin.imagen_perfil}`);
+        admin.imagen_perfil = null;
       }
     }
-    res.status(200).json(response(true, 'Administrador obtenido', administrador));
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
+    res.status(200).json(response(true, 'Administrador obtenido', admin));
   } catch (error) {
-    console.error('Error al obtener administrador por id_persona:', error);
+    console.error('Error al obtener administrador por correo:', error);
     res.status(500).json(response(false, 'Error interno del servidor'));
   }
 };
 
-const obtenerPersonaPorAdminId = async (req, res) => {
-  const { id } = req.params;
+const buscarAdministradorPorNombre = async (req, res) => {
+  const { nombre } = req.params;
 
   try {
-    const persona = await getPersonaByAdminId(id);
-    if (!persona) {
-      return res.status(404).json(response(false, 'Persona no encontrada'));
+    const administradores = await getAdministradoresByNombre(nombre);
+    if (!administradores.length) {
+      return res.status(404).json(response(false, 'No se encontraron administradores'));
     }
-    if (persona.imagen_perfil) {
-      try {
-        const filePath = path.join(__dirname, '../Uploads', persona.imagen_perfil.replace(/^\/*[uU]ploads\//, ''));
-        await fs.access(filePath);
-      } catch (error) {
-        console.warn(`Imagen no encontrada para persona ${persona.id_persona}: ${persona.imagen_perfil}`);
-        persona.imagen_perfil = null;
-      }
-    }
-    res.status(200).json(response(true, 'Persona obtenida', persona));
+    const administradoresConImagenValidada = await Promise.all(
+      administradores.map(async (admin) => {
+        if (admin.imagen_perfil) {
+          try {
+            const filePath = path.join(__dirname, '../Uploads', admin.imagen_perfil.replace(/^\/*[uU]ploads\//, ''));
+            await fs.access(filePath);
+          } catch (error) {
+            console.warn(`Imagen no encontrada para administrador ${admin.id_administrador}: ${admin.imagen_perfil}`);
+            admin.imagen_perfil = null;
+          }
+        }
+        return admin;
+      })
+    );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
+    res.status(200).json(response(true, 'Administradores encontrados', administradoresConImagenValidada));
   } catch (error) {
-    console.error('Error al obtener persona asociada al administrador:', error);
-    res.status(500).json(response(false, 'Error interno del servidor'));
-  }
-};
-
-const obtenerEspaciosPorAdminId = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const espacios = await getEspaciosByAdminId(id);
-    if (!espacios.length) {
-      return res.status(404).json(response(false, 'No se encontraron espacios deportivos para este administrador'));
-    }
-    res.status(200).json(response(true, 'Espacios deportivos obtenidos', espacios));
-  } catch (error) {
-    console.error('Error al listar espacios deportivos:', error);
+    console.error('Error al buscar administradores por nombre:', error);
     res.status(500).json(response(false, 'Error interno del servidor'));
   }
 };
 
 const crearAdministrador = async (req, res) => {
-  const { fecha_ingreso, direccion, id_persona } = req.body;
+  const { nombre, apellido, contraseña, telefono, correo, sexo, usuario, direccion } = req.body;
 
-  if (!fecha_ingreso || !id_persona) {
-    return res.status(400).json(response(false, 'Fecha de ingreso e id_persona son obligatorios'));
+  if (!nombre || !apellido || !contraseña || !correo || !usuario || !direccion) {
+    return res.status(400).json(response(false, 'Campos obligatorios: nombre, apellido, contraseña, correo, usuario, direccion'));
+  }
+
+  let imagen_perfil = null;
+  if (req.file) {
+    imagen_perfil = `/Uploads/persona/${req.file.filename}`;
   }
 
   try {
-    // Verificar que id_persona existe en PERSONA
-    const personaExistente = await pool.query('SELECT id_persona FROM PERSONA WHERE id_persona = $1', [id_persona]);
-    if (!personaExistente.rows[0]) {
-      return res.status(404).json(response(false, 'Persona no encontrada'));
-    }
+    const nuevoAdmin = await createAdministrador(nombre, apellido, contraseña, telefono, correo, sexo, usuario, direccion, imagen_perfil);
 
-    const nuevoAdministrador = await createAdministrador(fecha_ingreso, direccion, id_persona);
-    res.status(201).json(response(true, 'Administrador creado exitosamente', nuevoAdministrador));
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
+    res.status(201).json(response(true, 'Administrador creado exitosamente', nuevoAdmin));
   } catch (error) {
     console.error('Error al crear administrador:', error);
-    if (error.message.includes('duplicate key')) {
-      return res.status(400).json(response(false, 'El id_persona ya está registrado como administrador'));
+    if (error.message.includes('correo') || error.message.includes('usuario')) {
+      return res.status(400).json(response(false, 'Correo o usuario ya registrado'));
     }
     res.status(500).json(response(false, 'Error interno del servidor'));
   }
@@ -286,20 +333,49 @@ const crearAdministrador = async (req, res) => {
 
 const actualizarAdministrador = async (req, res) => {
   const { id } = req.params;
-  const { direccion } = req.body;
-
-  if (!direccion) {
-    return res.status(400).json(response(false, 'La dirección es obligatoria'));
-  }
+  const { nombre, apellido, contraseña, telefono, correo, sexo, usuario, direccion, estado } = req.body;
 
   try {
-    const administradorActualizado = await updateAdministrador(id, direccion);
-    if (!administradorActualizado) {
+    const adminExistente = await getAdministradorById(id);
+    if (!adminExistente) {
       return res.status(404).json(response(false, 'Administrador no encontrado'));
     }
-    res.status(200).json(response(true, 'Administrador actualizado exitosamente', administradorActualizado));
+
+    let imagen_perfil = adminExistente.imagen_perfil;
+    let oldFilePath = null;
+
+    if (req.file) {
+      imagen_perfil = `/Uploads/persona/${req.file.filename}`;
+      if (adminExistente.imagen_perfil) {
+        oldFilePath = path.join(__dirname, '../Uploads', adminExistente.imagen_perfil.replace(/^\/*[uU]ploads\//, ''));
+      }
+    }
+
+    const adminActualizado = await updateAdministrador(
+      id,
+      nombre,
+      apellido,
+      contraseña,
+      telefono,
+      correo,
+      sexo,
+      usuario,
+      direccion,
+      estado,
+      imagen_perfil
+    );
+
+    if (oldFilePath) {
+      await fs.unlink(oldFilePath).catch(err => console.warn('No se pudo eliminar imagen antigua:', err));
+    }
+
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
+    res.status(200).json(response(true, 'Administrador actualizado exitosamente', adminActualizado));
   } catch (error) {
     console.error('Error al actualizar administrador:', error);
+    if (error.message.includes('correo') || error.message.includes('usuario')) {
+      return res.status(400).json(response(false, 'Correo o usuario ya registrado'));
+    }
     res.status(500).json(response(false, 'Error interno del servidor'));
   }
 };
@@ -308,10 +384,12 @@ const eliminarAdministrador = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const administradorEliminado = await deleteAdministrador(id);
-    if (!administradorEliminado) {
-      return res.status(404).json(response(false, 'Administrador no encontrado'));
+    const adminEliminado = await deleteAdministrador(id);
+    if (adminEliminado.imagen_perfil) {
+      const filePath = path.join(__dirname, '../Uploads', adminEliminado.imagen_perfil.replace(/^\/*[uU]ploads\//, ''));
+      await fs.unlink(filePath).catch(err => console.warn('No se pudo eliminar imagen:', err));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Administrador eliminado exitosamente'));
   } catch (error) {
     console.error('Error al eliminar administrador:', error);
@@ -319,18 +397,20 @@ const eliminarAdministrador = async (req, res) => {
   }
 };
 
-// --- Rutas ---
+//-------- Rutas --------- 
+//------------------------
+//------------------------
+
 const router = express.Router();
 
-router.post('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), crearAdministrador);
+router.post('/', verifyToken, checkRole(['ADMINISTRADOR']), handleUpload('persona', 'imagen_perfil'), crearAdministrador);
 
-router.get('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), listarAdministradores);
-router.get('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), obtenerAdministradorPorId);
-router.get('/persona/:id_persona', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), obtenerAdministradorPorIdPersona);
-router.get('/:id/persona', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), obtenerPersonaPorAdminId);
-router.get('/:id/espacios', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), obtenerEspaciosPorAdminId);
+router.get('/datos-total', verifyToken, checkRole(['ADMINISTRADOR']), listarAdministradores);
+router.get('/id/:id', verifyToken, checkRole(['ADMINISTRADOR']), obtenerAdministradorPorId);
+router.get('/correo/:correo', verifyToken, checkRole(['ADMINISTRADOR']), obtenerAdministradorPorCorreo);
+router.get('/buscar-nombre/:nombre', verifyToken, checkRole(['ADMINISTRADOR']), buscarAdministradorPorNombre);
 
-router.patch('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), actualizarAdministrador);
-router.delete('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), eliminarAdministrador);
+router.patch('/:id', verifyToken, checkRole(['ADMINISTRADOR']), handleUpload('persona', 'imagen_perfil'), actualizarAdministrador);
+router.delete('/:id', verifyToken, checkRole(['ADMINISTRADOR']), eliminarAdministrador);
 
 module.exports = router;

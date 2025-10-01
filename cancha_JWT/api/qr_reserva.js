@@ -1,18 +1,28 @@
 const express = require('express');
+const QRCode = require('qrcode'); // Import the qrcode library
 const pool = require('../config/database');
 const { verifyToken, checkRole } = require('../middleware/auth');
 const path = require('path');
 const fs = require('fs').promises;
 
-// 👇 Importar tu handleUpload genérico
-const { handleUpload } = require('../middleware/multer');
-
 // --- Modelos ---
 async function getAllQRs() {
   try {
     const query = `
-      SELECT id_qr, fecha_generado, fecha_expira, qr_url_imagen, codigo_qr, estado, id_reserva, id_control
-      FROM QR_RESERVA
+      SELECT 
+        q.id_qr, 
+        q.fecha_generado, 
+        q.fecha_expira, 
+        q.qr_url_imagen, 
+        q.codigo_qr, 
+        q.estado, 
+        q.id_reserva, 
+        q.id_control,
+        p.nombre || ' ' || p.apellido AS nombre_cliente
+      FROM QR_RESERVA q
+      JOIN RESERVA r ON q.id_reserva = r.id_reserva
+      JOIN CLIENTE c ON r.id_cliente = c.id_cliente
+      JOIN PERSONA p ON c.id_cliente = p.id_persona
     `;
     const result = await pool.query(query);
     return result.rows;
@@ -24,9 +34,21 @@ async function getAllQRs() {
 async function getQRById(id) {
   try {
     const query = `
-      SELECT id_qr, fecha_generado, fecha_expira, qr_url_imagen, codigo_qr, estado, id_reserva, id_control
-      FROM QR_RESERVA
-      WHERE id_qr = $1
+      SELECT 
+        q.id_qr, 
+        q.fecha_generado, 
+        q.fecha_expira, 
+        q.qr_url_imagen, 
+        q.codigo_qr, 
+        q.estado, 
+        q.id_reserva, 
+        q.id_control,
+        p.nombre || ' ' || p.apellido AS nombre_cliente
+      FROM QR_RESERVA q
+      JOIN RESERVA r ON q.id_reserva = r.id_reserva
+      JOIN CLIENTE c ON r.id_cliente = c.id_cliente
+      JOIN PERSONA p ON c.id_cliente = p.id_persona
+      WHERE q.id_qr = $1
     `;
     const result = await pool.query(query, [id]);
     return result.rows[0];
@@ -38,9 +60,21 @@ async function getQRById(id) {
 async function getReservaByQRId(id) {
   try {
     const query = `
-      SELECT r.id_reserva, r.fecha_reserva, r.cupo, r.monto_total, r.saldo_pendiente, r.estado, r.id_cliente, r.id_cancha, r.id_disciplina
+      SELECT 
+        r.id_reserva, 
+        r.fecha_reserva, 
+        r.cupo, 
+        r.monto_total, 
+        r.saldo_pendiente, 
+        r.estado, 
+        r.id_cliente, 
+        r.id_cancha, 
+        r.id_disciplina,
+        p.nombre || ' ' || p.apellido AS nombre_cliente
       FROM RESERVA r
       JOIN QR_RESERVA q ON r.id_reserva = q.id_reserva
+      JOIN CLIENTE c ON r.id_cliente = c.id_cliente
+      JOIN PERSONA p ON c.id_cliente = p.id_persona
       WHERE q.id_qr = $1
     `;
     const result = await pool.query(query, [id]);
@@ -68,9 +102,21 @@ async function getControlByQRId(id) {
 async function getQRsByReservaId(id_reserva) {
   try {
     const query = `
-      SELECT id_qr, fecha_generado, fecha_expira, qr_url_imagen, codigo_qr, estado, id_reserva, id_control
-      FROM QR_RESERVA
-      WHERE id_reserva = $1
+      SELECT 
+        q.id_qr, 
+        q.fecha_generado, 
+        q.fecha_expira, 
+        q.qr_url_imagen, 
+        q.codigo_qr, 
+        q.estado, 
+        q.id_reserva, 
+        q.id_control,
+        p.nombre || ' ' || p.apellido AS nombre_cliente
+      FROM QR_RESERVA q
+      JOIN RESERVA r ON q.id_reserva = r.id_reserva
+      JOIN CLIENTE c ON r.id_cliente = c.id_cliente
+      JOIN PERSONA p ON c.id_cliente = p.id_persona
+      WHERE q.id_reserva = $1
     `;
     const result = await pool.query(query, [id_reserva]);
     return result.rows;
@@ -82,9 +128,21 @@ async function getQRsByReservaId(id_reserva) {
 async function getQRsByEstado(estado) {
   try {
     const query = `
-      SELECT id_qr, fecha_generado, fecha_expira, qr_url_imagen, codigo_qr, estado, id_reserva, id_control
-      FROM QR_RESERVA
-      WHERE estado = $1
+      SELECT 
+        q.id_qr, 
+        q.fecha_generado, 
+        q.fecha_expira, 
+        q.qr_url_imagen, 
+        q.codigo_qr, 
+        q.estado, 
+        q.id_reserva, 
+        q.id_control,
+        p.nombre || ' ' || p.apellido AS nombre_cliente
+      FROM QR_RESERVA q
+      JOIN RESERVA r ON q.id_reserva = r.id_reserva
+      JOIN CLIENTE c ON r.id_cliente = c.id_cliente
+      JOIN PERSONA p ON c.id_cliente = p.id_persona
+      WHERE q.estado = $1
     `;
     const result = await pool.query(query, [estado]);
     return result.rows;
@@ -144,6 +202,21 @@ async function deleteQR(id) {
   }
 }
 
+async function getEstadoQrEnumValues() {
+  try {
+    const query = `
+      SELECT e.enumlabel AS value
+      FROM pg_enum e
+      JOIN pg_type t ON e.enumtypid = t.oid
+      WHERE t.typname = 'estado_qr_enum'
+      ORDER BY e.enumsortorder
+    `;
+    const result = await pool.query(query);
+    return result.rows.map(row => row.value);
+  } catch (error) {
+    throw new Error('Error al obtener valores de estado_qr_enum: ' + error.message);
+  }
+}
 
 // ----------------------
 // ----------------------
@@ -186,6 +259,7 @@ const listarQRs = async (req, res) => {
         return qr;
       })
     );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Lista de QRs obtenida', qrsConImagenValidada));
   } catch (error) {
     console.error('Error al listar QRs:', error);
@@ -210,6 +284,7 @@ const obtenerQRPorId = async (req, res) => {
         qr.qr_url_imagen = null;
       }
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'QR obtenido', qr));
   } catch (error) {
     console.error('Error al obtener QR por ID:', error);
@@ -225,6 +300,7 @@ const obtenerReservaPorQRId = async (req, res) => {
     if (!reserva) {
       return res.status(404).json(response(false, 'Reserva no encontrada'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Reserva obtenida', reserva));
   } catch (error) {
     console.error('Error al obtener reserva asociada al QR:', error);
@@ -240,6 +316,7 @@ const obtenerControlPorQRId = async (req, res) => {
     if (!control) {
       return res.status(404).json(response(false, 'Control no encontrado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Control obtenido', control));
   } catch (error) {
     console.error('Error al obtener control asociado al QR:', error);
@@ -269,6 +346,7 @@ const listarQRsPorReservaId = async (req, res) => {
         return qr;
       })
     );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'QRs obtenidos por reserva', qrsConImagenValidada));
   } catch (error) {
     console.error('Error al listar QRs por reserva:', error);
@@ -298,6 +376,7 @@ const listarQRsPorEstado = async (req, res) => {
         return qr;
       })
     );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'QRs obtenidos por estado', qrsConImagenValidada));
   } catch (error) {
     console.error('Error al listar QRs por estado:', error);
@@ -308,21 +387,22 @@ const listarQRsPorEstado = async (req, res) => {
 const crearQR = async (req, res) => {
   const { fecha_generado, fecha_expira, codigo_qr, estado, id_reserva, id_control } = req.body;
 
+  // Validar campos requeridos
   if (!fecha_generado || !fecha_expira || !codigo_qr || !estado || !id_reserva) {
     return res.status(400).json(response(false, 'Los campos fecha_generado, fecha_expira, codigo_qr, estado e id_reserva son obligatorios'));
   }
-
-  if (!req.file) {
-    return res.status(400).json(response(false, 'La imagen QR es obligatoria'));
-  }
-
-  const qr_url_imagen = `/Uploads/qr/${req.file.filename}`;
 
   try {
     // Verificar que id_reserva existe en RESERVA
     const reservaExistente = await pool.query('SELECT id_reserva FROM RESERVA WHERE id_reserva = $1', [id_reserva]);
     if (!reservaExistente.rows[0]) {
       return res.status(404).json(response(false, 'Reserva no encontrada'));
+    }
+
+    // Verificar si la reserva ya tiene un QR asignado
+    const existingQR = await getQRsByReservaId(id_reserva);
+    if (existingQR.length > 0) {
+      return res.status(400).json(response(false, 'La reserva ya tiene un QR asignado'));
     }
 
     // Verificar que id_control existe en CONTROL si se proporciona
@@ -334,9 +414,9 @@ const crearQR = async (req, res) => {
     }
 
     // Validar estado
-    const validEstados = ['activo', 'usado', 'expirado'];
+    const validEstados = await getEstadoQrEnumValues();
     if (!validEstados.includes(estado)) {
-      return res.status(400).json(response(false, 'Estado inválido. Debe ser: activo, usado o expirado'));
+      return res.status(400).json(response(false, `Estado inválido. Debe ser uno de: ${validEstados.join(', ')}`));
     }
 
     // Validar fecha_expira > fecha_generado
@@ -350,8 +430,72 @@ const crearQR = async (req, res) => {
       return res.status(400).json(response(false, 'El código QR ya está registrado'));
     }
 
+    // Fetch detalles de la reserva, cliente, cancha y disciplina, incluyendo saldo_pendiente
+    const detailsQuery = `
+      SELECT 
+        r.id_reserva,
+        r.fecha_reserva,
+        r.cupo,
+        r.saldo_pendiente,
+        p.nombre || COALESCE(' ' || p.apellido, '') AS nombre_cliente,
+        ca.nombre AS nombre_cancha,
+        d.nombre AS nombre_disciplina
+      FROM RESERVA r
+      JOIN CLIENTE cl ON r.id_cliente = cl.id_cliente
+      JOIN PERSONA p ON cl.id_cliente = p.id_persona
+      JOIN CANCHA ca ON r.id_cancha = ca.id_cancha
+      JOIN DISCIPLINA d ON r.id_disciplina = d.id_disciplina
+      WHERE r.id_reserva = $1
+    `;
+
+    const detailsResult = await pool.query(detailsQuery, [id_reserva]);
+    if (!detailsResult.rows[0]) {
+      return res.status(404).json(response(false, 'Detalles de la reserva no encontrados'));
+    }
+    const details = detailsResult.rows[0];
+
+    // Verificar si el saldo pendiente es cero
+    if (details.saldo_pendiente !== 0) {
+      return res.status(400).json(response(false, 'No se puede generar QR hasta que el saldo pendiente sea cero'));
+    }
+
+    // Construir el contenido del QR como JSON (sin incluir saldo_pendiente)
+    const qrContent = JSON.stringify({
+      id_reserva: details.id_reserva,
+      nombre_cliente: details.nombre_cliente,
+      fecha_reserva: details.fecha_reserva,
+      cupo: details.cupo,
+      cancha: details.nombre_cancha,
+      disciplina: details.nombre_disciplina,
+      codigo_qr: codigo_qr,
+      fecha_generado: fecha_generado,
+      fecha_expira: fecha_expira
+    });
+
+    console.log(qrContent);
+
+    // Generar nombre único para el archivo QR
+    const qrFileName = `${id_reserva}_${Date.now()}.png`;
+    const qrFilePath = path.join(__dirname, '../Uploads/qr', qrFileName);
+    const qr_url_imagen = `/Uploads/qr/${qrFileName}`;
+
+    // Asegurar que el directorio /Uploads/qr existe
+    const qrDir = path.join(__dirname, '../Uploads/qr');
+    await fs.mkdir(qrDir, { recursive: true });
+
+    // Generar el QR code y guardarlo como PNG
+    await QRCode.toFile(qrFilePath, qrContent, {
+      errorCorrectionLevel: 'H', // Alto nivel de corrección para más datos
+      type: 'png',
+      width: 400, // Aumentado para manejar más contenido
+    });
+
+    // Guardar en la DB
     const nuevoQR = await createQR(fecha_generado, fecha_expira, qr_url_imagen, codigo_qr, estado, id_reserva, id_control);
-    res.status(201).json(response(true, 'QR creado exitosamente', nuevoQR));
+    // Obtener el QR completo con nombre_cliente para la respuesta
+    const qrConCliente = await getQRById(nuevoQR.id_qr);
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
+    res.status(201).json(response(true, 'QR creado exitosamente', qrConCliente));
   } catch (error) {
     console.error('Error al crear QR:', error);
     res.status(500).json(response(false, 'Error interno del servidor'));
@@ -360,37 +504,23 @@ const crearQR = async (req, res) => {
 
 const actualizarQR = async (req, res) => {
   const { id } = req.params;
-  const { fecha_generado, fecha_expira, codigo_qr, estado, id_reserva, id_control } = req.body;
+  const { fecha_generado, fecha_expira, codigo_qr, estado, id_control } = req.body;
 
   try {
-    // Obtener el QR actual para manejar la imagen antigua
+    // Obtener el QR actual
     const qrActual = await getQRById(id);
-    if (!qrActual) {
-      return res.status(404).json(response(false, 'QR no encontrado'));
-    }
+    if (!qrActual) return res.status(404).json(response(false, 'QR no encontrado'));
 
-    // Verificar que id_reserva existe si se proporciona
-    if (id_reserva) {
-      const reservaExistente = await pool.query('SELECT id_reserva FROM RESERVA WHERE id_reserva = $1', [id_reserva]);
-      if (!reservaExistente.rows[0]) {
-        return res.status(404).json(response(false, 'Reserva no encontrada'));
-      }
-    }
-
-    // Verificar que id_control existe si se proporciona
+    // Verificar id_control si se proporciona
     if (id_control) {
       const controlExistente = await pool.query('SELECT id_control FROM CONTROL WHERE id_control = $1', [id_control]);
-      if (!controlExistente.rows[0]) {
-        return res.status(404).json(response(false, 'Control no encontrado'));
-      }
+      if (!controlExistente.rows[0]) return res.status(404).json(response(false, 'Control no encontrado'));
     }
 
     // Validar estado si se proporciona
     if (estado) {
-      const validEstados = ['activo', 'usado', 'expirado'];
-      if (!validEstados.includes(estado)) {
-        return res.status(400).json(response(false, 'Estado inválido. Debe ser: activo, usado o expirado'));
-      }
+      const validEstados = await getEstadoQrEnumValues();
+      if (!validEstados.includes(estado)) return res.status(400).json(response(false, `Estado inválido. Debe ser uno de: ${validEstados.join(', ')}`));
     }
 
     // Validar fecha_expira > fecha_generado si ambas se proporcionan
@@ -398,27 +528,72 @@ const actualizarQR = async (req, res) => {
       return res.status(400).json(response(false, 'La fecha de expiración debe ser posterior a la fecha de generación'));
     }
 
-    // Validar que el código QR no esté duplicado si se proporciona
+    // Validar código QR único si se proporciona
     if (codigo_qr) {
       const qrExistente = await pool.query('SELECT id_qr FROM QR_RESERVA WHERE codigo_qr = $1 AND id_qr != $2', [codigo_qr, id]);
-      if (qrExistente.rows[0]) {
-        return res.status(400).json(response(false, 'El código QR ya está registrado'));
+      if (qrExistente.rows[0]) return res.status(400).json(response(false, 'El código QR ya está registrado'));
+    }
+
+    // Actualizar QR en la DB sin tocar la imagen aún
+    const qrActualizado = await updateQR(id, fecha_generado, fecha_expira, null, codigo_qr, estado, qrActual.id_reserva, id_control);
+
+    // Traer detalles de la reserva para generar el contenido del QR
+    const detailsQuery = `
+      SELECT r.id_reserva, r.fecha_reserva, r.cupo, r.saldo_pendiente,
+             p.nombre || ' ' || p.apellido AS nombre_cliente,
+             ca.nombre AS nombre_cancha, d.nombre AS nombre_disciplina
+      FROM RESERVA r
+      JOIN CLIENTE cl ON r.id_cliente = cl.id_cliente
+      JOIN PERSONA p ON cl.id_cliente = p.id_persona
+      JOIN CANCHA ca ON r.id_cancha = ca.id_cancha
+      JOIN DISCIPLINA d ON r.id_disciplina = d.id_disciplina
+      WHERE r.id_reserva = $1
+    `;
+    const detailsResult = await pool.query(detailsQuery, [qrActualizado.id_reserva]);
+    if (!detailsResult.rows[0]) return res.status(404).json(response(false, 'Detalles de la reserva no encontrados'));
+    const details = detailsResult.rows[0];
+
+    const qrContent = JSON.stringify({
+      id_reserva: details.id_reserva,
+      nombre_cliente: details.nombre_cliente,
+      fecha_reserva: details.fecha_reserva,
+      cupo: details.cupo,
+      cancha: details.nombre_cancha,
+      disciplina: details.nombre_disciplina,
+      codigo_qr: qrActualizado.codigo_qr,
+      fecha_generado: qrActualizado.fecha_generado,
+      fecha_expira: qrActualizado.fecha_expira
+    });
+
+    // Directorio y nombre de archivo
+    const qrDir = path.join(__dirname, '../Uploads/qr');
+    await fs.mkdir(qrDir, { recursive: true });
+    let qrFilePath;
+    let qr_url_imagen = qrActualizado.qr_url_imagen;
+
+    if (details.saldo_pendiente !== 0) {
+      // Si no está pagado, no generar QR y mantener la imagen existente
+      qr_url_imagen = qrActualizado.qr_url_imagen || null;
+    } else {
+      // Si está pagado
+      if (!qr_url_imagen) {
+        const qrFileName = `${qrActualizado.id_reserva}_${Date.now()}.png`;
+        qrFilePath = path.join(qrDir, qrFileName);
+        qr_url_imagen = `/Uploads/qr/${qrFileName}`;
+      } else {
+        qrFilePath = path.join(qrDir, qr_url_imagen.replace(/^\/*[uU]ploads\/qr\//, ''));
+      }
+      // Generar o sobrescribir el QR
+      await QRCode.toFile(qrFilePath, qrContent, { errorCorrectionLevel: 'H', type: 'png', width: 400 });
+      // Actualizar DB si antes no existía
+      if (!qrActualizado.qr_url_imagen) {
+        await pool.query('UPDATE QR_RESERVA SET qr_url_imagen = $1 WHERE id_qr = $2', [qr_url_imagen, id]);
       }
     }
 
-    // Procesar nueva imagen QR si se proporciona
-    let qr_url_imagen = qrActual.qr_url_imagen;
-    if (req.file) {
-      qr_url_imagen = `/Uploads/qr/${req.file.filename}`;
-      // Eliminar la imagen antigua si existe
-      if (qrActual.qr_url_imagen) {
-        const oldPath = path.join(__dirname, '../Uploads/qr', qrActual.qr_url_imagen.replace(/^\/Uploads\/qr\//, ''));
-        await fs.unlink(oldPath).catch(err => console.warn('No se pudo eliminar imagen antigua:', err));
-      }
-    }
-
-    const qrActualizado = await updateQR(id, fecha_generado, fecha_expira, qr_url_imagen, codigo_qr, estado, id_reserva, id_control);
-    res.status(200).json(response(true, 'QR actualizado exitosamente', qrActualizado));
+    const qrConCliente = await getQRById(qrActualizado.id_qr);
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
+    res.status(200).json(response(true, 'QR actualizado exitosamente', qrConCliente));
   } catch (error) {
     console.error('Error al actualizar QR:', error);
     res.status(500).json(response(false, 'Error interno del servidor'));
@@ -436,11 +611,12 @@ const eliminarQR = async (req, res) => {
 
     // Eliminar la imagen asociada si existe
     if (qr.qr_url_imagen) {
-      const filePath = path.join(__dirname, '../Uploads/qr', qr.qr_url_imagen.replace(/^\/Uploads\/qr\//, ''));
+      const filePath = path.join(__dirname, '../Uploads/qr', qr.qr_url_imagen.replace(/^\/*[uU]ploads\/qr\//, ''));
       await fs.unlink(filePath).catch(err => console.warn('No se pudo eliminar imagen:', err));
     }
 
     const qrEliminado = await deleteQR(id);
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'QR eliminado exitosamente'));
   } catch (error) {
     console.error('Error al eliminar QR:', error);
@@ -448,20 +624,40 @@ const eliminarQR = async (req, res) => {
   }
 };
 
-// --- Rutas ---
+const listarEstadoQrEnum = async (req, res) => {
+  try {
+    const valores = await getEstadoQrEnumValues();
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
+    res.status(200).json({
+      success: true,
+      message: 'Valores de estado_qr_enum obtenidos correctamente',
+      data: valores,
+    });
+  } catch (error) {
+    console.error('Error al listar estado_qr_enum:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor',
+    });
+  }
+};
+
+//-------- Rutas --------- 
+
 const router = express.Router();
 
-// Aplicar middleware de upload a POST y PATCH
-router.post('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), handleUpload('qr', 'qr_imagen'), crearQR);
+router.post('/', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP']), crearQR);
 
-router.get('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), listarQRs);
-router.get('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), obtenerQRPorId);
-router.get('/:id/reserva', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), obtenerReservaPorQRId);
-router.get('/reserva/:id_reserva', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), listarQRsPorReservaId);
-router.get('/estado/:estado', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), listarQRsPorEstado);
-router.get('/:id/control', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), obtenerControlPorQRId);
+router.get('/datos-total', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'CLIENTE', 'ENCARGADO']), listarQRs);
+router.get('/id/:id', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'CLIENTE', 'ENCARGADO']), obtenerQRPorId);
+router.get('/:id/reserva', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'CLIENTE', 'ENCARGADO']), obtenerReservaPorQRId);
+router.get('/reserva/:id_reserva', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'CLIENTE', 'ENCARGADO']), listarQRsPorReservaId);
+router.get('/estado/:estado', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'CLIENTE', 'ENCARGADO']), listarQRsPorEstado);
+router.get('/estado-qr-enum', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'CLIENTE']), listarEstadoQrEnum);
 
-router.patch('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), handleUpload('qr', 'qr_imagen'), actualizarQR);
-router.delete('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), eliminarQR);
+router.get('/:id/control', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'ENCARGADO']), obtenerControlPorQRId);
+
+router.patch('/:id', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP']), actualizarQR);
+router.delete('/:id', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP']), eliminarQR);
 
 module.exports = router;

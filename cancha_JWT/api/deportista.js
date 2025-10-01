@@ -155,6 +155,21 @@ async function deleteDeportista(id) {
   }
 }
 
+async function getNivelDeportistaEnumValues() {
+  try {
+    const query = `
+      SELECT e.enumlabel AS value
+      FROM pg_enum e
+      JOIN pg_type t ON e.enumtypid = t.oid
+      WHERE t.typname = 'nivel_deportista_enum'
+      ORDER BY e.enumsortorder
+    `;
+    const result = await pool.query(query);
+    return result.rows.map(row => row.value);
+  } catch (error) {
+    throw new Error('Error al obtener valores de nivel_deportista_enum: ' + error.message);
+  }
+}
 
 // ----------------------
 // ----------------------
@@ -198,6 +213,7 @@ const listarDeportistas = async (req, res) => {
         return deportista;
       })
     );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Lista de deportistas obtenida', deportistasConImagenValidada));
   } catch (error) {
     console.error('Error al listar deportistas:', error);
@@ -222,6 +238,7 @@ const obtenerDeportistaPorId = async (req, res) => {
         deportista.imagen_perfil = null;
       }
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Deportista obtenido', deportista));
   } catch (error) {
     console.error('Error al obtener deportista por ID:', error);
@@ -246,6 +263,7 @@ const obtenerDeportistaPorIdPersona = async (req, res) => {
         deportista.imagen_perfil = null;
       }
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Deportista obtenido', deportista));
   } catch (error) {
     console.error('Error al obtener deportista por id_persona:', error);
@@ -270,6 +288,7 @@ const obtenerPersonaPorDeportistaId = async (req, res) => {
         persona.imagen_perfil = null;
       }
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Persona obtenida', persona));
   } catch (error) {
     console.error('Error al obtener persona asociada al deportista:', error);
@@ -285,6 +304,7 @@ const obtenerReservasPorDeportistaId = async (req, res) => {
     if (!reservas.length) {
       return res.status(404).json(response(false, 'No se encontraron reservas para este deportista'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Reservas obtenidas', reservas));
   } catch (error) {
     console.error('Error al listar reservas del deportista:', error);
@@ -315,6 +335,7 @@ const listarDeportistasPorNivel = async (req, res) => {
         return deportista;
       })
     );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Deportistas obtenidos por nivel', deportistasConImagenValidada));
   } catch (error) {
     console.error('Error al listar deportistas por nivel:', error);
@@ -345,6 +366,7 @@ const listarDeportistasPorDisciplina = async (req, res) => {
         return deportista;
       })
     );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Deportistas obtenidos por disciplina', deportistasConImagenValidada));
   } catch (error) {
     console.error('Error al listar deportistas por disciplina:', error);
@@ -373,6 +395,7 @@ const crearDeportista = async (req, res) => {
     }
 
     const nuevoDeportista = await createDeportista(nivel, disciplina_principal, id_persona);
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(201).json(response(true, 'Deportista creado exitosamente', nuevoDeportista));
   } catch (error) {
     console.error('Error al crear deportista:', error);
@@ -400,6 +423,7 @@ const actualizarDeportista = async (req, res) => {
     if (!deportistaActualizado) {
       return res.status(404).json(response(false, 'Deportista no encontrado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Deportista actualizado exitosamente', deportistaActualizado));
   } catch (error) {
     console.error('Error al actualizar deportista:', error);
@@ -415,6 +439,7 @@ const eliminarDeportista = async (req, res) => {
     if (!deportistaEliminado) {
       return res.status(404).json(response(false, 'Deportista no encontrado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Deportista eliminado exitosamente'));
   } catch (error) {
     console.error('Error al eliminar deportista:', error);
@@ -422,20 +447,43 @@ const eliminarDeportista = async (req, res) => {
   }
 };
 
-// --- Rutas ---
+const listarNivelDeportistaEnum = async (req, res) => {
+  try {
+    const valores = await getNivelDeportistaEnumValues();
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
+    res.status(200).json({
+      success: true,
+      message: 'Valores de nivel_deportista_enum obtenidos correctamente',
+      data: valores,
+    });
+    console.log("Valores de nivel_deportista_enum obtenidos:", valores);
+  } catch (error) {
+    console.error('Error al listar nivel_deportista_enum:', error.message);
+    res.status(500).json({
+      success: false,
+      message: 'Error interno del servidor',
+    });
+  }
+};
+
+//-------- Rutas --------- 
+//------------------------
+//------------------------
+
 const router = express.Router();
 
-router.post('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), crearDeportista);
+router.post('/', verifyToken, checkRole(['ADMINISTRADOR']), crearDeportista);
 
-router.get('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'DEPORTISTA']), listarDeportistas);
-router.get('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'DEPORTISTA']), obtenerDeportistaPorId);
-router.get('/persona/:id_persona', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'DEPORTISTA']), obtenerDeportistaPorIdPersona);
-router.get('/:id/persona', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'DEPORTISTA']), obtenerPersonaPorDeportistaId);
-router.get('/nivel/:nivel', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'DEPORTISTA']), listarDeportistasPorNivel);
-router.get('/disciplina/:disciplina', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'DEPORTISTA']), listarDeportistasPorDisciplina);
-router.get('/:id/reservas', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'DEPORTISTA']), obtenerReservasPorDeportistaId);
+router.get('/datos-total', verifyToken, checkRole(['ADMINISTRADOR', 'DEPORTISTA']), listarDeportistas);
+router.get('/id/:id', verifyToken, checkRole(['ADMINISTRADOR', 'DEPORTISTA']), obtenerDeportistaPorId);
+router.get('/persona/:id_persona', verifyToken, checkRole(['ADMINISTRADOR', 'DEPORTISTA']), obtenerDeportistaPorIdPersona);
+router.get('/nivel/:nivel', verifyToken, checkRole(['ADMINISTRADOR', 'DEPORTISTA']), listarDeportistasPorNivel);
+router.get('/disciplina/:disciplina', verifyToken, checkRole(['ADMINISTRADOR', 'DEPORTISTA']), listarDeportistasPorDisciplina);
+router.get('/nivel-deportista-enum', verifyToken, checkRole(['ADMINISTRADOR', 'ENTRENADOR']), listarNivelDeportistaEnum);
+router.get('/:id/persona', verifyToken, checkRole(['ADMINISTRADOR', 'DEPORTISTA']), obtenerPersonaPorDeportistaId);
+router.get('/:id/reservas', verifyToken, checkRole(['ADMINISTRADOR', 'DEPORTISTA']), obtenerReservasPorDeportistaId);
 
-router.patch('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), actualizarDeportista);
-router.delete('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), eliminarDeportista);
+router.patch('/:id', verifyToken, checkRole(['ADMINISTRADOR']), actualizarDeportista);
+router.delete('/:id', verifyToken, checkRole(['ADMINISTRADOR']), eliminarDeportista);
 
 module.exports = router;

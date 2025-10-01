@@ -6,13 +6,28 @@ const { verifyToken, checkRole } = require('../middleware/auth');
 async function getAllReportes() {
   try {
     const query = `
-      SELECT id_reporte, detalle, sugerencia, id_encargado, id_reserva
-      FROM REPORTE_INCIDENCIA
-    `;
-    const result = await pool.query(query);
-    return result.rows;
+      SELECT 
+        r.id_reporte,
+        r.detalle,
+        r.sugerencia,
+        r.id_encargado,
+        r.id_reserva,
+        -- Cliente asociado a la reserva
+        p.usuario AS nombre_cliente,
+        ca.nombre AS nombre_cancha,
+        d.nombre AS nombre_disciplina
+      FROM REPORTE_INCIDENCIA r
+      JOIN RESERVA res ON r.id_reserva = res.id_reserva
+      JOIN CLIENTE cl ON res.id_cliente = cl.id_cliente
+      JOIN PERSONA p ON cl.id_cliente = p.id_persona
+      JOIN CANCHA ca ON res.id_cancha = ca.id_cancha
+      JOIN DISCIPLINA d ON res.id_disciplina = d.id_disciplina
+      ORDER BY r.id_reporte DESC
+    `
+    const result = await pool.query(query)
+    return result.rows
   } catch (error) {
-    throw new Error('Error al listar reportes: ' + error.message);
+    throw new Error('Error al listar reportes: ' + error.message)
   }
 }
 
@@ -164,6 +179,7 @@ const response = (success, message, data = null) => ({
 const listarReportes = async (req, res) => {
   try {
     const reportes = await getAllReportes();
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Lista de reportes obtenida', reportes));
   } catch (error) {
     console.error('Error al listar reportes:', error);
@@ -179,6 +195,7 @@ const obtenerReportePorId = async (req, res) => {
     if (!reporte) {
       return res.status(404).json(response(false, 'Reporte no encontrado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Reporte obtenido', reporte));
   } catch (error) {
     console.error('Error al obtener reporte por ID:', error);
@@ -194,6 +211,7 @@ const obtenerEncargadoPorReporteId = async (req, res) => {
     if (!encargado) {
       return res.status(404).json(response(false, 'Encargado no encontrado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Encargado obtenido', encargado));
   } catch (error) {
     console.error('Error al obtener encargado asociado al reporte:', error);
@@ -209,6 +227,7 @@ const obtenerReservaPorReporteId = async (req, res) => {
     if (!reserva) {
       return res.status(404).json(response(false, 'Reserva no encontrada'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Reserva obtenida', reserva));
   } catch (error) {
     console.error('Error al obtener reserva asociada al reporte:', error);
@@ -224,6 +243,7 @@ const listarReportesPorEncargadoId = async (req, res) => {
     if (!reportes.length) {
       return res.status(404).json(response(false, 'No se encontraron reportes para este encargado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Reportes obtenidos por encargado', reportes));
   } catch (error) {
     console.error('Error al listar reportes por encargado:', error);
@@ -239,6 +259,7 @@ const listarReportesPorReservaId = async (req, res) => {
     if (!reportes.length) {
       return res.status(404).json(response(false, 'No se encontraron reportes para esta reserva'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Reportes obtenidos por reserva', reportes));
   } catch (error) {
     console.error('Error al listar reportes por reserva:', error);
@@ -267,6 +288,7 @@ const crearReporte = async (req, res) => {
     }
 
     const nuevoReporte = await createReporte(detalle, sugerencia, id_encargado, id_reserva);
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(201).json(response(true, 'Reporte creado exitosamente', nuevoReporte));
   } catch (error) {
     console.error('Error al crear reporte:', error);
@@ -299,6 +321,7 @@ const actualizarReporte = async (req, res) => {
     if (!reporteActualizado) {
       return res.status(404).json(response(false, 'Reporte no encontrado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Reporte actualizado exitosamente', reporteActualizado));
   } catch (error) {
     console.error('Error al actualizar reporte:', error);
@@ -314,6 +337,7 @@ const eliminarReporte = async (req, res) => {
     if (!reporteEliminado) {
       return res.status(404).json(response(false, 'Reporte no encontrado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Reporte eliminado exitosamente'));
   } catch (error) {
     console.error('Error al eliminar reporte:', error);
@@ -321,19 +345,22 @@ const eliminarReporte = async (req, res) => {
   }
 };
 
-// --- Rutas ---
+//-------- Rutas --------- 
+//------------------------
+//------------------------
+
 const router = express.Router();
 
-router.post('/', verifyToken, checkRole(['ENCARGADO']), crearReporte);
+router.post('/', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), crearReporte);
 
-router.get('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), listarReportes);
-router.get('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), obtenerReportePorId);
-router.get('/:id/encargado', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), obtenerEncargadoPorReporteId);
-router.get('/:id/reserva', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), obtenerReservaPorReporteId);
-router.get('/encargado/:id_encargado', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), listarReportesPorEncargadoId);
-router.get('/reserva/:id_reserva', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), listarReportesPorReservaId);
+router.get('/datos-total', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), listarReportes);
+router.get('/id/:id', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), obtenerReportePorId);
+router.get('/encargado/:id_encargado', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), listarReportesPorEncargadoId);
+router.get('/reserva/:id_reserva', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), listarReportesPorReservaId);
+router.get('/:id/encargado', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), obtenerEncargadoPorReporteId);
+router.get('/:id/reserva', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), obtenerReservaPorReporteId);
 
-router.patch('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), actualizarReporte);
-router.delete('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), eliminarReporte);
+router.patch('/:id', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), actualizarReporte);
+router.delete('/:id', verifyToken, checkRole(['ADMINISTRADOR']), eliminarReporte);
 
 module.exports = router;

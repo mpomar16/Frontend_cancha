@@ -6,7 +6,7 @@ const { verifyToken, checkRole } = require('../middleware/auth');
 async function getAllSePractica() {
   try {
     const query = `
-      SELECT id_cancha, id_disciplina, frecuencia_practica, nivel
+      SELECT id_cancha, id_disciplina, frecuencia_practica
       FROM SE_PRACTICA
     `;
     const result = await pool.query(query);
@@ -19,7 +19,7 @@ async function getAllSePractica() {
 async function getSePracticaById(id_cancha, id_disciplina) {
   try {
     const query = `
-      SELECT id_cancha, id_disciplina, frecuencia_practica, nivel
+      SELECT id_cancha, id_disciplina, frecuencia_practica
       FROM SE_PRACTICA
       WHERE id_cancha = $1 AND id_disciplina = $2
     `;
@@ -60,28 +60,14 @@ async function getCanchasByDisciplinaId(id_disciplina) {
   }
 }
 
-async function getSePracticaByNivel(nivel) {
+async function createSePractica(id_cancha, id_disciplina, frecuencia_practica) {
   try {
     const query = `
-      SELECT id_cancha, id_disciplina, frecuencia_practica, nivel
-      FROM SE_PRACTICA
-      WHERE nivel = $1
-    `;
-    const result = await pool.query(query, [nivel]);
-    return result.rows;
-  } catch (error) {
-    throw new Error('Error al listar relaciones por nivel: ' + error.message);
-  }
-}
-
-async function createSePractica(id_cancha, id_disciplina, frecuencia_practica, nivel) {
-  try {
-    const query = `
-      INSERT INTO SE_PRACTICA (id_cancha, id_disciplina, frecuencia_practica, nivel)
+      INSERT INTO SE_PRACTICA (id_cancha, id_disciplina, frecuencia_practica)
       VALUES ($1, $2, $3, $4)
-      RETURNING id_cancha, id_disciplina, frecuencia_practica, nivel
+      RETURNING id_cancha, id_disciplina, frecuencia_practica
     `;
-    const values = [id_cancha, id_disciplina, frecuencia_practica, nivel];
+    const values = [id_cancha, id_disciplina, frecuencia_practica];
     const result = await pool.query(query, values);
     return result.rows[0];
   } catch (error) {
@@ -89,16 +75,15 @@ async function createSePractica(id_cancha, id_disciplina, frecuencia_practica, n
   }
 }
 
-async function updateSePractica(id_cancha, id_disciplina, frecuencia_practica, nivel) {
+async function updateSePractica(id_cancha, id_disciplina, frecuencia_practica) {
   try {
     const query = `
       UPDATE SE_PRACTICA
-      SET frecuencia_practica = COALESCE($1, frecuencia_practica),
-          nivel = COALESCE($2, nivel)
-      WHERE id_cancha = $3 AND id_disciplina = $4
-      RETURNING id_cancha, id_disciplina, frecuencia_practica, nivel
+      SET frecuencia_practica = COALESCE($1, frecuencia_practica)
+      WHERE id_cancha = $2 AND id_disciplina = $3
+      RETURNING id_cancha, id_disciplina, frecuencia_practica
     `;
-    const values = [frecuencia_practica, nivel, id_cancha, id_disciplina];
+    const values = [frecuencia_practica, id_cancha, id_disciplina];
     const result = await pool.query(query, values);
     return result.rows[0];
   } catch (error) {
@@ -111,7 +96,7 @@ async function deleteSePractica(id_cancha, id_disciplina) {
     const query = `
       DELETE FROM SE_PRACTICA
       WHERE id_cancha = $1 AND id_disciplina = $2
-      RETURNING id_cancha, id_disciplina, frecuencia_practica, nivel
+      RETURNING id_cancha, id_disciplina, frecuencia_practica
     `;
     const result = await pool.query(query, [id_cancha, id_disciplina]);
     return result.rows[0];
@@ -119,7 +104,6 @@ async function deleteSePractica(id_cancha, id_disciplina) {
     throw new Error('Error al eliminar relación cancha-disciplina: ' + error.message);
   }
 }
-
 
 // ----------------------
 // ----------------------
@@ -148,6 +132,7 @@ const response = (success, message, data = null) => ({
 const listarSePractica = async (req, res) => {
   try {
     const relaciones = await getAllSePractica();
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Lista de relaciones cancha-disciplina obtenida', relaciones));
   } catch (error) {
     console.error('Error al listar relaciones cancha-disciplina:', error);
@@ -163,6 +148,7 @@ const obtenerSePracticaPorId = async (req, res) => {
     if (!relacion) {
       return res.status(404).json(response(false, 'Relación cancha-disciplina no encontrada'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Relación cancha-disciplina obtenida', relacion));
   } catch (error) {
     console.error('Error al obtener relación cancha-disciplina por ID:', error);
@@ -178,6 +164,7 @@ const listarDisciplinasPorCanchaId = async (req, res) => {
     if (!disciplinas.length) {
       return res.status(404).json(response(false, 'No se encontraron disciplinas para esta cancha'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Disciplinas obtenidas por cancha', disciplinas));
   } catch (error) {
     console.error('Error al listar disciplinas por cancha:', error);
@@ -193,6 +180,7 @@ const listarCanchasPorDisciplinaId = async (req, res) => {
     if (!canchas.length) {
       return res.status(404).json(response(false, 'No se encontraron canchas para esta disciplina'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Canchas obtenidas por disciplina', canchas));
   } catch (error) {
     console.error('Error al listar canchas por disciplina:', error);
@@ -200,25 +188,10 @@ const listarCanchasPorDisciplinaId = async (req, res) => {
   }
 };
 
-const listarSePracticaPorNivel = async (req, res) => {
-  const { nivel } = req.params;
-
-  try {
-    const relaciones = await getSePracticaByNivel(nivel);
-    if (!relaciones.length) {
-      return res.status(404).json(response(false, 'No se encontraron relaciones para este nivel'));
-    }
-    res.status(200).json(response(true, 'Relaciones obtenidas por nivel', relaciones));
-  } catch (error) {
-    console.error('Error al listar relaciones por nivel:', error);
-    res.status(500).json(response(false, 'Error interno del servidor'));
-  }
-};
-
 const crearSePractica = async (req, res) => {
-  const { id_cancha, id_disciplina, frecuencia_practica, nivel } = req.body;
+  const { id_cancha, id_disciplina, frecuencia_practica } = req.body;
 
-  if (!id_cancha || !id_disciplina || !frecuencia_practica || !nivel) {
+  if (!id_cancha || !id_disciplina || !frecuencia_practica) {
     return res.status(400).json(response(false, 'Todos los campos son obligatorios'));
   }
 
@@ -241,12 +214,6 @@ const crearSePractica = async (req, res) => {
       return res.status(400).json(response(false, 'Frecuencia de práctica inválida. Debe ser: Diaria, Semanal o Mensual'));
     }
 
-    // Validar nivel
-    const validNiveles = ['recreativo', 'competitivo', 'profesional'];
-    if (!validNiveles.includes(nivel)) {
-      return res.status(400).json(response(false, 'Nivel inválido. Debe ser: recreativo, competitivo o profesional'));
-    }
-
     // Verificar que no exista una relación duplicada
     const relacionExistente = await pool.query('SELECT id_cancha FROM SE_PRACTICA WHERE id_cancha = $1 AND id_disciplina = $2', [id_cancha, id_disciplina]);
     if (relacionExistente.rows[0]) {
@@ -254,6 +221,7 @@ const crearSePractica = async (req, res) => {
     }
 
     const nuevaRelacion = await createSePractica(id_cancha, id_disciplina, frecuencia_practica, nivel);
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(201).json(response(true, 'Relación cancha-disciplina creada exitosamente', nuevaRelacion));
   } catch (error) {
     console.error('Error al crear relación cancha-disciplina:', error);
@@ -263,7 +231,7 @@ const crearSePractica = async (req, res) => {
 
 const actualizarSePractica = async (req, res) => {
   const { id_cancha, id_disciplina } = req.params;
-  const { frecuencia_practica, nivel } = req.body;
+  const { frecuencia_practica } = req.body;
 
   try {
     // Validar frecuencia_practica si se proporciona
@@ -274,18 +242,11 @@ const actualizarSePractica = async (req, res) => {
       }
     }
 
-    // Validar nivel si se proporciona
-    if (nivel) {
-      const validNiveles = ['recreativo', 'competitivo', 'profesional'];
-      if (!validNiveles.includes(nivel)) {
-        return res.status(400).json(response(false, 'Nivel inválido. Debe ser: recreativo, competitivo o profesional'));
-      }
-    }
-
     const relacionActualizada = await updateSePractica(id_cancha, id_disciplina, frecuencia_practica, nivel);
     if (!relacionActualizada) {
       return res.status(404).json(response(false, 'Relación cancha-disciplina no encontrada'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Relación cancha-disciplina actualizada exitosamente', relacionActualizada));
   } catch (error) {
     console.error('Error al actualizar relación cancha-disciplina:', error);
@@ -301,6 +262,7 @@ const eliminarSePractica = async (req, res) => {
     if (!relacionEliminada) {
       return res.status(404).json(response(false, 'Relación cancha-disciplina no encontrada'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Relación cancha-disciplina eliminada exitosamente'));
   } catch (error) {
     console.error('Error al eliminar relación cancha-disciplina:', error);
@@ -308,18 +270,20 @@ const eliminarSePractica = async (req, res) => {
   }
 };
 
-// --- Rutas ---
+//-------- Rutas --------- 
+//------------------------
+//------------------------
+
 const router = express.Router();
 
-router.post('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), crearSePractica);
+router.post('/', verifyToken, checkRole(['ADMINISTRADOR']), crearSePractica);
 
-router.get('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), listarSePractica);
-router.get('/cancha/:id_cancha', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), listarDisciplinasPorCanchaId);
-router.get('/disciplina/:id_disciplina', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), listarCanchasPorDisciplinaId);
-router.get('/nivel/:nivel', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), listarSePracticaPorNivel);
-router.get('/:id_cancha/:id_disciplina', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), obtenerSePracticaPorId);
+router.get('/datos-total', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'ENCARGADO']), listarSePractica);
+router.get('/cancha/:id_cancha', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'ENCARGADO']), listarDisciplinasPorCanchaId);
+router.get('/disciplina/:id_disciplina', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'ENCARGADO']), listarCanchasPorDisciplinaId);
+router.get('/:id_cancha/:id_disciplina', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'ENCARGADO']), obtenerSePracticaPorId);
 
-router.patch('/:id_cancha/:id_disciplina', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), actualizarSePractica);
-router.delete('/:id_cancha/:id_disciplina', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), eliminarSePractica);
+router.patch('/:id_cancha/:id_disciplina', verifyToken, checkRole(['ADMINISTRADOR']), actualizarSePractica);
+router.delete('/:id_cancha/:id_disciplina', verifyToken, checkRole(['ADMINISTRADOR']), eliminarSePractica);
 
 module.exports = router;

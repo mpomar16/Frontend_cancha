@@ -142,7 +142,6 @@ async function deleteEncargado(id) {
   }
 }
 
-
 // ----------------------
 // ----------------------
 // ----------------------
@@ -185,6 +184,7 @@ const listarEncargados = async (req, res) => {
         return encargado;
       })
     );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Lista de encargados obtenida', encargadosConImagenValidada));
   } catch (error) {
     console.error('Error al listar encargados:', error);
@@ -209,6 +209,7 @@ const obtenerEncargadoPorId = async (req, res) => {
         encargado.imagen_perfil = null;
       }
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Encargado obtenido', encargado));
   } catch (error) {
     console.error('Error al obtener encargado por ID:', error);
@@ -233,6 +234,7 @@ const obtenerEncargadoPorIdPersona = async (req, res) => {
         encargado.imagen_perfil = null;
       }
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Encargado obtenido', encargado));
   } catch (error) {
     console.error('Error al obtener encargado por id_persona:', error);
@@ -257,6 +259,7 @@ const obtenerPersonaPorEncargadoId = async (req, res) => {
         persona.imagen_perfil = null;
       }
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Persona obtenida', persona));
   } catch (error) {
     console.error('Error al obtener persona asociada al encargado:', error);
@@ -272,6 +275,7 @@ const obtenerReportesPorEncargadoId = async (req, res) => {
     if (!reportes.length) {
       return res.status(404).json(response(false, 'No se encontraron reportes para este encargado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Reportes obtenidos', reportes));
   } catch (error) {
     console.error('Error al listar reportes del encargado:', error);
@@ -302,6 +306,7 @@ const listarEncargadosPorEstado = async (req, res) => {
         return encargado;
       })
     );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Encargados obtenidos por estado', encargadosConImagenValidada));
   } catch (error) {
     console.error('Error al listar encargados por estado:', error);
@@ -330,6 +335,8 @@ const crearEncargado = async (req, res) => {
     }
 
     const nuevoEncargado = await createEncargado(responsabilidad, fecha_inicio, hora_ingreso, hora_salida, estado, id_persona);
+
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(201).json(response(true, 'Encargado creado exitosamente', nuevoEncargado));
   } catch (error) {
     console.error('Error al crear encargado:', error);
@@ -357,6 +364,7 @@ const actualizarEncargado = async (req, res) => {
     if (!encargadoActualizado) {
       return res.status(404).json(response(false, 'Encargado no encontrado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Encargado actualizado exitosamente', encargadoActualizado));
   } catch (error) {
     console.error('Error al actualizar encargado:', error);
@@ -372,6 +380,7 @@ const eliminarEncargado = async (req, res) => {
     if (!encargadoEliminado) {
       return res.status(404).json(response(false, 'Encargado no encontrado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Encargado eliminado exitosamente'));
   } catch (error) {
     console.error('Error al eliminar encargado:', error);
@@ -379,19 +388,22 @@ const eliminarEncargado = async (req, res) => {
   }
 };
 
-// --- Rutas ---
+//-------- Rutas --------- 
+//------------------------
+//------------------------
+
 const router = express.Router();
 
-router.post('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), crearEncargado);
+router.post('/', verifyToken, checkRole(['ADMINISTRADOR']), crearEncargado);
 
-router.get('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), listarEncargados);
-router.get('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), obtenerEncargadoPorId);
-router.get('/persona/:id_persona', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), obtenerEncargadoPorIdPersona);
-router.get('/:id/persona', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), obtenerPersonaPorEncargadoId);
-router.get('/estado/:estado', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), listarEncargadosPorEstado);
-router.get('/:id/reportes', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'ENCARGADO']), obtenerReportesPorEncargadoId);
+router.get('/datos-total', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), listarEncargados);
+router.get('/id/:id', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), obtenerEncargadoPorId);
+router.get('/persona/:id_persona', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), obtenerEncargadoPorIdPersona);
+router.get('/:id/persona', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), obtenerPersonaPorEncargadoId);
+router.get('/estado/:estado', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), listarEncargadosPorEstado);
+router.get('/:id/reportes', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), obtenerReportesPorEncargadoId);
 
-router.patch('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), actualizarEncargado);
-router.delete('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), eliminarEncargado);
+router.patch('/:id', verifyToken, checkRole(['ADMINISTRADOR']), actualizarEncargado);
+router.delete('/:id', verifyToken, checkRole(['ADMINISTRADOR']), eliminarEncargado);
 
 module.exports = router;

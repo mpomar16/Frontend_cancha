@@ -148,6 +148,7 @@ const response = (success, message, data = null) => ({
 const listarDisciplinas = async (req, res) => {
   try {
     const disciplinas = await getAllDisciplinas();
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Lista de disciplinas obtenida', disciplinas));
   } catch (error) {
     console.error('Error al listar disciplinas:', error);
@@ -163,6 +164,7 @@ const obtenerDisciplinaPorId = async (req, res) => {
     if (!disciplina) {
       return res.status(404).json(response(false, 'Disciplina no encontrada'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Disciplina obtenida', disciplina));
   } catch (error) {
     console.error('Error al obtener disciplina por ID:', error);
@@ -178,6 +180,7 @@ const obtenerCanchasPorDisciplinaId = async (req, res) => {
     if (!canchas.length) {
       return res.status(404).json(response(false, 'No se encontraron canchas para esta disciplina'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Canchas obtenidas', canchas));
   } catch (error) {
     console.error('Error al listar canchas de la disciplina:', error);
@@ -193,6 +196,7 @@ const obtenerReservasPorDisciplinaId = async (req, res) => {
     if (!reservas.length) {
       return res.status(404).json(response(false, 'No se encontraron reservas para esta disciplina'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Reservas obtenidas', reservas));
   } catch (error) {
     console.error('Error al listar reservas de la disciplina:', error);
@@ -208,6 +212,7 @@ const obtenerDeportistasPorDisciplinaId = async (req, res) => {
     if (!deportistas.length) {
       return res.status(404).json(response(false, 'No se encontraron deportistas para esta disciplina'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Deportistas obtenidos', deportistas));
   } catch (error) {
     console.error('Error al listar deportistas de la disciplina:', error);
@@ -224,6 +229,7 @@ const crearDisciplina = async (req, res) => {
 
   try {
     const nuevaDisciplina = await createDisciplina(nombre, descripcion);
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(201).json(response(true, 'Disciplina creada exitosamente', nuevaDisciplina));
   } catch (error) {
     console.error('Error al crear disciplina:', error);
@@ -243,6 +249,7 @@ const actualizarDisciplina = async (req, res) => {
     if (!disciplinaActualizada) {
       return res.status(404).json(response(false, 'Disciplina no encontrada'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Disciplina actualizada exitosamente', disciplinaActualizada));
   } catch (error) {
     console.error('Error al actualizar disciplina:', error);
@@ -261,6 +268,7 @@ const eliminarDisciplina = async (req, res) => {
     if (!disciplinaEliminada) {
       return res.status(404).json(response(false, 'Disciplina no encontrada'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Disciplina eliminada exitosamente'));
   } catch (error) {
     console.error('Error al eliminar disciplina:', error);
@@ -268,18 +276,22 @@ const eliminarDisciplina = async (req, res) => {
   }
 };
 
-// --- Rutas ---
+
+//-------- Rutas --------- 
+//------------------------
+//------------------------
+
 const router = express.Router();
 
-router.post('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), crearDisciplina);
+router.post('/', verifyToken, checkRole(['ADMINISTRADOR']), crearDisciplina);
 
-router.get('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), listarDisciplinas);
-router.get('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), obtenerDisciplinaPorId);
-router.get('/:id/canchas', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), obtenerCanchasPorDisciplinaId);
-router.get('/:id/reservas', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), obtenerReservasPorDisciplinaId);
-router.get('/:id/deportistas', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), obtenerDeportistasPorDisciplinaId);
+router.get('/datos-total', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), listarDisciplinas);
+router.get('/id/:id', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), obtenerDisciplinaPorId);
+router.get('/:id/canchas', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), obtenerCanchasPorDisciplinaId);
+router.get('/:id/reservas', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), obtenerReservasPorDisciplinaId);
+router.get('/:id/deportistas', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), obtenerDeportistasPorDisciplinaId);
 
-router.patch('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), actualizarDisciplina);
-router.delete('/:id', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO']), eliminarDisciplina);
+router.patch('/:id', verifyToken, checkRole(['ADMINISTRADOR']), actualizarDisciplina);
+router.delete('/:id', verifyToken, checkRole(['ADMINISTRADOR']), eliminarDisciplina);
 
 module.exports = router;

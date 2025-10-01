@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const personaRoutes = require('./api/persona');
 const administradorRoutes = require('./api/administrador');
+const admin_esp_depRoutes = require('./api/admin_esp_dep');
 const clienteRoutes = require('./api/cliente');
 const deportistaRoutes = require('./api/deportista');
 const encargadoRoutes = require('./api/encargado');
@@ -16,8 +17,9 @@ const pagoRoutes = require('./api/pago');
 const qr_reservaRoutes = require('./api/qr_reserva');
 const controlRoutes = require('./api/control');
 const reporte_incidenciaRoutes = require('./api/reporte_incidencia');
-const comentarioRoutes = require('./api/comentario');
-const ponderacionRoutes = require('./api/ponderacion');
+const resenaRoutes = require('./api/resena');
+const empresaRoutes = require('./api/empresa');
+const reserva_horarioRoutes = require('./api/reserva_horario');
 const se_practicaRoutes = require('./api/se_practica');
 const participa_enRoutes = require('./api/participa_en');
 
@@ -34,6 +36,7 @@ app.use('/Uploads', express.static(path.join(__dirname, 'Uploads')));
 try {
   app.use('/persona', personaRoutes);
   app.use('/administrador', administradorRoutes);
+  app.use('/admin_esp_dep', admin_esp_depRoutes);
   app.use('/cliente', clienteRoutes);
   app.use('/deportista', deportistaRoutes);
   app.use('/encargado', encargadoRoutes);
@@ -45,8 +48,9 @@ try {
   app.use('/qr_reserva', qr_reservaRoutes);
   app.use('/control', controlRoutes);
   app.use('/reporte_incidencia', reporte_incidenciaRoutes);
-  app.use('/comentario', comentarioRoutes);
-  app.use('/ponderacion', ponderacionRoutes);
+  app.use('/resena', resenaRoutes);
+  app.use('/empresa', empresaRoutes);
+  app.use('/reserva_horario', reserva_horarioRoutes);
   app.use('/se_practica', se_practicaRoutes);
   app.use('/participa_en', participa_enRoutes);
 

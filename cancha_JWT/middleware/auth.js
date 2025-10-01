@@ -22,17 +22,30 @@ const verifyToken = async (req, res, next) => {
 
     // Consulta para obtener el rol del usuario
     const query = `
-      SELECT 'Administrador_ESP_DEPORTIVO' AS rol FROM ADMINISTRADOR_ESP_DEPORTIVO WHERE id_admin = $1
+      SELECT 'ADMINISTRADOR' AS rol FROM ADMINISTRADOR WHERE id_administrador = $1
+      UNION
+      SELECT 'ADMIN_ESP_DEP' AS rol FROM ADMIN_ESP_DEP WHERE id_admin_esp_dep = $1
       UNION
       SELECT 'CLIENTE' AS rol FROM CLIENTE WHERE id_cliente = $1
       UNION
       SELECT 'DEPORTISTA' AS rol FROM DEPORTISTA WHERE id_deportista = $1
       UNION
+      SELECT 'CONTROL' AS rol FROM CONTROL WHERE id_control = $1
+      UNION
       SELECT 'ENCARGADO' AS rol FROM ENCARGADO WHERE id_encargado = $1
     `;
     const result = await pool.query(query, [decoded.id_persona]);
 
-    req.user.rol = result.rows[0]?.rol || 'Registrado';
+    req.user.roles = result.rows.map(r => r.rol.toUpperCase());
+    console.log(`Usuario ${req.user.id_persona} autenticado con roles: ${req.user.roles.join(', ')}`);
+
+    if (!req.user.roles || req.user.roles.length === 0) {
+      return res.status(403).json({
+        success: false,
+        message: 'Rol no encontrado para este usuario',
+      });
+    }
+
     next();
   } catch (error) {
     // Captura tipos de error específicos
@@ -63,7 +76,8 @@ const verifyToken = async (req, res, next) => {
 // Middleware para verificar roles
 const checkRole = (roles) => {
   return (req, res, next) => {
-    if (!roles.includes(req.user.rol)) {
+    const tieneAcceso = req.user.roles.some(rol => roles.includes(rol));
+    if (!tieneAcceso) {
       return res.status(403).json({
         success: false,
         message: `Acceso denegado. Se requiere uno de los siguientes roles: ${roles.join(', ')}`,

@@ -10,9 +10,9 @@ const validatePersonaFields = (req, res, next) => {
   }
 
   // Los campos están en req.body después de que multer procesa multipart/form-data
-  const { contraseña, correo } = req.body;
+  const { contrasena, correo } = req.body;
 
-  if (!contraseña || !correo) {
+  if (!contrasena || !correo) {
     return res.status(400).json(response(false, 'Contraseña y correo son obligatorios'));
   }
 

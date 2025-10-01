@@ -122,7 +122,6 @@ async function deleteParticipaEn(id_deportista, id_reserva) {
   }
 }
 
-
 // ----------------------
 // ----------------------
 // ----------------------
@@ -150,6 +149,7 @@ const response = (success, message, data = null) => ({
 const listarParticipaEn = async (req, res) => {
   try {
     const relaciones = await getAllParticipaEn();
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Lista de relaciones deportista-reserva obtenida', relaciones));
   } catch (error) {
     console.error('Error al listar relaciones deportista-reserva:', error);
@@ -165,6 +165,7 @@ const obtenerParticipaEnPorId = async (req, res) => {
     if (!relacion) {
       return res.status(404).json(response(false, 'Relación deportista-reserva no encontrada'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Relación deportista-reserva obtenida', relacion));
   } catch (error) {
     console.error('Error al obtener relación deportista-reserva por ID:', error);
@@ -180,6 +181,7 @@ const listarReservasPorDeportistaId = async (req, res) => {
     if (!reservas.length) {
       return res.status(404).json(response(false, 'No se encontraron reservas para este deportista'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Reservas obtenidas por deportista', reservas));
   } catch (error) {
     console.error('Error al listar reservas por deportista:', error);
@@ -195,6 +197,7 @@ const listarDeportistasPorReservaId = async (req, res) => {
     if (!deportistas.length) {
       return res.status(404).json(response(false, 'No se encontraron deportistas para esta reserva'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Deportistas obtenidos por reserva', deportistas));
   } catch (error) {
     console.error('Error al listar deportistas por reserva:', error);
@@ -210,6 +213,7 @@ const listarParticipaEnPorEstado = async (req, res) => {
     if (!relaciones.length) {
       return res.status(404).json(response(false, 'No se encontraron relaciones para este estado'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Relaciones obtenidas por estado', relaciones));
   } catch (error) {
     console.error('Error al listar relaciones por estado:', error);
@@ -259,6 +263,7 @@ const crearParticipaEn = async (req, res) => {
     }
 
     const nuevaRelacion = await createParticipaEn(id_deportista, id_reserva, fecha_reserva, estado_participacion);
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(201).json(response(true, 'Relación deportista-reserva creada exitosamente', nuevaRelacion));
   } catch (error) {
     console.error('Error al crear relación deportista-reserva:', error);
@@ -304,6 +309,7 @@ const actualizarParticipaEn = async (req, res) => {
     if (!relacionActualizada) {
       return res.status(404).json(response(false, 'Relación deportista-reserva no encontrada'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Relación deportista-reserva actualizada exitosamente', relacionActualizada));
   } catch (error) {
     console.error('Error al actualizar relación deportista-reserva:', error);
@@ -319,6 +325,7 @@ const eliminarParticipaEn = async (req, res) => {
     if (!relacionEliminada) {
       return res.status(404).json(response(false, 'Relación deportista-reserva no encontrada'));
     }
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(200).json(response(true, 'Relación deportista-reserva eliminada exitosamente'));
   } catch (error) {
     console.error('Error al eliminar relación deportista-reserva:', error);
@@ -326,18 +333,22 @@ const eliminarParticipaEn = async (req, res) => {
   }
 };
 
-// --- Rutas ---
+
+//-------- Rutas --------- 
+//------------------------
+//------------------------
+
 const router = express.Router();
 
-router.post('/', verifyToken, checkRole(['CLIENTE', 'Administrador_ESP_DEPORTIVO']), crearParticipaEn);
+router.post('/', verifyToken, checkRole(['CLIENTE', 'ADMINISTRADOR']), crearParticipaEn);
 
-router.get('/', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), listarParticipaEn);
-router.get('/deportista/:id_deportista', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), listarReservasPorDeportistaId);
-router.get('/reserva/:id_reserva', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), listarDeportistasPorReservaId);
-router.get('/estado/:estado', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), listarParticipaEnPorEstado);
-router.get('/:id_deportista/:id_reserva', verifyToken, checkRole(['Administrador_ESP_DEPORTIVO', 'CLIENTE', 'ENCARGADO']), obtenerParticipaEnPorId);
+router.get('/datos-total', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'ENCARGADO']), listarParticipaEn);
+router.get('/deportista/:id_deportista', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'ENCARGADO']), listarReservasPorDeportistaId);
+router.get('/reserva/:id_reserva', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'ENCARGADO']), listarDeportistasPorReservaId);
+router.get('/estado/:estado', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'ENCARGADO']), listarParticipaEnPorEstado);
+router.get('/:id_deportista/:id_reserva', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'ENCARGADO']), obtenerParticipaEnPorId);
 
-router.patch('/:id_deportista/:id_reserva', verifyToken, checkRole(['CLIENTE', 'Administrador_ESP_DEPORTIVO']), actualizarParticipaEn);
-router.delete('/:id_deportista/:id_reserva', verifyToken, checkRole(['CLIENTE', 'Administrador_ESP_DEPORTIVO']), eliminarParticipaEn);
+router.patch('/:id_deportista/:id_reserva', verifyToken, checkRole(['CLIENTE', 'ADMINISTRADOR']), actualizarParticipaEn);
+router.delete('/:id_deportista/:id_reserva', verifyToken, checkRole(['CLIENTE', 'ADMINISTRADOR']), eliminarParticipaEn);
 
 module.exports = router;
