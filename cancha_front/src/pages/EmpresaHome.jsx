@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import EmpresaBody from '../components/EmpresaBody';
 import EmpresaFooter from '../components/EmpresaFooter';
+import EmpresaNavbarCasual from '../components/EmpresaNavbarCasual';
 import { obtenerEmpresaBody, obtenerEmpresaFooter } from '../services/empresaService';
 
 function EmpresaHome() {
@@ -13,6 +14,7 @@ function EmpresaHome() {
       try {
         const bodyResponse = await obtenerEmpresaBody();
         setBodyData(bodyResponse.data);
+
         const footerResponse = await obtenerEmpresaFooter();
         setFooterData(footerResponse.data);
       } catch (err) {
@@ -23,10 +25,18 @@ function EmpresaHome() {
   }, []);
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Bienvenidos a Nuestra Empresa</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      <EmpresaBody data={bodyData} />
+    <div className="min-h-screen flex flex-col">
+      {/* Navbar fijo */}
+      <EmpresaNavbarCasual /> {/* 👈 aquí va el navbar arriba */}
+
+      {/* Contenido principal */}
+      <main className="flex-grow pt-20"> 
+        {/* pt-20 para dejar espacio debajo del navbar fijo */}
+        {error && <p className="text-red-500">{error}</p>}
+        <EmpresaBody data={bodyData} />
+      </main>
+
+      {/* Footer */}
       <EmpresaFooter data={footerData} />
     </div>
   );

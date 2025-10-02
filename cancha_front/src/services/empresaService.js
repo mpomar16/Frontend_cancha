@@ -84,3 +84,16 @@ export async function actualizarEmpresa(id, empresaData, token) {
     throw new Error("Error de conexión con el servidor");
   }
 }
+
+// Obtener datos para el navbar (logo + nombre del sistema)
+export async function obtenerEmpresaNavbar() {
+  try {
+    const res = await axios.get(`${API_URL}/body`);
+    return res.data;
+  } catch (err) {
+    if (err.response && err.response.data && err.response.data.message) {
+      throw new Error(err.response.data.message);
+    }
+    throw new Error("Error de conexión con el servidor");
+  }
+}
