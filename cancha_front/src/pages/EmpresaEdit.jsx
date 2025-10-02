@@ -8,7 +8,11 @@ function EmpresaEdit() {
   const [empresa, setEmpresa] = useState(null);
   const [error, setError] = useState('');
   const token = localStorage.getItem('token');
-  
+
+  // 🔹 Leer roles como array
+  const roles = JSON.parse(localStorage.getItem('roles') || '[]');
+  const isAdmin = roles.includes('ADMINISTRADOR');
+
   // Asignar directamente el ID 2
   const empresaId = 2;
 
@@ -21,10 +25,10 @@ function EmpresaEdit() {
         setError(err.message);
       }
     }
-    if (token && localStorage.getItem('role') === 'ADMINISTRADOR') {
+    if (token && isAdmin) {
       fetchEmpresa();
     }
-  }, [empresaId, token]);
+  }, [empresaId, token, isAdmin]);
 
   const handleSubmit = async (data) => {
     try {
@@ -36,13 +40,13 @@ function EmpresaEdit() {
   };
 
   if (!token) return <p className="text-red-500">Por favor, inicia sesión para editar.</p>;
-  if (localStorage.getItem('role') !== 'ADMINISTRADOR') {
+  if (!isAdmin) {
     return <p className="text-red-500">Acceso restringido: Solo para administradores</p>;
   }
   if (!empresa) return <div>Cargando...</div>;
 
   return (
-    <div className="pt-10"> {/* agrega padding superior */}
+    <div className="pt-10">
       <h1 className="text-4xl font-poppins font-bold text-azul-950 text-center mb-6">
         Editar Información de la Empresa
       </h1>

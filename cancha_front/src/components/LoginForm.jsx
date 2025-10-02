@@ -25,15 +25,31 @@ export default function LoginForm() {
       localStorage.setItem("roles", JSON.stringify(response.data.persona.roles));
       localStorage.setItem("imagen_perfil", response.data.persona.imagen_perfil || "");
       localStorage.setItem("nombre", response.data.persona.nombre || "");
-localStorage.setItem("apellido", response.data.persona.apellido || "");
-localStorage.setItem("usuario", response.data.persona.usuario || "");
+      localStorage.setItem("apellido", response.data.persona.apellido || "");
+      localStorage.setItem("usuario", response.data.persona.usuario || "");
 
       // Redirección
-      if (response.data.persona.role === "ADMINISTRADOR") {
-        navigate("/personas");
-      } else {
-        navigate("/espacios/cercanos");
+      const roleRedirects = {
+        ADMINISTRADOR: "/personas",
+        ADMIN_ESP_DEP: "/espacios",
+        CLIENTE: "/espacios/cercanos",
+        ENCARGADO: "/espacios/cercanos",
+        DEPORTISTA: "/espacios/cercanos",
+        CONTROL: "/espacios/cercanos",
+      };
+
+      // 🔹 Buscar el primer rol del usuario que tenga ruta definida
+      const userRoles = response.data.persona.roles;
+      let redirectPath = "/espacios/cercanos"; // fallback por defecto
+
+      for (const role of Object.keys(roleRedirects)) {
+        if (userRoles.includes(role)) {
+          redirectPath = roleRedirects[role];
+          break; // corta en el primer rol prioritario encontrado
+        }
       }
+
+      navigate(redirectPath);
     } catch (err) {
       setError(err.message || "Error al iniciar sesión");
     }
