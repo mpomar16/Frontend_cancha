@@ -1,17 +1,20 @@
-import { useState } from 'react';
-import { buscarPersonaPorNombre, obtenerPersonaPorCorreo } from '../services/personaService';
+import { useState } from "react";
+import {
+  buscarPersonaPorNombre,
+  obtenerPersonaPorCorreo,
+} from "../services/personaService";
 
 function SearchBar({ onSearchResults }) {
-  const [searchType, setSearchType] = useState('nombre');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [error, setError] = useState('');
-  const token = localStorage.getItem('token');
+  const [searchType, setSearchType] = useState("nombre");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState("");
+  const token = localStorage.getItem("token");
 
   const handleSearch = async (e) => {
     e.preventDefault();
     try {
       let results;
-      if (searchType === 'nombre') {
+      if (searchType === "nombre") {
         results = await buscarPersonaPorNombre(searchTerm, token);
       } else {
         results = await obtenerPersonaPorCorreo(searchTerm, token);
@@ -23,25 +26,41 @@ function SearchBar({ onSearchResults }) {
   };
 
   return (
-    <form onSubmit={handleSearch} className="bg-white p-6 rounded-lg shadow-md mb-4">
-      {error && <p className="text-red-500">{error}</p>}
-      <div className="flex gap-4">
+    <form
+      onSubmit={handleSearch}
+      className="bg-white p-6 rounded-lg shadow-md mb-4 w-full"
+    >
+      {error && <p className="text-red-500 font-poppins mb-2">{error}</p>}
+
+      <div className="flex flex-col md:flex-row gap-4 w-full">
+        {/* Select */}
         <select
           value={searchType}
           onChange={(e) => setSearchType(e.target.value)}
-          className="p-2 border rounded"
+          className="w-full md:w-1/6 p-3 rounded-full border border-gray-300 font-poppins text-azul-950 focus:outline-none focus:ring-2 focus:ring-verde-600 transition-colors duration-300"
         >
-          <option value="nombre">Nombre</option>
-          <option value="correo">Correo</option>
+          <option value="nombre" className="hover:bg-azul-900">
+            Nombre
+          </option>
+          <option value="correo" className="hover:bg-azul-900">
+            Correo
+          </option>
         </select>
+
+        {/* Input de búsqueda */}
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder={`Buscar por ${searchType}`}
-          className="w-full p-2 border rounded"
+          className="w-full md:w-3/4 p-3 rounded-full border border-gray-300 font-poppins text-azul-950 focus:outline-none focus:ring-2 focus:ring-verde-600 placeholder-gray-400 transition-colors duration-300"
         />
-        <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+
+        {/* Botón */}
+        <button
+          type="submit"
+          className="w-full md:w-1/6 bg-verde-600 text-white px-6 py-3 rounded-full font-poppins font-semibold hover:bg-verde-700 transition-colors duration-300"
+        >
           Buscar
         </button>
       </div>

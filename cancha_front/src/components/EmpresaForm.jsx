@@ -68,15 +68,17 @@ function EmpresaForm({ initialData = {}, onSubmit }) {
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="mb-4">
-          <label className="block text-gray-700">Nombre del Sistema</label>
+          <label className="block text-azul-950 font-poppins font-bold">Nombre del Sistema</label>
           <input
             type="text"
             name="nombre_sistema"
             value={formData.nombre_sistema}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full p-2 rounded border-2 border-verde-500 font-poppins text-azul-950"
           />
         </div>
+
+
         <div className="mb-4">
   <label className="block text-azul-950 font-poppins font-bold">Lema</label>
   <input

@@ -38,4 +38,10 @@ input::-webkit-credentials-auto-fill-button {
   visibility: hidden;
   display: none !important;
 }
+
+.custom-select option:hover {
+  background-color: #22c55e; /* verde */
+  color: white; /* texto blanco */
+}
+
     

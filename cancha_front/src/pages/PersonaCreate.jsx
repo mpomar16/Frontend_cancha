@@ -11,8 +11,10 @@ function PersonaCreate() {
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Crear Nueva Persona</h1>
+    <div className="max-w-3xl mx-auto mt-16">
+      <h1 className="text-4xl font-poppins font-bold text-azul-950 text-center mb-6">
+        Crear Nueva Persona
+      </h1>
       <PersonaRegistro onSubmit={handleSubmit} isSignUp={true} />
     </div>
   );
