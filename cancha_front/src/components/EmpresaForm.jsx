@@ -61,11 +61,14 @@ function EmpresaForm({ initialData = {}, onSubmit }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+    <form onSubmit={handleSubmit} className="bg-blanco-50 p-3 rounded-lg shadow-md max-w-6xl mx-auto">
+
       {error && <p className="text-red-500">{error}</p>}
+
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="mb-4">
-          <label className="block text-verde-600">Nombre del Sistema</label>
+          <label className="block text-gray-700">Nombre del Sistema</label>
           <input
             type="text"
             name="nombre_sistema"
@@ -75,242 +78,333 @@ function EmpresaForm({ initialData = {}, onSubmit }) {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700">Título H1</label>
-          <input
-            type="text"
-            name="titulo_h1"
-            value={formData.titulo_h1}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Lema</label>
+  <input
+    type="text"
+    name="titulo_h1"
+    value={formData.titulo_h1}
+    onChange={handleChange}
+    className="w-full p-2 rounded border-2 border-verde-500 font-poppins text-azul-950"
+  />
+</div>
+
+
+
+       <div className="mb-4">
+  <label className="block text-azul-950 font-poppins font-bold">Descripción</label>
+  <textarea
+    name="descripcion_h1"
+    value={formData.descripcion_h1}
+    onChange={handleChange}
+    onInput={(e) => {
+      e.target.style.height = "auto"; // reinicia altura
+      e.target.style.height = e.target.scrollHeight + "px"; // ajusta al contenido
+    }}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins text-azul-950"
+  />
+</div>
+
+
+
+
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Descripción H1</label>
-          <textarea
-            name="descripcion_h1"
-            value={formData.descripcion_h1}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Te Ofrecemos</label>
+  <textarea
+    name="te_ofrecemos"
+    value={formData.te_ofrecemos}
+    onChange={handleChange}
+    className="w-full p-2 rounded border-2 border-verde-500 font-poppins text-azul-950"
+  />
+</div>
+
+
+       <div className="mb-4">
+  <label className="block text-azul-950 font-poppins font-bold">Título Ventaja 1</label>
+  <input
+    type="text"
+    name="titulo_1"
+    value={formData.titulo_1}
+    onChange={handleChange}
+    className="w-full p-2 rounded border-2 border-verde-500 font-poppins text-azul-950"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Te Ofrecemos</label>
-          <textarea
-            name="te_ofrecemos"
-            value={formData.te_ofrecemos}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Descripcion Ventaja 1</label>
+  <textarea
+    name="descripcion_1"
+    value={formData.descripcion_1}
+    onChange={handleChange}
+    className="w-full p-2 rounded border-2 border-verde-500 font-poppins text-azul-950"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Título 1</label>
-          <input
-            type="text"
-            name="titulo_1"
-            value={formData.titulo_1}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Titulo Ventaja 2</label>
+  <input
+    type="text"
+    name="titulo_2"
+    value={formData.titulo_2}
+    onChange={handleChange}
+    className="w-full p-2 rounded border-2 border-verde-500 font-poppins text-azul-950"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Descripción 1</label>
-          <textarea
-            name="descripcion_1"
-            value={formData.descripcion_1}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Descripción Ventaja 2</label>
+  <textarea
+    name="descripcion_2"
+    value={formData.descripcion_2}
+    onChange={handleChange}
+    className="w-full p-2 rounded border-2 border-verde-500 font-poppins text-azul-950"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Título 2</label>
-          <input
-            type="text"
-            name="titulo_2"
-            value={formData.titulo_2}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Título Ventaja 3</label>
+  <input
+    type="text"
+    name="titulo_3"
+    value={formData.titulo_3}
+    onChange={handleChange}
+    className="w-full p-2 rounded border-2 border-verde-500 font-poppins text-azul-950"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Descripción 2</label>
-          <textarea
-            name="descripcion_2"
-            value={formData.descripcion_2}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Descripción Ventaja 3</label>
+  <textarea
+    name="descripcion_3"
+    value={formData.descripcion_3}
+    onChange={handleChange}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins text-azul-950"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Título 3</label>
-          <input
-            type="text"
-            name="titulo_3"
-            value={formData.titulo_3}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold mb-2">Misión</label>
+  <textarea
+    name="mision"
+    value={formData.mision}
+    onChange={(e) => {
+      handleChange(e);
+      e.target.style.height = "auto"; // reinicia la altura
+      e.target.style.height = e.target.scrollHeight + "px"; // ajusta al contenido
+    }}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins text-azul-950 resize-none overflow-hidden"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Descripción 3</label>
-          <textarea
-            name="descripcion_3"
-            value={formData.descripcion_3}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold mb-2">Visión</label>
+  <textarea
+    name="vision"
+    value={formData.vision}
+    onChange={(e) => {
+      handleChange(e);
+      e.target.style.height = "auto"; // reinicia la altura
+      e.target.style.height = e.target.scrollHeight + "px"; // ajusta al contenido
+    }}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins text-azul-950 resize-none overflow-hidden"
+  />
+</div>
+
+
+
+       <div className="mb-4">
+  <label className="block text-azul-950 font-poppins font-bold">Objetivo General</label>
+  <textarea
+    name="nuestro_objetivo"
+    value={formData.nuestro_objetivo}
+    onChange={handleChange}
+    className="w-full p-2 border-2 border-verde-500 text-azul-950 rounded font-poppins"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Misión</label>
-          <textarea
-            name="mision"
-            value={formData.mision}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Objetivo Específico 1</label>
+  <input
+    type="text"
+    name="objetivo_1"
+    value={formData.objetivo_1}
+    onChange={handleChange}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Visión</label>
-          <textarea
-            name="vision"
-            value={formData.vision}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Objetivo Específico 2</label>
+  <input
+    type="text"
+    name="objetivo_2"
+    value={formData.objetivo_2}
+    onChange={handleChange}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Nuestro Objetivo</label>
-          <textarea
-            name="nuestro_objetivo"
-            value={formData.nuestro_objetivo}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Objetivo Específico 3</label>
+  <input
+    type="text"
+    name="objetivo_3"
+    value={formData.objetivo_3}
+    onChange={handleChange}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins"
+  />
+</div>
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Objetivo 1</label>
-          <input
-            type="text"
-            name="objetivo_1"
-            value={formData.objetivo_1}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Quienes Somos</label>
+  <textarea
+    name="quienes_somos"
+    value={formData.quienes_somos}
+    onChange={handleChange}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins"
+  />
+</div>
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Objetivo 2</label>
-          <input
-            type="text"
-            name="objetivo_2"
-            value={formData.objetivo_2}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Correo Empresa</label>
+  <input
+    type="email"
+    name="correo_empresa"
+    value={formData.correo_empresa}
+    onChange={handleChange}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins"
+  />
+</div>
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Objetivo 3</label>
-          <input
-            type="text"
-            name="objetivo_3"
-            value={formData.objetivo_3}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Teléfono</label>
+  <input
+    type="tel"
+    name="telefono"
+    value={formData.telefono}
+    onChange={handleChange}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins"
+  />
+</div>
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Quienes Somos</label>
-          <textarea
-            name="quienes_somos"
-            value={formData.quienes_somos}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Correo Empresa</label>
-          <input
-            type="email"
-            name="correo_empresa"
-            value={formData.correo_empresa}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Teléfono</label>
-          <input
-            type="tel"
-            name="telefono"
-            value={formData.telefono}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">Dirección</label>
-          <input
-            type="text"
-            name="direccion"
-            value={formData.direccion}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-700">ID Administrador</label>
-          <input
-            type="number"
-            name="id_administrador"
-            value={formData.id_administrador}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold">Dirección</label>
+  <input
+    type="text"
+    name="direccion"
+    value={formData.direccion}
+    onChange={handleChange}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins"
+  />
+</div>
+
+
+
+        {/* <div className="mb-4">
+  <label className="block text-azul-950 font-poppins font-bold">ID Administrador</label>
+  <input
+    type="number"
+    name="id_administrador"
+    value={formData.id_administrador}
+    onChange={handleChange}
+    className="w-full p-2 border-2 border-verde-500 rounded font-poppins"
+  />
+</div> */}
+
       </div>
+
+
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Logo Imagen</label>
-          <input
-            type="file"
-            name="logo_imagen"
-            accept=".jpg,.jpeg,.png,.webp"
-            onChange={handleFileChange}
-            className="w-full p-2"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold mb-2">Imagen-Logo</label>
+  <input
+    type="file"
+    name="logo_imagen"
+    accept=".jpg,.jpeg,.png,.webp"
+    onChange={handleFileChange}
+    className="w-full p-3 bg-blanco-50 text-azul-950 font-poppins cursor-pointer rounded-lg hover:bg-gris-100 transition"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Imagen 1</label>
-          <input
-            type="file"
-            name="imagen_1"
-            accept=".jpg,.jpeg,.png,.webp"
-            onChange={handleFileChange}
-            className="w-full p-2"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold mb-2">Imagen 1</label>
+  <input
+    type="file"
+    name="imagen_1"
+    accept=".jpg,.jpeg,.png,.webp"
+    onChange={handleFileChange}
+    className="w-full p-3 bg-blanco-50 text-azul-950 font-poppins cursor-pointer rounded-lg hover:bg-gris-100 transition"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Imagen 2</label>
-          <input
-            type="file"
-            name="imagen_2"
-            accept=".jpg,.jpeg,.png,.webp"
-            onChange={handleFileChange}
-            className="w-full p-2"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold mb-2">Imagen 2</label>
+  <input
+    type="file"
+    name="imagen_2"
+    accept=".jpg,.jpeg,.png,.webp"
+    onChange={handleFileChange}
+    className="w-full p-3 bg-blanco-50 text-azul-950 font-poppins cursor-pointer rounded-lg hover:bg-gris-100 transition"
+  />
+</div>
+
+
+
         <div className="mb-4">
-          <label className="block text-gray-700">Imagen 3</label>
-          <input
-            type="file"
-            name="imagen_3"
-            accept=".jpg,.jpeg,.png,.webp"
-            onChange={handleFileChange}
-            className="w-full p-2"
-          />
-        </div>
+  <label className="block text-azul-950 font-poppins font-bold mb-2">Imagen 3</label>
+  <input
+    type="file"
+    name="imagen_3"
+    accept=".jpg,.jpeg,.png,.webp"
+    onChange={handleFileChange}
+    className="w-full p-3 bg-blanco-50 text-azul-950 font-poppins cursor-pointer rounded-lg hover:bg-gris-100 transition"
+  />
+</div>
+
+
       </div>
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-        Guardar
-      </button>
+
+      <button
+  type="submit"
+  className="bg-verde-600 text-white font-poppins px-6 py-2 rounded block mx-auto w-1/3"
+>
+  Guardar
+</button>
+
+
     </form>
   );
 }

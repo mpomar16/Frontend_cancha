@@ -29,7 +29,7 @@ function EmpresaEdit() {
   const handleSubmit = async (data) => {
     try {
       await actualizarEmpresa(empresaId, data, token);
-      navigate(`/empresa/${empresaId}`);
+      navigate(`/`);
     } catch (err) {
       setError(err.message);
     }
@@ -42,10 +42,16 @@ function EmpresaEdit() {
   if (!empresa) return <div>Cargando...</div>;
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Editar Empresa (ID: {empresaId})</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      <EmpresaForm initialData={empresa} onSubmit={handleSubmit} />
+    <div className="pt-10"> {/* agrega padding superior */}
+      <h1 className="text-4xl font-poppins font-bold text-azul-950 text-center mb-6">
+        Editar Información de la Empresa
+      </h1>
+      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+      <div className="flex justify-center">
+        <div className="w-full md:w-3/4">
+          <EmpresaForm initialData={empresa} onSubmit={handleSubmit} />
+        </div>
+      </div>
     </div>
   );
 }
