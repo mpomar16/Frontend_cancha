@@ -138,6 +138,22 @@ export async function listarEstadoCanchaEnum(token) {
   }
 }
 
+// Listar todas las disciplinas con id y nombre
+export async function listarDisciplinas(token) {
+  try {
+    const res = await axios.get("http://localhost:3000/disciplina/datos-total", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
+  } catch (err) {
+    if (err.response && err.response.data && err.response.data.message) {
+      throw new Error(err.response.data.message);
+    }
+    throw new Error("Error de conexión con el servidor");
+  }
+}
+
+
 // Listar disciplinas únicas
 // Parámetros de entrada: ninguno
 // Respuesta:

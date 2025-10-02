@@ -1,28 +1,33 @@
-import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { obtenerCanchaPorId, eliminarCancha, getDisciplinasPorCancha, listarDisciplinasPorCancha, calcularPromedioResenas } from '../services/canchaService';
-
-const API_BASE = "http://localhost:3000"; // ajusta según tu backend
+/* eslint-disable no-unused-vars */
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  obtenerCanchaPorId,
+  eliminarCancha,
+  actualizarCancha,
+  getDisciplinasPorCancha,
+  listarDisciplinasPorCancha,
+  calcularPromedioResenas,
+} from "../services/canchaService";
+import Modal from "../components/Modal";
+import CanchaForm from "../components/CanchaForm"; // 👈 tu form de edición
+import SideBar from '../components/Sidebar';
+const API_BASE = "http://localhost:3000";
 
 function CanchaDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [cancha, setCancha] = useState(null);
-  const [disciplinas, setDisciplinas] = useState([]);
-  const [disciplinaNombres, setDisciplinaNombres] = useState([]);
   const [promedio, setPromedio] = useState(null);
-  const [error, setError] = useState('');
-  const token = localStorage.getItem('token');
+  const [error, setError] = useState("");
+  const [openModal, setOpenModal] = useState(false); // 👈 controla el modal
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     async function fetchCancha() {
       try {
         const response = await obtenerCanchaPorId(id, token);
         setCancha(response.data);
-        const disciplinasResponse = await getDisciplinasPorCancha(id, token);
-        setDisciplinas(disciplinasResponse.data);
-        const nombresResponse = await listarDisciplinasPorCancha(id, token);
-        setDisciplinaNombres(nombresResponse.data);
         const promedioResponse = await calcularPromedioResenas(id, token);
         setPromedio(promedioResponse.data);
       } catch (err) {
@@ -33,56 +38,91 @@ function CanchaDetail() {
   }, [id, token]);
 
   const handleDelete = async () => {
-    if (window.confirm('¿Estás seguro de eliminar esta cancha?')) {
+    if (window.confirm("¿Estás seguro de eliminar esta cancha?")) {
       try {
         await eliminarCancha(id, token);
-        alert('Cancha eliminada exitosamente');
-        navigate('/');
+        alert("Cancha eliminada exitosamente");
+        navigate("/");
       } catch (err) {
         setError(err.message);
       }
     }
   };
 
+  // 🔹 Lógica de update
+  const handleUpdate = async (formData) => {
+    try {
+      await actualizarCancha(id, formData, token);
+      alert("Cancha actualizada exitosamente ✅");
+      setOpenModal(false);
+      window.location.reload(); // 🔄 refresca (luego podemos hacer refetch sin reload)
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   if (!cancha) return <div>Cargando...</div>;
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">{cancha.nombre}</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      {cancha.imagen_cancha && (
-          <img
-            src={`${API_BASE}${cancha.imagen_cancha}`}
-            alt={cancha.nombre}
-            className="w-40 h-32 rounded-lg border-2 border-gray-300 mb-4 object-cover"
-            onError={(e) => { e.target.src = "/default-avatar.png"; }} // fallback
-          />  
-      )}
-      <p><strong>Capacidad:</strong> {cancha.capacidad}</p>
-      <p><strong>Estado:</strong> {cancha.estado}</p>
-      <p><strong>Ubicación:</strong> {cancha.ubicacion || 'No especificada'}</p>
-      <p><strong>Monto por hora:</strong> {cancha.monto_por_hora || 'No especificado'}</p>
-      <p><strong>Espacio ID:</strong> {cancha.id_espacio}</p>
-      <p><strong>Promedio de Reseñas:</strong> {promedio?.promedio_estrellas || 'Sin reseñas'} ({promedio?.total_comentarios || 0} comentarios)</p>
-      <div className="mb-4">
-        <h2 className="text-xl font-bold">Disciplinas:</h2>
-        {disciplinaNombres.length > 0 ? (
-          <ul className="list-disc pl-5">
-            {disciplinaNombres.map((nombre) => (
-              <li key={nombre}>{nombre}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No hay disciplinas asignadas.</p>
-        )}
-      </div>
-      <div className="flex gap-4">
-        <Link to={`/cancha/edit/${id}`} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600">
-          Editar Cancha
-        </Link>
-        <button onClick={handleDelete} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-          Eliminar Cancha
-        </button>
+    <div className="flex min-h-screen bg-gray-50 font-poppins">
+      {/* Sidebar fijo */}
+      <SideBar />
+      <div className="flex-1 ml-64 p-6">
+        {error && <p className="text-red-500">{error}</p>}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+          {cancha.imagen_cancha && (
+            <img
+              src={`${API_BASE}${cancha.imagen_cancha}`}
+              alt={cancha.nombre}
+              className="w-64 h-40 rounded-lg border mb-4 object-cover"
+              onError={(e) => (e.target.src = "/default-avatar.png")}
+            />
+          )}
+
+          <p>
+            <strong>Capacidad:</strong> {cancha.capacidad}
+          </p>
+          <p>
+            <strong>Estado:</strong> {cancha.estado}
+          </p>
+          <p>
+            <strong>Monto por hora:</strong> {cancha.monto_por_hora}
+          </p>
+          <p>
+            <strong>Promedio reseñas:</strong>{" "}
+            {promedio?.promedio_estrellas || "Sin reseñas"} (
+            {promedio?.total_comentarios || 0} comentarios)
+          </p>
+
+          {/* Botones */}
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={() => setOpenModal(true)}
+              className="bg-verde-600 hover:bg-azul-900 text-white px-5 py-2 rounded-lg shadow transition duration-200"
+            >
+              Editar Cancha
+            </button>
+            <button
+              onClick={handleDelete}
+              className="bg-rojo-600 hover:bg-rojo-700 text-white px-5 py-2 rounded-lg shadow transition duration-200"
+            >
+              Eliminar Cancha
+            </button>
+          </div>
+
+          {/* Modal con formulario */}
+          <Modal
+            open={openModal}
+            onClose={() => setOpenModal(false)}
+            title="Editar Cancha"
+          >
+            <CanchaForm
+              initialData={cancha}
+              onSubmit={handleUpdate}
+              token={token}
+            />
+          </Modal>
+        </div>
       </div>
     </div>
   );

@@ -31,7 +31,7 @@ export default function LoginForm() {
       // Redirección
       const roleRedirects = {
         ADMINISTRADOR: "/personas",
-        ADMIN_ESP_DEP: "/espacios",
+        ADMIN_ESP_DEP: "/espacios/cercanos",
         CLIENTE: "/espacios/cercanos",
         ENCARGADO: "/espacios/cercanos",
         DEPORTISTA: "/espacios/cercanos",

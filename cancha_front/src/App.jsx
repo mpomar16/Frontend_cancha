@@ -14,6 +14,7 @@ import EspacioCreate from './pages/EspacioCreate';
 import EspacioEdit from './pages/EspacioEdit';
 import EspaciosByAdmin from './pages/EspaciosByAdmin';
 import EspaciosCercanos from './pages/EspaciosCercanos';
+import CanchaDetail from './pages/CanchaDetail';
 
 // Personas
 import PersonasList from './pages/PersonasList';
@@ -53,6 +54,7 @@ function App() {
             <Route path="/espacio/edit/:id" element={<EspacioEdit />} />
             <Route path="/espacios/admin/:id_admin" element={<EspaciosByAdmin />} />
             <Route path="/espacios/cercanos" element={<EspaciosCercanos />} />
+            <Route path="/cancha/:id" element={<CanchaDetail />} />
           </Routes>
     </BrowserRouter>
   );

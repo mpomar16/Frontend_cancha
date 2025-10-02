@@ -1,7 +1,12 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
-import { listarEspacios, listarEspaciosGeneral } from '../services/espacioService';
+import { listarEspacios, listarEspaciosGeneral, crearEspacio } from '../services/espacioService';
 import EspacioCard from '../components/EspacioCard';
 import EspacioSearchBar from '../components/EspacioSearchBar';
+import EspacioForm from '../components/EspacioForm';
+import SideBar from '../components/Sidebar';
+import EspacioCreate from './EspacioCreate';
+import Modal from '../components/Modal';
 
 function EspaciosList() {
   const [espacios, setEspacios] = useState([]);
@@ -12,6 +17,7 @@ function EspaciosList() {
   const [isSearch, setIsSearch] = useState(false);
   const token = localStorage.getItem('token');
   const isLoggedIn = !!token;
+  const [openModal, setOpenModal] = useState(false);
 
   useEffect(() => {
     async function fetchEspacios() {
@@ -30,40 +36,87 @@ function EspaciosList() {
   }, [limit, offset, isLoggedIn]);
 
   const handleSearchResults = (results) => {
-    setEspacios(results);
-    setIsSearch(true);
-    setHasMore(false);
+    if (results.espacios) {
+      // Cuando viene de listarEspacios o listarEspaciosGeneral
+      setEspacios(results.espacios);
+      setHasMore(results.hasMore);
+      setIsSearch(false);
+    } else {
+      // Cuando viene de búsqueda por nombre o disciplina
+      setEspacios(results);
+      setHasMore(false);
+      setIsSearch(true);
+    }
+    setError(""); // limpia error en cada búsqueda
+  };
+  // 🔹 Crear espacio
+  const handleCreate = async (formData) => {
+    try {
+      await crearEspacio(formData, token);
+      alert("Espacio creado exitosamente ✅");
+      setOpenModal(false);
+      window.location.reload();
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
+
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Lista de Espacios Deportivos</h1>
-      <EspacioSearchBar onSearchResults={handleSearchResults} />
-      {error && <p className="text-red-500">{error}</p>}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {espacios.map((espacio) => (
-          <EspacioCard key={espacio.id_espacio} espacio={espacio} />
-        ))}
-      </div>
-      {!isSearch && (
-        <div className="mt-4 flex gap-4">
-          <button
-            onClick={() => setOffset((prev) => Math.max(prev - limit, 0))}
-            disabled={offset === 0}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-          >
-            Anterior
-          </button>
-          <button
-            onClick={() => setOffset((prev) => prev + limit)}
-            disabled={!hasMore}
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-          >
-            Siguiente
-          </button>
+    <div className="flex min-h-screen bg-gray-50 font-poppins">
+      {/* Sidebar a la izquierda */}
+      <SideBar />
+
+      {/* Contenido principal */}
+      <div className="flex-1 p-6 ml-64">
+        <div>
+          <EspacioSearchBar onSearchResults={handleSearchResults} />
+          <div className="pt-1 flex justify-begin items-center">
+            {isLoggedIn && (
+            <button
+              onClick={() => setOpenModal(true)}
+              className="ml-4 flex items-center gap-2 bg-verde-600 hover:bg-verde-700 text-white px-4 py-2 rounded-lg shadow transition"
+            >
+              <span className="text-lg font-bold">+</span> Crear
+            </button>
+          )}
+          </div>
+          {error && <p className="text-red-500 mt-4">{error}</p>}
+
+          {/* Cards de espacios */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+            {espacios.map((espacio) => (
+              <EspacioCard key={espacio.id_espacio} espacio={espacio} />
+            ))}
+          </div>
+
+          {/* Botones de paginación */}
+          {!isSearch && (
+            <div className="mt-6 flex justify-center gap-4">
+              <button
+                onClick={() => setOffset((prev) => Math.max(prev - limit, 0))}
+                disabled={offset === 0}
+                className="bg-verde-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-verde-700 disabled:bg-gray-400"
+              >
+                Anterior
+              </button>
+              <button
+                onClick={() => setOffset((prev) => prev + limit)}
+                disabled={!hasMore}
+                className="bg-verde-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-verde-700 disabled:bg-gray-400"
+              >
+                Siguiente
+              </button>
+            </div>
+          )}
         </div>
-      )}
+        {/* Modal para crear espacio */}
+        <Modal open={openModal} onClose={() => setOpenModal(false)} title="Crear Espacio">
+          <EspacioForm onSubmit={handleCreate} token={token} />
+        </Modal>
+      </div>
     </div>
+
   );
 }
 

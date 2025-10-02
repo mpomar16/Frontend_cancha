@@ -18,7 +18,7 @@ function EspacioCard({ espacio }) {
       {espacio.distancia_km && (
         <p><strong>Distancia:</strong> {espacio.distancia_km.toFixed(2)} km</p>
       )}
-      <Link to={`/espacio/${espacio.id_espacio}`} className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mt-4 inline-block">
+      <Link to={`/espacio/${espacio.id_espacio}`} className="bg-verde-600 text-white px-4 py-2 rounded hover:bg-azul-900 mt-4 inline-block">
         Ver Detalles
       </Link>
     </div>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { listarEstadoCanchaEnum } from '../services/canchaService';
+import { listarEstadoCanchaEnum, listarDisciplinas, asignarDisciplinas } from "../services/canchaService";
 
 function CanchaForm({ initialData = {}, onSubmit, token }) {
   const [formData, setFormData] = useState({
@@ -13,7 +13,10 @@ function CanchaForm({ initialData = {}, onSubmit, token }) {
   const [imagen_cancha, setImagenCancha] = useState(null);
   const [estados, setEstados] = useState([]);
   const [error, setError] = useState('');
+  const [disciplinas, setDisciplinas] = useState([]);
+  const [disciplinasSeleccionadas, setDisciplinasSeleccionadas] = useState([]);
 
+  // 🔹 Cargar estados
   useEffect(() => {
     async function fetchEstados() {
       try {
@@ -24,6 +27,19 @@ function CanchaForm({ initialData = {}, onSubmit, token }) {
       }
     }
     fetchEstados();
+  }, [token]);
+
+  // 🔹 Cargar disciplinas
+  useEffect(() => {
+    async function fetchDisciplinas() {
+      try {
+        const response = await listarDisciplinas(token);
+        setDisciplinas(response.data); // [{id_disciplina, nombre}, ...]
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+    fetchDisciplinas();
   }, [token]);
 
   const handleChange = (e) => {
@@ -44,7 +60,29 @@ function CanchaForm({ initialData = {}, onSubmit, token }) {
     if (imagen_cancha) data.append('imagen_cancha', imagen_cancha);
 
     try {
-      await onSubmit(data);
+      // Crear cancha
+      const res = await onSubmit(data); // { success, message, data }
+      const nuevaCancha = res.data;
+
+      // Asignar disciplinas si hay
+      if (disciplinasSeleccionadas.length > 0 && nuevaCancha?.id_cancha) {
+        console.log("Asignando disciplinas:", {
+  cancha: nuevaCancha.id_cancha,
+  disciplinas: disciplinasSeleccionadas.map((id) => ({
+    id_disciplina: id,
+    frecuencia_practica: null
+  }))
+});
+        await asignarDisciplinas(
+          nuevaCancha.id_cancha,
+          disciplinasSeleccionadas.map((id) => ({
+            id_disciplina: id,
+            frecuencia_practica: null
+          })),
+          token
+        );
+      }
+
       alert('Operación exitosa');
     } catch (err) {
       setError(err.message);
@@ -111,6 +149,32 @@ function CanchaForm({ initialData = {}, onSubmit, token }) {
         />
       </div>
       <div className="mb-4">
+        <label className="block text-gray-700">Disciplinas</label>
+        <div className="grid grid-cols-2 gap-2">
+          {disciplinas.map((disc) => (
+            <label key={disc.id_disciplina} className="flex items-center">
+              <input
+                type="checkbox"
+                value={disc.id_disciplina}
+                checked={disciplinasSeleccionadas.includes(disc.id_disciplina)}
+                onChange={(e) => {
+                  const id = disc.id_disciplina;
+                  if (e.target.checked) {
+                    setDisciplinasSeleccionadas([...disciplinasSeleccionadas, id]);
+                  } else {
+                    setDisciplinasSeleccionadas(
+                      disciplinasSeleccionadas.filter((d) => d !== id)
+                    );
+                  }
+                }}
+                className="mr-2"
+              />
+              {disc.nombre}
+            </label>
+          ))}
+        </div>
+      </div>
+      <div className="hidden mb-4">
         <label className="block text-gray-700">ID Espacio</label>
         <input
           type="number"

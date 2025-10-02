@@ -18,7 +18,9 @@ const navLinksByRole = {
   ],
   ADMINISTRADOR: [
     { label: "Panel de Personas", href: "/personas" },
-    { label: "Reportes", href: "#" },
+    { label: "Panel de Espacios Deportivos", href: "/espacios" },
+    { label: "Empresa", href: "/empresa/edit/:id" },
+    
   ]
 };
 
@@ -92,7 +94,7 @@ function SideBar() {
       <div className="absolute bottom-4 left-0 w-full px-4">
         <button
           onClick={handleLogout}
-          className="flex items-center w-full px-4 py-2 rounded bg-red-500 hover:bg-red-600 transition"
+          className="flex items-center w-full px-4 py-2 rounded bg-verde-600 hover:bg-azul-900 transition"
         >
           <LogOut className="w-4 h-4 mr-2" />
           Cerrar Sesión

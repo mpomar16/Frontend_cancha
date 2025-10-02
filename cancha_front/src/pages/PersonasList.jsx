@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { listarPersonas } from "../services/personaService";
 import PersonaCard from "../components/PersonaCard";
 import SideBar from "../components/Sidebar";
+import SearchPersonas from '../pages/SearchPersonas';
 
 function PersonasList() {
   const [personas, setPersonas] = useState([]);
@@ -39,9 +40,10 @@ function PersonasList() {
 
       {/* Contenido principal */}
       <main className="flex-1 ml-64 p-6">
-        <h1 className="text-4xl font-poppins font-bold mb-8 text-azul-950 text-center">
+        <h1 className="text-2xl font-poppins font-bold mb-8 text-azul-950 text-begin">
           Listado de Personas
         </h1>
+        <SearchPersonas/>
 
         {error && <p className="text-red-500 mb-4">{error}</p>}
 

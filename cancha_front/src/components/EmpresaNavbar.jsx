@@ -12,7 +12,6 @@ const navLinksByRole = {
     { label: "Publicar mi Espacio", href: "#" },
   ],
   ADMIN_ESP_DEP: [
-    { label: "Inicio", href: "/espacios" },
     { label: "Mis Espacios", href: "#" },
     { label: "Ver Personal", href: "#" },
   ],
