@@ -86,7 +86,15 @@ async function createPersonaCasual(nombre, usuario, contrasena, correo) {
     
     const values = [nombre || null, usuario || null, hashedPassword, correo, latitud, longitud];
     const result = await pool.query(query, values);
-    return result.rows[0];
+
+    const persona = result.rows[0];
+    //Asignar rol CLIENTE automáticamente
+    await pool.query(
+      `INSERT INTO CLIENTE (id_cliente) VALUES ($1)`,
+      [persona.id_persona]
+    );
+
+    return persona;
   } catch (error) {
     throw new Error('Error al crear persona casual: ' + error.message);
   }
@@ -127,30 +135,34 @@ async function deletePersona(id) {
   }
 }
 
-async function loginPersona(correo, contrasena) { 
-  const query = 'SELECT * FROM PERSONA WHERE correo = $1'; 
-  const result = await pool.query(query, [correo]); 
-  const persona = result.rows[0]; 
-    
-  if (!persona) throw new Error('Correo no encontrado'); 
+async function loginPersona(correo, contrasena) {
+  const query = 'SELECT * FROM PERSONA WHERE correo = $1';
+  const result = await pool.query(query, [correo]);
+  const persona = result.rows[0];
 
-  const isMatch = await bcrypt.compare(contrasena, persona.contrasena); 
-  if (!isMatch) throw new Error('contrasena incorrecta'); 
+  if (!persona) throw new Error('Correo no encontrado');
 
-  // Determinar el rol según las tablas relacionadas
-  let role = 'CLIENTE'; // por defecto
-  const resAdmin = await pool.query('SELECT 1 FROM ADMINISTRADOR WHERE id_administrador=$1', [persona.id_persona]);
-  if (resAdmin.rowCount > 0) role = 'ADMINISTRADOR';
-  const resAdminEsp = await pool.query('SELECT 1 FROM ADMIN_ESP_DEP WHERE id_admin_esp_dep=$1', [persona.id_persona]);
-  if (resAdminEsp.rowCount > 0) role = 'ADMIN_ESP_DEP';
-  const resDeportista = await pool.query('SELECT 1 FROM DEPORTISTA WHERE id_deportista=$1', [persona.id_persona]);
-  if (resDeportista.rowCount > 0) role = 'DEPORTISTA';
-  const resControl = await pool.query('SELECT 1 FROM CONTROL WHERE id_control=$1', [persona.id_persona]);
-  if (resControl.rowCount > 0) role = 'CONTROL';
-  const resEncargado = await pool.query('SELECT 1 FROM ENCARGADO WHERE id_encargado=$1', [persona.id_persona]);
-  if (resEncargado.rowCount > 0) role = 'ENCARGADO';
+  const isMatch = await bcrypt.compare(contrasena, persona.contrasena);
+  if (!isMatch) throw new Error('contrasena incorrecta');
 
-  return { 
+  // Buscar todos los roles del usuario
+  const rolesQuery = `
+    SELECT 'ADMINISTRADOR' AS rol FROM ADMINISTRADOR WHERE id_administrador = $1
+    UNION
+    SELECT 'ADMIN_ESP_DEP' AS rol FROM ADMIN_ESP_DEP WHERE id_admin_esp_dep = $1
+    UNION
+    SELECT 'CLIENTE' AS rol FROM CLIENTE WHERE id_cliente = $1
+    UNION
+    SELECT 'DEPORTISTA' AS rol FROM DEPORTISTA WHERE id_deportista = $1
+    UNION
+    SELECT 'CONTROL' AS rol FROM CONTROL WHERE id_control = $1
+    UNION
+    SELECT 'ENCARGADO' AS rol FROM ENCARGADO WHERE id_encargado = $1
+  `;
+  const rolesResult = await pool.query(rolesQuery, [persona.id_persona]);
+  const roles = rolesResult.rows.map(r => r.rol);
+
+  return {
     id_persona: persona.id_persona,
     nombre: persona.nombre,
     usuario: persona.usuario,
@@ -158,9 +170,10 @@ async function loginPersona(correo, contrasena) {
     correo: persona.correo,
     sexo: persona.sexo,
     imagen_perfil: persona.imagen_perfil,
-    role
+    roles // <- ahora devuelve array
   };
 }
+
 
 
 async function getSexoEnumValues() {
@@ -460,7 +473,7 @@ const login = async (req, res) => {
   try {
     const persona = await loginPersona(correo, contrasena);
     const token = jwt.sign(
-      { id_persona: persona.id_persona, role: persona.role }, 
+      { id_persona: persona.id_persona, roles: persona.roles }, 
       JWT_SECRET, 
       { expiresIn: '5h' }
     );
@@ -514,6 +527,7 @@ const obtenerMiPerfil = async (req, res) => {
         persona.imagen_perfil = null
       }
     }
+    persona.roles = req.user.roles;
 
     console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl)
     res.status(200).json(response(true, 'Perfil obtenido', persona))

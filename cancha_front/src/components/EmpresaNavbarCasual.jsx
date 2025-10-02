@@ -13,7 +13,7 @@ function EmpresaNavbarCasual() {
     async function fetchNavbarData() {
       try {
         const response = await obtenerEmpresaNavbar();
-        setEmpresaData(response.data); // 👈 importante: en tus services, los datos vienen dentro de "data"
+        setEmpresaData(response.data);
       } catch (error) {
         console.error("Error cargando datos de empresa:", error);
       }

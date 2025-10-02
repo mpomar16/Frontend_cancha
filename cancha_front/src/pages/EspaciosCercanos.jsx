@@ -1,6 +1,8 @@
+/* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { listarEspaciosCercanos } from '../services/espacioService';
 import EspacioCard from '../components/EspacioCard';
+import EmpresaNavbar from '../components/EmpresaNavbar';
 
 function EspaciosCercanos() {
   const [espacios, setEspacios] = useState([]);
@@ -25,6 +27,7 @@ function EspaciosCercanos() {
 
   return (
     <div>
+      <EmpresaNavbar/>
       <h1 className="text-2xl font-bold mb-4">Espacios Deportivos Cercanos</h1>
       {error && <p className="text-red-500">{error}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

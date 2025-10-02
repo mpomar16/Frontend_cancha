@@ -22,10 +22,18 @@ export default function LoginForm() {
 
       // Guardar token y rol en localStorage
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("role", response.data.persona.role);
+      localStorage.setItem("roles", JSON.stringify(response.data.persona.roles));
+      localStorage.setItem("imagen_perfil", response.data.persona.imagen_perfil || "");
+      localStorage.setItem("nombre", response.data.persona.nombre || "");
+localStorage.setItem("apellido", response.data.persona.apellido || "");
+localStorage.setItem("usuario", response.data.persona.usuario || "");
 
       // Redirección
-      navigate("/");
+      if (response.data.persona.role === "ADMINISTRADOR") {
+        navigate("/personas");
+      } else {
+        navigate("/espacios/cercanos");
+      }
     } catch (err) {
       setError(err.message || "Error al iniciar sesión");
     }

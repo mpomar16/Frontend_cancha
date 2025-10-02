@@ -26,17 +26,11 @@ function EmpresaHome() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Navbar fijo */}
-      <EmpresaNavbarCasual /> {/* 👈 aquí va el navbar arriba */}
-
-      {/* Contenido principal */}
-      <main className="flex-grow pt-20"> 
-        {/* pt-20 para dejar espacio debajo del navbar fijo */}
+      <EmpresaNavbarCasual />
+      <main className="flex-grow pt-10"> 
         {error && <p className="text-red-500">{error}</p>}
         <EmpresaBody data={bodyData} />
       </main>
-
-      {/* Footer */}
       <EmpresaFooter data={footerData} />
     </div>
   );

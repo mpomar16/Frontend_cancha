@@ -65,7 +65,7 @@ function EmpresaForm({ initialData = {}, onSubmit }) {
       {error && <p className="text-red-500">{error}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="mb-4">
-          <label className="block text-gray-700">Nombre del Sistema</label>
+          <label className="block text-verde-600">Nombre del Sistema</label>
           <input
             type="text"
             name="nombre_sistema"
