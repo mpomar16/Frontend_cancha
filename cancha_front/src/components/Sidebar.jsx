@@ -141,7 +141,7 @@ export default function Sidebar({ children }) {
         <div className="my-4 h-px bg-gray-600" />
         <div className="mt-3">
           <Link
-            to={empresaData?.id_empresa ? `/empresa/edit/${empresaData.id_empresa}` : "2"}
+            to={empresaData?.id_empresa ? `/empresa/${empresaData.id_empresa}` : "2"}
             className={`flex w-full items-center rounded-md px-4 py-2.5 text-left transition-colors
               ${empresaData?.id_empresa ? "text-white hover:bg-azul-900" : "text-white/50 cursor-not-allowed"}`}
             onClick={(e) => { if (!empresaData?.id_empresa) e.preventDefault(); }}
@@ -149,7 +149,7 @@ export default function Sidebar({ children }) {
           >
             <Building2 className="h-5 w-5" />
             <span className="ml-4 w-full text-[15px] font-bold">
-              Editar Empresa
+              Empresa
             </span>
           </Link>
         </div>
