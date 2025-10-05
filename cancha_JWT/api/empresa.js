@@ -12,7 +12,7 @@ async function getNombreParaArchivo(req, defaultFolder) {
   // Si se envió un nombre_sistema en el body, usarlo
   if (req.body?.nombre_sistema) {
     nombreParaArchivo = req.body.nombre_sistema;
-  } 
+  }
   // Si no, y estamos haciendo PATCH (tiene params.id), buscar el nombre_sistema actual en DB
   else if (req.params?.id) {
     try {
@@ -123,6 +123,7 @@ async function getEmpresaById(id) {
         titulo_h1,
         descripcion_h1,
         te_ofrecemos,
+        imagen_hero,
         imagen_1,
         imagen_2,
         imagen_3,
@@ -164,6 +165,7 @@ async function getEmpresaBody() {
         titulo_h1,
         descripcion_h1,
         te_ofrecemos,
+        imagen_hero,
         imagen_1,
         imagen_2,
         imagen_3,
@@ -210,7 +212,7 @@ async function getEmpresaFooter() {
   }
 }
 
-async function updateEmpresa(id, logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion,  id_administrador) {
+async function updateEmpresa(id, logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_hero, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, id_administrador) {
   try {
     const query = `
       UPDATE EMPRESA
@@ -219,30 +221,31 @@ async function updateEmpresa(id, logo_imagen, nombre_sistema, titulo_h1, descrip
           titulo_h1 = COALESCE($3, titulo_h1),
           descripcion_h1 = COALESCE($4, descripcion_h1),
           te_ofrecemos = COALESCE($5, te_ofrecemos),
-          imagen_1 = COALESCE($6, imagen_1),
-          imagen_2 = COALESCE($7, imagen_2),
-          imagen_3 = COALESCE($8, imagen_3),
-          titulo_1 = COALESCE($9, titulo_1),
-          titulo_2 = COALESCE($10, titulo_2),
-          titulo_3 = COALESCE($11, titulo_3),
-          descripcion_1 = COALESCE($12, descripcion_1),
-          descripcion_2 = COALESCE($13, descripcion_2),
-          descripcion_3 = COALESCE($14, descripcion_3),
-          mision = COALESCE($15, mision),
-          vision = COALESCE($16, vision),
-          nuestro_objetivo = COALESCE($17, nuestro_objetivo),
-          objetivo_1 = COALESCE($18, objetivo_1),
-          objetivo_2 = COALESCE($19, objetivo_2),
-          objetivo_3 = COALESCE($20, objetivo_3),
-          quienes_somos = COALESCE($21, quienes_somos),
-          correo_empresa = COALESCE($22, correo_empresa),
-          telefono = COALESCE($23, telefono),
-          direccion = COALESCE($24, direccion),
-          id_administrador = COALESCE($25, id_administrador)
-      WHERE id_empresa = $26
-      RETURNING id_empresa, fecha_registrado, logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, id_administrador
+          imagen_hero = COALESCE($6, imagen_1),
+          imagen_1 = COALESCE($7, imagen_1),
+          imagen_2 = COALESCE($8, imagen_2),
+          imagen_3 = COALESCE($9, imagen_3),
+          titulo_1 = COALESCE($10, titulo_1),
+          titulo_2 = COALESCE($11, titulo_2),
+          titulo_3 = COALESCE($12, titulo_3),
+          descripcion_1 = COALESCE($13, descripcion_1),
+          descripcion_2 = COALESCE($14, descripcion_2),
+          descripcion_3 = COALESCE($15, descripcion_3),
+          mision = COALESCE($16, mision),
+          vision = COALESCE($17, vision),
+          nuestro_objetivo = COALESCE($18, nuestro_objetivo),
+          objetivo_1 = COALESCE($19, objetivo_1),
+          objetivo_2 = COALESCE($20, objetivo_2),
+          objetivo_3 = COALESCE($21, objetivo_3),
+          quienes_somos = COALESCE($22, quienes_somos),
+          correo_empresa = COALESCE($23, correo_empresa),
+          telefono = COALESCE($24, telefono),
+          direccion = COALESCE($25, direccion),
+          id_administrador = COALESCE($26, id_administrador)
+      WHERE id_empresa = $27
+      RETURNING id_empresa, fecha_registrado, logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_hero, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, id_administrador
     `;
-    const values = [logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, id_administrador,  id];
+    const values = [logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_hero, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, id_administrador, id];
     const result = await pool.query(query, values);
     return result.rows[0];
   } catch (error) {
@@ -274,7 +277,7 @@ const response = (success, message, data = null) => ({
   data,
 });
 
-const imageFields = ['logo_imagen', 'imagen_1', 'imagen_2', 'imagen_3'];
+const imageFields = ['logo_imagen', 'imagen_hero', 'imagen_1', 'imagen_2', 'imagen_3'];
 
 async function validateImages(empresa) {
   for (const field of imageFields) {
@@ -339,7 +342,7 @@ const obtenerEmpresaFooter = async (req, res) => {
 
 const actualizarEmpresa = async (req, res) => {
   const { id } = req.params;
-  const { nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion,  id_administrador } = req.body;
+  const { nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, id_administrador } = req.body;
 
   try {
     const empresaExistente = await pool.query(
@@ -368,6 +371,7 @@ const actualizarEmpresa = async (req, res) => {
 
     // Procesar imágenes
     let logo_imagen = empresaExistente.rows[0].logo_imagen;
+    let imagen_hero = empresaExistente.rows[0].imagen_hero;
     let imagen_1 = empresaExistente.rows[0].imagen_1;
     let imagen_2 = empresaExistente.rows[0].imagen_2;
     let imagen_3 = empresaExistente.rows[0].imagen_3;
@@ -378,6 +382,13 @@ const actualizarEmpresa = async (req, res) => {
       logo_imagen = `/Uploads/empresa/${req.files.logo_imagen[0].filename}`;
       if (empresaExistente.rows[0].logo_imagen) {
         oldPaths.logo_imagen = path.join(__dirname, '../Uploads', empresaExistente.rows[0].logo_imagen.replace(/^\/*[uU]ploads\//, ''));
+      }
+    }
+
+    if (req.files?.imagen_hero?.[0]) {
+      imagen_hero = `/Uploads/empresa/${req.files.imagen_hero[0].filename}`;
+      if (empresaExistente.rows[0].imagen_hero) {
+        oldPaths.imagen_hero = path.join(__dirname, '../Uploads', empresaExistente.rows[0].imagen_hero.replace(/^\/*[uU]ploads\//, ''));
       }
     }
 
@@ -409,6 +420,7 @@ const actualizarEmpresa = async (req, res) => {
       titulo_h1,
       descripcion_h1,
       te_ofrecemos,
+      imagen_hero,
       imagen_1,
       imagen_2,
       imagen_3,
@@ -454,6 +466,7 @@ const router = express.Router();
 
 const empresaFieldConfigs = [
   { name: 'logo_imagen', maxCount: 1 },
+  { name: 'imagen_hero', maxCount: 1 },
   { name: 'imagen_1', maxCount: 1 },
   { name: 'imagen_2', maxCount: 1 },
   { name: 'imagen_3', maxCount: 1 }

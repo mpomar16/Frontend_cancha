@@ -22,16 +22,17 @@ export default function Sidebar({ children }) {
 
   //Datos de Empresa
   useEffect(() => {
-      async function fetchNavbarData() {
-        try {
-          const response = await obtenerEmpresaNavbar();
-          setEmpresaData(response.data);
-        } catch (error) {
-          console.error("Error cargando datos de empresa:", error);
-        }
+    async function fetchNavbarData() {
+      try {
+        const response = await obtenerEmpresaNavbar();
+        console.log(response.data)
+        setEmpresaData(response.data);
+      } catch (error) {
+        console.error("Error cargando datos de empresa:", error);
       }
-      fetchNavbarData();
-    }, []);
+    }
+    fetchNavbarData();
+  }, []);
   const handleImageError = (e) => {
     e.target.src = placeholder;
   };
@@ -77,13 +78,13 @@ export default function Sidebar({ children }) {
           <div className="mt-1 flex items-center p-2.5">
             <span className="rounded-md">
               {empresaData?.logo_imagen && (
-              <img
-                src={`${API_BASE}${empresaData.logo_imagen}`}
-                alt="Logo"
-                className="h-10 w-10 rounded-full object-cover"
-                onError={handleImageError}
-              />
-            )}
+                <img
+                  src={`${API_BASE}${empresaData.logo_imagen}`}
+                  alt="Logo"
+                  className="h-10 w-10 rounded-full object-cover"
+                  onError={handleImageError}
+                />
+              )}
             </span>
             <h1 className="ml-3 text-xl font-bold text-white">{empresaData?.nombre_sistema || "Cargando..."}</h1>
           </div>
@@ -129,23 +130,28 @@ export default function Sidebar({ children }) {
             ].join(" ")}
           >
             <Link to="/mi-perfil" className="flex items-center justify-items-stretch rounded-md px-2 py-2 hover:bg-azul-900/30">
-              <CircleUserRound size={20} className="mr-2"/> Ver mi Perfil
+              <CircleUserRound size={20} className="mr-2" /> Ver mi Perfil
             </Link>
             <Link onClick={handleLogout} className="flex items-center justify-items-stretch rounded-md px-2 py-2 hover:bg-azul-900/30">
-              <LogOut size={20} className="mr-2"/> Cerrar Sesión
+              <LogOut size={20} className="mr-2" /> Cerrar Sesión
             </Link>
           </div>
         </div>
 
         <div className="my-4 h-px bg-gray-600" />
         <div className="mt-3">
-          <a
-            href="/empresa/edit/:id"
-            className="flex w-full items-center rounded-md px-4 py-2.5 text-left text-white transition-colors hover:bg-azul-900"
+          <Link
+            to={empresaData?.id_empresa ? `/empresa/edit/${empresaData.id_empresa}` : "2"}
+            className={`flex w-full items-center rounded-md px-4 py-2.5 text-left transition-colors
+              ${empresaData?.id_empresa ? "text-white hover:bg-azul-900" : "text-white/50 cursor-not-allowed"}`}
+            onClick={(e) => { if (!empresaData?.id_empresa) e.preventDefault(); }}
+            aria-disabled={!empresaData?.id_empresa}
           >
             <Building2 className="h-5 w-5" />
-            <span className="ml-4 w-full text-[15px] font-bold text-white ">Empresa</span>
-          </a>
+            <span className="ml-4 w-full text-[15px] font-bold">
+              Editar Empresa
+            </span>
+          </Link>
         </div>
 
         <div className="mt-3">
@@ -186,7 +192,7 @@ export default function Sidebar({ children }) {
         </div>
       </aside>
 
-      <main className="ml-0 min-h-screen p-6 text-white lg:ml-64 bg-gray-100">
+      <main className="ml-0 min-h-screen p-6 text-azul-950 lg:ml-64 bg-gray-100">
         <div className="mx-auto max-w-full">
           {children}
         </div>
