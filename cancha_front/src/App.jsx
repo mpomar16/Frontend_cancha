@@ -17,7 +17,6 @@ import CanchaDetail from './pages/CanchaDetail';
 
 // Personas
 import PersonasList from './pages/PersonasList';
-import PersonaDetail from './pages/PersonaDetail';
 import PersonaCreate from './pages/PersonaCreate';
 import PersonaEdit from './pages/PersonaEdit';
 import Profile from './pages/Profile';
@@ -38,8 +37,6 @@ function App() {
 
         {/* Personas */}
         <Route path="/personas" element={<PersonasList />} />
-
-        <Route path="/persona/:id" element={<PersonaDetail />} />
         <Route path="/persona/create" element={<PersonaCreate />} />
         <Route path="/persona/edit/:id" element={<PersonaEdit />} />
         <Route path="/profile" element={<Profile />} />

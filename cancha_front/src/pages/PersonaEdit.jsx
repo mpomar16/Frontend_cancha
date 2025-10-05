@@ -55,7 +55,6 @@ function PersonaEdit() {
   return (
     <Sidebar>
       <main className="flex-1 p-8">
-        {/* Mensajes */}
         {error && (
           <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-red-700">
             {error}
