@@ -30,8 +30,8 @@ function EmpresaBody({ data }) {
       <section
         className="relative font-poppins isolate bg-cover bg-center bg-no-repeat min-h-[100vh] flex items-center justify-center h-screen"
         style={{
-          backgroundImage: data.imagen_3
-            ? `url(http://localhost:3000${data.imagen_3})`
+          backgroundImage: data.imagen_hero
+            ? `url(http://localhost:3000${data.imagen_hero})`
             : "none",
         }}
       >
@@ -208,9 +208,9 @@ function EmpresaBody({ data }) {
             <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-azul-950 to-azul-950 opacity-30 blur-3xl"></div>
 
             {/* Imagen dinámica desde la BD */}
-            {data.imagen_3 && (
+            {data.imagen_hero && (
               <img
-                src={`${API_BASE}${data.imagen_3}`}
+                src={`${API_BASE}${data.imagen_hero}`}
                 alt="Ilustración de objetivos"
                 className="bg-blanco-50 relative w-full rounded-2xl shadow-xl object-cover"
                 onError={(e) => (e.target.src = "/default-avatar.png")}
