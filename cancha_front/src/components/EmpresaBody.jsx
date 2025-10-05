@@ -28,10 +28,10 @@ function EmpresaBody({ data }) {
   return (
     <div>
       <section
-        className="relative font-poppins isolate bg-cover bg-center bg-no-repeat min-h-[100vh] flex items-center justify-center"
+        className="relative font-poppins isolate bg-cover bg-center bg-no-repeat min-h-[100vh] flex items-center justify-center h-screen"
         style={{
-          backgroundImage: data.hero_imagen
-            ? `url(http://localhost:3000${data.hero_imagen})`
+          backgroundImage: data.imagen_3
+            ? `url(http://localhost:3000${data.imagen_3})`
             : "none",
         }}
       >
@@ -66,7 +66,7 @@ function EmpresaBody({ data }) {
         </div>
 
         {/* Grid de Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.imagen_1 && (
             <div className="rounded-lg shadow-lg overflow-hidden bg-blanco-50">
               <img
@@ -208,9 +208,9 @@ function EmpresaBody({ data }) {
             <div className="absolute -inset-4 rounded-3xl bg-gradient-to-r from-azul-950 to-azul-950 opacity-30 blur-3xl"></div>
 
             {/* Imagen dinámica desde la BD */}
-            {data.hero_imagen && (
+            {data.imagen_3 && (
               <img
-                src={`${API_BASE}${data.hero_imagen}`}
+                src={`${API_BASE}${data.imagen_3}`}
                 alt="Ilustración de objetivos"
                 className="bg-blanco-50 relative w-full rounded-2xl shadow-xl object-cover"
                 onError={(e) => (e.target.src = "/default-avatar.png")}

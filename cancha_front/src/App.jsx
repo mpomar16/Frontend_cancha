@@ -1,6 +1,5 @@
 // src/App.jsx
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import MainNavbar from './MainNavbar';
 
 // Empresa
 import EmpresaHome from './pages/EmpresaHome';
@@ -29,33 +28,34 @@ import SearchPersonas from './pages/SearchPersonas';
 function App() {
   return (
     <BrowserRouter>
-          <Routes>
-            {/* Página Principal - Empresa */}
-            <Route path="/" element={<EmpresaHome />} />
-            
-            {/* Rutas de Empresa */}
-            <Route path="/empresa/:id" element={<EmpresaDetail />} />
-            <Route path="/empresa/edit/:id" element={<EmpresaEdit />} />
+      <Routes>
+        {/* Página Principal - Empresa */}
+        <Route path="/" element={<EmpresaHome />} />
 
-            {/* Personas */}
-            <Route path="/personas" element={<PersonasList />} />
-            <Route path="/persona/:id" element={<PersonaDetail />} />
-            <Route path="/persona/create" element={<PersonaCreate />} />
-            <Route path="/persona/edit/:id" element={<PersonaEdit />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/search" element={<SearchPersonas />} />
+        {/* Rutas de Empresa */}
+        <Route path="/empresa/:id" element={<EmpresaDetail />} />
+        <Route path="/empresa/edit/:id" element={<EmpresaEdit />} />
 
-            {/* Espacios Deportivos */}
-            <Route path="/espacios" element={<EspaciosList />} />
-            <Route path="/espacio/:id" element={<EspacioDetail />} />
-            <Route path="/espacio/create" element={<EspacioCreate />} />
-            <Route path="/espacio/edit/:id" element={<EspacioEdit />} />
-            <Route path="/espacios/admin/:id_admin" element={<EspaciosByAdmin />} />
-            <Route path="/espacios/cercanos" element={<EspaciosCercanos />} />
-            <Route path="/cancha/:id" element={<CanchaDetail />} />
-          </Routes>
+        {/* Personas */}
+        <Route path="/personas" element={<PersonasList />} />
+
+        <Route path="/persona/:id" element={<PersonaDetail />} />
+        <Route path="/persona/create" element={<PersonaCreate />} />
+        <Route path="/persona/edit/:id" element={<PersonaEdit />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/search" element={<SearchPersonas />} />
+
+        {/* Espacios Deportivos */}
+        <Route path="/espacios" element={<EspaciosList />} />
+        <Route path="/espacio/:id" element={<EspacioDetail />} />
+        <Route path="/espacio/create" element={<EspacioCreate />} />
+        <Route path="/espacio/edit/:id" element={<EspacioEdit />} />
+        <Route path="/espacios/admin/:id_admin" element={<EspaciosByAdmin />} />
+        <Route path="/espacios/cercanos" element={<EspaciosCercanos />} />
+        <Route path="/cancha/:id" element={<CanchaDetail />} />
+      </Routes>
     </BrowserRouter>
   );
 }

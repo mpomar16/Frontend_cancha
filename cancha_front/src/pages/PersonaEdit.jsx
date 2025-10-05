@@ -1,55 +1,86 @@
+// pages/PersonaEdit.jsx
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  obtenerPersonaPorId,
-  actualizarPersona,
-} from "../services/personaService";
-import PersonaForm from "../components/PersonaForm";
+import Sidebar from "../components/Sidebar";
+import PersonaForm from "../components/PersonaFormEdit";
+import { obtenerPersonaPorId, actualizarPersona } from "../services/personaService";
 
 function PersonaEdit() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [persona, setPersona] = useState(null);
-  const [error, setError] = useState("");
   const token = localStorage.getItem("token");
 
+  const [persona, setPersona] = useState(null);
+  const [cargando, setCargando] = useState(true);
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState("");
+
   useEffect(() => {
-    async function fetchPersona() {
+    let cancelado = false;
+
+    (async () => {
+      setCargando(true);
+      setError("");
       try {
-        const response = await obtenerPersonaPorId(id, token);
-        setPersona(response.data);
+        const resp = await obtenerPersonaPorId(id, token);
+        if (!cancelado) setPersona(resp.data);
       } catch (err) {
-        setError(err.message);
+        if (!cancelado) setError(err?.message || "No se pudo cargar la persona.");
+      } finally {
+        if (!cancelado) setCargando(false);
       }
-    }
-    fetchPersona();
+    })();
+
+    return () => {
+      cancelado = true;
+    };
   }, [id, token]);
 
   const handleSubmit = async (data) => {
-    await actualizarPersona(id, data, token);
-    navigate(`/persona/${id}`);
+    if (enviando) return;           // evita doble submit
+    setEnviando(true);
+    setError("");
+    try {
+      await actualizarPersona(id, data, token);
+      // misma UX que PersonaCreate: volver atrás
+      if (window.history.length > 1) navigate(-1);
+      else navigate(`/persona/${id}`, { replace: true });
+    } catch (err) {
+      setError(err?.message || "Ocurrió un error al actualizar.");
+    } finally {
+      setEnviando(false);
+    }
   };
 
-  if (!persona) return <div>Cargando...</div>;
-
   return (
-    <div className="pt-10">
-      {" "}
-      {/* agrega padding superior para separar del borde */}
-      <h1 className="text-4xl font-poppins font-bold text-azul-950 text-center mb-6">
-        Editar Persona
-      </h1>
-      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-      <div className="flex justify-center">
-        <div className="w-full md:w-3/4">
-          <PersonaForm
-            initialData={persona}
-            onSubmit={handleSubmit}
-            token={token}
-          />
-        </div>
-      </div>
-    </div>
+    <Sidebar>
+      <main className="flex-1 p-8">
+        {/* Mensajes */}
+        {error && (
+          <div className="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-red-700">
+            {error}
+          </div>
+        )}
+        {enviando && <p className="mb-3 text-sm text-gray-500">Enviando…</p>}
+
+        {/* Contenido */}
+        {cargando ? (
+          <div className="max-w-4xl">
+            <div className="h-28 rounded-lg bg-gray-100 animate-pulse mb-4" />
+            <div className="h-56 rounded-lg bg-gray-100 animate-pulse" />
+          </div>
+        ) : (
+          persona && (
+            <PersonaForm
+              initialData={persona}
+              onSubmit={handleSubmit}
+              token={token}
+              isSignUp={false}
+            />
+          )
+        )}
+      </main>
+    </Sidebar>
   );
 }
 

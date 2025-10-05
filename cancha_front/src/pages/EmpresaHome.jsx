@@ -25,14 +25,14 @@ function EmpresaHome() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <body className="min-h-screen flex flex-col">
       <EmpresaNavbarCasual />
       <main className="flex-grow pt-10"> 
         {error && <p className="text-red-500">{error}</p>}
         <EmpresaBody data={bodyData} />
       </main>
       <EmpresaFooter data={footerData} />
-    </div>
+    </body>
   );
 }
 

@@ -4,7 +4,7 @@ import {
   obtenerMiPerfil,
   actualizarMiPerfil,
 } from "../services/personaService";
-import PersonaForm from "../components/PersonaForm";
+import PersonaForm from "../components/PersonaFormEdit";
 
 const API_BASE = "http://localhost:3000"; // ajusta según tu backend
 

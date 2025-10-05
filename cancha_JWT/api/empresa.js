@@ -142,7 +142,6 @@ async function getEmpresaById(id) {
         correo_empresa,
         telefono,
         direccion,
-        hero_imagen,
         id_administrador
       FROM EMPRESA
       WHERE id_empresa = $1
@@ -180,7 +179,6 @@ async function getEmpresaBody() {
         objetivo_1,
         objetivo_2,
         objetivo_3,
-        hero_imagen,
         id_administrador
       FROM EMPRESA
       LIMIT 1  -- Asumiendo que hay solo una empresa principal
@@ -212,7 +210,7 @@ async function getEmpresaFooter() {
   }
 }
 
-async function updateEmpresa(id, logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, hero_imagen, id_administrador) {
+async function updateEmpresa(id, logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion,  id_administrador) {
   try {
     const query = `
       UPDATE EMPRESA
@@ -240,12 +238,11 @@ async function updateEmpresa(id, logo_imagen, nombre_sistema, titulo_h1, descrip
           correo_empresa = COALESCE($22, correo_empresa),
           telefono = COALESCE($23, telefono),
           direccion = COALESCE($24, direccion),
-          id_administrador = COALESCE($25, id_administrador),
-          hero_imagen = COALESCE($26, id_administrador)
-      WHERE id_empresa = $27
-      RETURNING id_empresa, fecha_registrado, logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, id_administrador, hero_imagen
+          id_administrador = COALESCE($25, id_administrador)
+      WHERE id_empresa = $26
+      RETURNING id_empresa, fecha_registrado, logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, id_administrador
     `;
-    const values = [logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, id_administrador, hero_imagen, id];
+    const values = [logo_imagen, nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, imagen_1, imagen_2, imagen_3, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, id_administrador,  id];
     const result = await pool.query(query, values);
     return result.rows[0];
   } catch (error) {
@@ -277,7 +274,7 @@ const response = (success, message, data = null) => ({
   data,
 });
 
-const imageFields = ['logo_imagen', 'imagen_1', 'imagen_2', 'imagen_3', 'hero_imagen'];
+const imageFields = ['logo_imagen', 'imagen_1', 'imagen_2', 'imagen_3'];
 
 async function validateImages(empresa) {
   for (const field of imageFields) {
@@ -342,7 +339,7 @@ const obtenerEmpresaFooter = async (req, res) => {
 
 const actualizarEmpresa = async (req, res) => {
   const { id } = req.params;
-  const { nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion, hero_imagen, id_administrador } = req.body;
+  const { nombre_sistema, titulo_h1, descripcion_h1, te_ofrecemos, titulo_1, titulo_2, titulo_3, descripcion_1, descripcion_2, descripcion_3, mision, vision, nuestro_objetivo, objetivo_1, objetivo_2, objetivo_3, quienes_somos, correo_empresa, telefono, direccion,  id_administrador } = req.body;
 
   try {
     const empresaExistente = await pool.query(
@@ -374,7 +371,6 @@ const actualizarEmpresa = async (req, res) => {
     let imagen_1 = empresaExistente.rows[0].imagen_1;
     let imagen_2 = empresaExistente.rows[0].imagen_2;
     let imagen_3 = empresaExistente.rows[0].imagen_3;
-    let hero_imagen = empresaExistente.rows[0].hero_imagen;
 
     const oldPaths = {};
 
@@ -406,13 +402,6 @@ const actualizarEmpresa = async (req, res) => {
       }
     }
 
-    if (req.files?.hero_imagen?.[0]) {
-      hero_imagen = `/Uploads/empresa/${req.files.hero_imagen[0].filename}`;
-      if (empresaExistente.rows[0].hero_imagen) {
-        oldPaths.hero_imagen = path.join(__dirname, '../Uploads', empresaExistente.rows[0].hero_imagen.replace(/^\/*[uU]ploads\//, ''));
-      }
-    }
-
     const empresaActualizada = await updateEmpresa(
       id,
       logo_imagen,
@@ -439,7 +428,6 @@ const actualizarEmpresa = async (req, res) => {
       correo_empresa,
       telefono,
       direccion,
-      hero_imagen,
       id_administrador
     );
 
@@ -468,8 +456,7 @@ const empresaFieldConfigs = [
   { name: 'logo_imagen', maxCount: 1 },
   { name: 'imagen_1', maxCount: 1 },
   { name: 'imagen_2', maxCount: 1 },
-  { name: 'imagen_3', maxCount: 1 },
-  { name: 'hero_imagen', maxCount: 1 }
+  { name: 'imagen_3', maxCount: 1 }
 ];
 
 // Aplicar middleware de upload a POST y PATCH
