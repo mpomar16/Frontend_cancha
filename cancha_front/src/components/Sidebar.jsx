@@ -25,7 +25,6 @@ export default function Sidebar({ children }) {
     async function fetchNavbarData() {
       try {
         const response = await obtenerEmpresaNavbar();
-        console.log(response.data)
         setEmpresaData(response.data);
       } catch (error) {
         console.error("Error cargando datos de empresa:", error);
