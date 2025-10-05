@@ -159,7 +159,7 @@ function EmpresaEdit() {
               No se encontró la información de la empresa.
             </div>
           ) : (
-            <div className="flex justify-center">
+            <div className="flex justify-center grid grid-cols-1">
               <EmpresaFormEdit initialData={empresa} onSubmit={handleSubmit} />
             </div>
           )}
