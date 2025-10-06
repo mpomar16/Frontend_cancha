@@ -76,7 +76,7 @@ export default function Paginacion({
     : Math.min(desplazamiento + limite, totalRegistros);
 
   return (
-    <div className={`mt-6 flex flex-col sm:flex-row items-center sm:justify-between gap-3 ${clase}`}>
+    <div className={`text-white mt-6 flex flex-col sm:flex-row items-center sm:justify-between gap-3 ${clase}`}>
       {/* Info */}
       <span className="text-xs sm:text-sm text-azul-950">
         Mostrando {desde}–{hasta}
