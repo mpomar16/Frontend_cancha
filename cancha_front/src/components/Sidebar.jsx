@@ -1,7 +1,20 @@
 import { useState, useEffect, Children } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { obtenerEmpresaNavbar } from "../services/empresaService";
-import { Menu, X, Archive, ChevronDown, LogOut, Users, Volleyball, Building2, CircleUserRound } from "lucide-react";
+import { Menu, X, Archive, ChevronDown, LogOut, Building2, CircleUserRound,
+  Users,
+  Volleyball,
+  UserRound,
+  UserCog,
+  ClipboardList,
+  ShieldCheck,
+  CalendarCheck,
+  CreditCard,
+  QrCode,
+  MessageSquare,
+  Star,
+  FileText,
+  Dumbbell, } from "lucide-react";
 import { usePerfil } from "../hooks/usePerfil";
 import placeholder from "../assets/placeholder.jpeg";
 
@@ -9,8 +22,28 @@ const API_BASE = "http://localhost:3000";
 
 const navLinksByRole = {
   DEFAULT: [
+    // === GESTIÓN DE PERSONAS Y USUARIOS ===
     { label: "Personas", href: "/personas", icon: Users },
+    { label: "Cliente", href: "#", icon: UserRound },
+    { label: "Deportista", href: "#", icon: Dumbbell },
+    { label: "Encargado", href: "#", icon: UserCog },
+    { label: "Administradores de Espacios Deportivos", href: "#", icon: ShieldCheck },
+
+    // === ESPACIOS Y DISCIPLINAS ===
     { label: "Espacios deportivos y canchas", href: "/espacios", icon: Volleyball },
+    { label: "Disciplina", href: "#", icon: ClipboardList },
+
+    // === OPERACIONES ===
+    { label: "Reserva", href: "#", icon: CalendarCheck },
+    { label: "Pago", href: "#", icon: CreditCard },
+    { label: "QR Reserva", href: "#", icon: QrCode },
+
+    // === INTERACCIÓN Y EVALUACIÓN ===
+    { label: "Comentario", href: "#", icon: MessageSquare },
+    { label: "Ponderación", href: "#", icon: Star },
+
+    // === REPORTES ===
+    { label: "Reporte de Incidencia", href: "#", icon: FileText },
   ],
 };
 
@@ -171,7 +204,7 @@ export default function Sidebar({ children }) {
             id="submenu"
             className={[
               "mx-auto mt-2 w-4/5 text-left text-sm font-bold text-white transition-all",
-              chatboxOpen ? "max-h-48 opacity-100" : "max-h-0 overflow-hidden opacity-0",
+              chatboxOpen ? "max-h-50 opacity-100" : "max-h-0 overflow-hidden opacity-0",
             ].join(" ")}
           >
             {navLinks.map(item => {
