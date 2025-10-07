@@ -51,13 +51,19 @@ export default function CanchaFila({ cancha, mostrarAcciones, onEliminar, elimin
       </td>
 
       {/* Nombre */}
-      <td className="px-5 py-3 text-sm font-semibold text-azul-950">{cancha.nombre}</td>
+      <td className="px-5 py-3 text-sm font-semibold text-azul-950">
+        {cancha.nombre}
+      </td>
 
       {/* Ubicación */}
-      <td className="px-5 py-3 text-sm text-gray-700">{cancha.ubicacion || "—"}</td>
+      <td className="px-5 py-3 text-sm text-gray-700">
+        {cancha.ubicacion || "—"}
+      </td>
 
       {/* Capacidad */}
-      <td className="px-5 py-3 text-sm text-gray-700">{cancha.capacidad || "—"}</td>
+      <td className="px-5 py-3 text-sm text-gray-700">
+        {cancha.capacidad || "—"}
+      </td>
 
       {/* Monto por hora */}
       <td className="px-5 py-3 text-sm text-gray-700">
@@ -85,7 +91,7 @@ export default function CanchaFila({ cancha, mostrarAcciones, onEliminar, elimin
             <Loader2 className="w-3 h-3 mr-1 animate-spin" />
             Cargando...
           </div>
-        ) : disciplinas.length > 0 ? (
+        ) : (disciplinas?.length ?? 0) > 0 ? (
           <div className="flex flex-wrap gap-1.5 max-w-[220px]">
             {disciplinas.map((d, i) => (
               <span
@@ -101,20 +107,32 @@ export default function CanchaFila({ cancha, mostrarAcciones, onEliminar, elimin
         )}
       </td>
 
-
       {/* Acciones */}
       {mostrarAcciones && (
         <td className="px-5 py-3 text-sm text-right">
           <div className="flex items-center gap-2">
             <Link
-              to={``}
-              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm bg-verde-600 text-white border rounded-md"
+              to={`/cancha/edit/${cancha.id_cancha}`}
+              state={{
+                cancha: {
+                  ...cancha,
+                  disciplinas: Array.isArray(disciplinas)
+                    ? disciplinas
+                      .filter(d => d?.id_disciplina) // solo válidos
+                      .map(d => ({
+                        id_disciplina: String(d.id_disciplina),
+                        nombre: d.nombre
+                      }))
+                    : [],
+                },
+              }}
+              className="inline-flex items-center gap-1 px-3 py-1.5 text-sm bg-verde-600 text-white border rounded-md hover:bg-verde-700 transition"
               title="Editar"
             >
               <Pencil className="w-4 h-4" />
-              <span className="hidden sm:inline"></span>
             </Link>
 
+            {/* Botón Eliminar */}
             <button
               type="button"
               onClick={() => onEliminar?.(cancha.id_cancha)}
@@ -128,12 +146,10 @@ export default function CanchaFila({ cancha, mostrarAcciones, onEliminar, elimin
               {eliminando ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="hidden sm:inline"></span>
                 </>
               ) : (
                 <>
                   <Trash2 className="w-4 h-4" />
-                  <span className="hidden sm:inline"></span>
                 </>
               )}
             </button>

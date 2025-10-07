@@ -177,55 +177,56 @@ async function getDisciplinasUnicas() {
 }
 
 async function asignarDisciplinas(idCancha, disciplinas) {
-  const query = `
-    INSERT INTO se_practica (id_cancha, id_disciplina, frecuencia_practica)
-    VALUES ($1, $2, $3)
-    ON CONFLICT (id_cancha, id_disciplina) DO UPDATE
-    SET frecuencia_practica = EXCLUDED.frecuencia_practica
-    RETURNING *;
-  `;
+  const client = await pool.connect();
+  try {
+    await client.query("BEGIN");
 
-  const results = [];
-  for (const disc of disciplinas) {
-    const { id_disciplina, frecuencia_practica } = disc;
-    const result = await pool.query(query, [
-      idCancha,
-      id_disciplina,
-      frecuencia_practica || null
-    ]);
-    results.push(result.rows[0]);
+    // 🔹 1. Eliminar TODAS las relaciones previas
+    await client.query("DELETE FROM se_practica WHERE id_cancha = $1", [idCancha]);
+
+    // 🔹 2. Insertar las nuevas (si hay)
+    if (disciplinas.length > 0) {
+      const insertQuery = `
+        INSERT INTO se_practica (id_cancha, id_disciplina, frecuencia_practica)
+        VALUES ($1, $2, $3)
+        RETURNING *;
+      `;
+
+      for (const disc of disciplinas) {
+        const { id_disciplina, frecuencia_practica } = disc;
+        await client.query(insertQuery, [
+          idCancha,
+          id_disciplina,
+          frecuencia_practica || null,
+        ]);
+      }
+    }
+
+    await client.query("COMMIT");
+    return { success: true, message: "Disciplinas actualizadas correctamente" };
+  } catch (err) {
+    await client.query("ROLLBACK");
+    throw err;
+  } finally {
+    client.release();
   }
-  return results;
 }
 
 async function getDisciplinasPorCancha(idCancha) {
-  const query = `
-    SELECT 
-      d.id_disciplina,
-      d.nombre,
-      d.descripcion,
-      sp.frecuencia_practica
-    FROM se_practica sp
-    JOIN DISCIPLINA d ON sp.id_disciplina = d.id_disciplina
-    WHERE sp.id_cancha = $1
-    ORDER BY d.nombre;
-  `;
-  const result = await pool.query(query, [idCancha]);
-  return result.rows;
-}
-
-
-async function getDisciplinasPorCancha(id_cancha) {
   try {
     const query = `
-      SELECT d.nombre
-      FROM DISCIPLINA d
-      JOIN se_practica sp ON d.id_disciplina = sp.id_disciplina
+      SELECT 
+        d.id_disciplina,
+        d.nombre,
+        d.descripcion,
+        sp.frecuencia_practica
+      FROM se_practica sp
+      JOIN DISCIPLINA d ON sp.id_disciplina = d.id_disciplina
       WHERE sp.id_cancha = $1
-      ORDER BY d.nombre
+      ORDER BY d.nombre;
     `;
-    const result = await pool.query(query, [id_cancha]);
-    return result.rows.map(row => row.nombre);
+    const result = await pool.query(query, [idCancha]);
+    return result.rows; // Devuelve array de objetos completos
   } catch (error) {
     throw new Error('Error al listar disciplinas por cancha: ' + error.message);
   }

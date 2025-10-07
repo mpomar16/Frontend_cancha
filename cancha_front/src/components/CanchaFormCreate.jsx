@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { PlusCircle, Loader2 } from "lucide-react";
+import { PlusCircle, Loader2, ArrowLeft } from "lucide-react";
 import {
   crearCancha,
   listarEstadoCanchaEnum,
@@ -108,14 +108,21 @@ function CanchaFormCreate() {
   // === UI ===
   return (
     <Sidebar>
-      <main>
-        {/* Header */}
-        <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-          <h1 className="flex items-center text-2xl font-poppins font-bold text-azul-950">
-            <PlusCircle className="mr-3" />
+      <main className="flex-1 p-6 sm:p-8 space-y-8">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition"
+            >
+              <ArrowLeft size={16} /> Volver
+            </button>
+            <h1 className="flex items-center text-2xl font-poppins font-bold text-azul-950">
+              <PlusCircle className="mr-3" />
             Registrar nueva cancha
-          </h1>
-        </div>
+            </h1>
+          </div>
+        </header>
 
         {/* Formulario */}
         <form onSubmit={handleSubmit} className="min-h-[0]">

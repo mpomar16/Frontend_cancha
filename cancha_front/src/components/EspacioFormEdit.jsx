@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { listarAdminsUnicos } from "../services/espacioService";
-import { listarCanchas } from "../services/canchaService";
+import { listarCanchas, eliminarCancha } from "../services/canchaService";
 import { Building2, Plus, ArrowLeft } from "lucide-react";
 import CanchasLista from "../components/CanchasLista";
 import useImagePreview from "../hooks/useImagePreview";
+import Alerta from "../components/Alerta";
 
 const API_BASE = "http://localhost:3000";
 
@@ -138,21 +139,52 @@ function EspacioFormEdit({ initialData = {}, onSubmit, token }) {
     }
   };
 
+  // Estado para control del modal
+  const [alerta, setAlerta] = useState({ open: false, idObjetivo: null });
+  const [eliminandoId, setEliminandoId] = useState(null);
+
+  // Abrir modal de confirmación
+  const solicitarEliminacion = (idCancha) => {
+    setAlerta({ open: true, idObjetivo: idCancha });
+  };
+
+  // Confirmar eliminación
+  const confirmarEliminacion = async () => {
+    const id = alerta.idObjetivo;
+    if (!id) return;
+
+    try {
+      setEliminandoId(id);
+      await eliminarCancha(id, token);
+
+      // quitar de la lista local
+      setCanchas((prev) => prev.filter((c) => c.id_cancha !== id));
+
+      setAlerta({ open: false, idObjetivo: null });
+    } catch (err) {
+      console.error("❌ Error al eliminar cancha:", err.message);
+      alert("No se pudo eliminar la cancha: " + err.message);
+    } finally {
+      setEliminandoId(null);
+    }
+  };
+
+
   return (
     <main>
       <div className="mb-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/espacios")}
-              className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition"
-            >
-              <ArrowLeft size={16} /> Volver
-            </button>
-            <h1 className="flex items-center text-2xl font-poppins font-bold text-azul-950">
-              <Building2 className="mr-3" />
-              Edite la información del Espacio Deportivo
-            </h1>
-          </div>
+          <button
+            onClick={() => navigate("/espacios")}
+            className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition"
+          >
+            <ArrowLeft size={16} /> Volver
+          </button>
+          <h1 className="flex items-center text-2xl font-poppins font-bold text-azul-950">
+            <Building2 className="mr-3" />
+            Edite la información del Espacio Deportivo
+          </h1>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="min-h-[0]">
@@ -352,74 +384,74 @@ function EspacioFormEdit({ initialData = {}, onSubmit, token }) {
 
           {/* === Imágenes === */}
           {/* === Imágenes (en 2 columnas) === */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-  {Object.entries(imagenes).map(([key, obj], idx) => {
-    const label = idx === 0 ? "Imagen Principal" : `Imagen Secundaria ${idx}`;
-    return (
-      <div key={key} className="border border-gray-200 rounded-lg bg-white p-3 shadow-sm hover:shadow-md transition">
-        <label htmlFor={key} className="text-azul-950 font-medium text-sm">
-          {label}
-        </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {Object.entries(imagenes).map(([key, obj], idx) => {
+              const label = idx === 0 ? "Imagen Principal" : `Imagen Secundaria ${idx}`;
+              return (
+                <div key={key} className="border border-gray-200 rounded-lg bg-white p-3 shadow-sm hover:shadow-md transition">
+                  <label htmlFor={key} className="text-azul-950 font-medium text-sm">
+                    {label}
+                  </label>
 
-        <div
-          {...obj.dropzoneProps}
-          className="mt-2 border border-dashed border-gray-300 rounded-md p-3 bg-gray-50 hover:bg-gray-100 transition cursor-pointer"
-        >
-          <div className="flex items-center gap-3">
-            {/* Miniatura */}
-            <div className="w-20 h-20 rounded-md overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
-              {obj.previewUrl ? (
-                <img
-                  src={obj.previewUrl}
-                  alt="Previsualización"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <span className="text-xs text-gray-400 text-center leading-tight px-2">
-                  Sin imagen
-                </span>
-              )}
-            </div>
-
-            {/* Controles */}
-            <div className="flex-1">
-              <p className="text-xs text-gray-600 mb-2">
-                Arrastra una imagen o selecciona un archivo
-              </p>
-
-              <div className="flex flex-wrap items-center gap-2">
-                <label
-                  htmlFor={key}
-                  className="cursor-pointer bg-verde-600 text-white hover:bg-green-700 text-xs font-medium px-2.5 py-1.5 rounded-md border"
-                >
-                  Seleccionar
-                </label>
-
-                {obj.previewUrl && (
-                  <button
-                    type="button"
-                    onClick={obj.clear}
-                    className="bg-white hover:bg-gray-50 text-gray-800 text-xs font-medium px-2.5 py-1.5 rounded-md border"
+                  <div
+                    {...obj.dropzoneProps}
+                    className="mt-2 border border-dashed border-gray-300 rounded-md p-3 bg-gray-50 hover:bg-gray-100 transition cursor-pointer"
                   >
-                    Quitar
-                  </button>
-                )}
-              </div>
+                    <div className="flex items-center gap-3">
+                      {/* Miniatura */}
+                      <div className="w-20 h-20 rounded-md overflow-hidden bg-gray-100 flex items-center justify-center shrink-0">
+                        {obj.previewUrl ? (
+                          <img
+                            src={obj.previewUrl}
+                            alt="Previsualización"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-xs text-gray-400 text-center leading-tight px-2">
+                            Sin imagen
+                          </span>
+                        )}
+                      </div>
 
-              <p className="mt-1 text-[11px] text-gray-400">
-                JPG, PNG o WEBP · máx. 5 MB
-              </p>
-            </div>
+                      {/* Controles */}
+                      <div className="flex-1">
+                        <p className="text-xs text-gray-600 mb-2">
+                          Arrastra una imagen o selecciona un archivo
+                        </p>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <label
+                            htmlFor={key}
+                            className="cursor-pointer bg-verde-600 text-white hover:bg-green-700 text-xs font-medium px-2.5 py-1.5 rounded-md border"
+                          >
+                            Seleccionar
+                          </label>
+
+                          {obj.previewUrl && (
+                            <button
+                              type="button"
+                              onClick={obj.clear}
+                              className="bg-white hover:bg-gray-50 text-gray-800 text-xs font-medium px-2.5 py-1.5 rounded-md border"
+                            >
+                              Quitar
+                            </button>
+                          )}
+                        </div>
+
+                        <p className="mt-1 text-[11px] text-gray-400">
+                          JPG, PNG o WEBP · máx. 5 MB
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {obj.imgError && (
+                    <p className="mt-1 text-red-600 text-xs">{obj.imgError}</p>
+                  )}
+                </div>
+              );
+            })}
           </div>
-        </div>
-
-        {obj.imgError && (
-          <p className="mt-1 text-red-600 text-xs">{obj.imgError}</p>
-        )}
-      </div>
-    );
-  })}
-</div>
 
 
           {/* === Lista de Canchas con acciones === */}
@@ -439,7 +471,12 @@ function EspacioFormEdit({ initialData = {}, onSubmit, token }) {
 
             </div>
 
-            <CanchasLista canchas={canchas} mostrarAcciones={true} />
+            <CanchasLista
+              canchas={canchas}
+              mostrarAcciones={true}
+              eliminandoId={eliminandoId}
+              onEliminar={solicitarEliminacion} // 👈 este nombre debe coincidir
+            />
           </div>
 
           {/* === Botón Guardar === */}
@@ -454,6 +491,23 @@ function EspacioFormEdit({ initialData = {}, onSubmit, token }) {
           </div>
         </div>
       </form>
+      <Alerta
+        open={alerta.open}
+        variant="confirm"
+        title="¿Eliminar cancha?"
+        message="Esta acción eliminará permanentemente la cancha seleccionada. ¿Deseas continuar?"
+        primaryAction={{
+          label: "Eliminar",
+          onClick: confirmarEliminacion,
+          loading: eliminandoId !== null,
+        }}
+        secondaryAction={{
+          label: "Cancelar",
+          onClick: () => setAlerta({ open: false, idObjetivo: null }),
+        }}
+        onClose={() => setAlerta({ open: false, idObjetivo: null })}
+      />
+
     </main>
   );
 }

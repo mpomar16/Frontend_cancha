@@ -26,6 +26,7 @@ import SearchPersonas from './pages/SearchPersonas';
 
 //Cancha
 import CanchaFormCreate from './components/CanchaFormCreate';
+import CanchaEdit from './pages/CanchaEdit';
 
 function App() {
   return (
@@ -56,6 +57,7 @@ function App() {
         <Route path="/espacios/admin/:id_admin" element={<EspaciosByAdmin />} />
         <Route path="/espacios/cercanos" element={<EspaciosCercanos />} />
         <Route path="/cancha/create" element={<CanchaFormCreate />} />
+        <Route path="/cancha/edit/:id" element={<CanchaEdit />} />
         <Route path="/cancha/:id" element={<CanchaDetail />} />
 
       </Routes>
