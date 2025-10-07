@@ -194,7 +194,6 @@ function EspacioFormEdit({ initialData = {}, onSubmit, token }) {
             <h2 className="font-medium text-xl text-verde-600">Información General</h2>
             <p className="font-light text-verde-600">Actualiza los datos y guarda los cambios.</p>
           </div>
-
           <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-2">
             <div className="lg:col-span-2">
               <div className="grid gap-4 gap-y-4 text-sm grid-cols-1 md:grid-cols-2">

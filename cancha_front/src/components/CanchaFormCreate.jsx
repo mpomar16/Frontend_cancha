@@ -23,7 +23,7 @@ function CanchaFormCreate() {
     monto_por_hora: "",
     estado: "",
     disciplinas: [],
-    id_espacio: "", 
+    id_espacio: "",
   });
 
   const [error, setError] = useState("");
@@ -85,24 +85,34 @@ function CanchaFormCreate() {
     setError("");
     setEnviando(true);
 
-    try {
-      const data = new FormData();
+try {
+  const data = new FormData();
 
-      // ✅ Incluimos todos los campos, incluyendo id_espacio
-      Object.entries(formData).forEach(([k, v]) => {
-        if (Array.isArray(v)) data.append(k, JSON.stringify(v));
-        else if (v !== null && v !== undefined) data.append(k, v);
-      });
+  Object.entries(formData).forEach(([k, v]) => {
+    if (Array.isArray(v)) data.append(k, JSON.stringify(v));
+    else if (v !== null && v !== undefined) data.append(k, v);
+  });
 
-      if (imagenFile) data.append("imagen_cancha", imagenFile);
+  if (imagenFile) data.append("imagen_cancha", imagenFile);
 
-      await crearCancha(data, token);
-      navigate(`/espacio/${idEspacio}`); // ✅ redirige al espacio actual
-    } catch (err) {
-      setError(err.message || "Error al crear la cancha.");
-    } finally {
-      setEnviando(false);
-    }
+  const res = await crearCancha(data, token);
+  const nuevaCancha = res.data || res;
+  console.log("✅ Cancha creada:", nuevaCancha);
+
+  // ✅ Redirige directo al EDIT del espacio (para listar las canchas)
+  if (formData.id_espacio) {
+    navigate(`/espacio/edit/${formData.id_espacio}`);
+  } else {
+    // fallback de seguridad
+    navigate(-1);
+  }
+} catch (err) {
+  setError(err.message || "Error al crear la cancha.");
+} finally {
+  setEnviando(false);
+}
+
+
   };
 
   // === UI ===
@@ -119,7 +129,7 @@ function CanchaFormCreate() {
             </button>
             <h1 className="flex items-center text-2xl font-poppins font-bold text-azul-950">
               <PlusCircle className="mr-3" />
-            Registrar nueva cancha
+              Registrar nueva cancha
             </h1>
           </div>
         </header>
