@@ -1,20 +1,21 @@
 import { useState, useEffect, Children } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { obtenerEmpresaNavbar } from "../services/empresaService";
-import { Menu, X, Archive, ChevronDown, LogOut, Building2, CircleUserRound,
+import { Menu, X, Archive, ChevronDown, LogOut, CircleUserRound,
   Users,
   Volleyball,
-  UserRound,
-  UserCog,
+  UserCircle2,
+  Activity,
+  MonitorCheck,
+  Building2,
   ClipboardList,
-  ShieldCheck,
-  CalendarCheck,
+  Dumbbell,
+  FileWarning,
+  CalendarCheck2,
   CreditCard,
   QrCode,
   MessageSquare,
-  Star,
-  FileText,
-  Dumbbell, } from "lucide-react";
+  Star, } from "lucide-react";
 import { usePerfil } from "../hooks/usePerfil";
 import placeholder from "../assets/placeholder.jpeg";
 
@@ -22,28 +23,20 @@ const API_BASE = "http://localhost:3000";
 
 const navLinksByRole = {
   DEFAULT: [
-    // === GESTIÓN DE PERSONAS Y USUARIOS ===
     { label: "Personas", href: "/personas", icon: Users },
-    { label: "Cliente", href: "#", icon: UserRound },
-    { label: "Deportista", href: "#", icon: Dumbbell },
-    { label: "Encargado", href: "#", icon: UserCog },
-    { label: "Administradores de Espacios Deportivos", href: "#", icon: ShieldCheck },
-
-    // === ESPACIOS Y DISCIPLINAS ===
-    { label: "Espacios deportivos y canchas", href: "/espacios", icon: Volleyball },
-    { label: "Disciplina", href: "#", icon: ClipboardList },
-
-    // === OPERACIONES ===
-    { label: "Reserva", href: "#", icon: CalendarCheck },
+    { label: "Espacios deportivos y canchas", href: "/espacios", icon: Volleyball, },
+    { label: "Cliente", href: "#", icon: UserCircle2 },
+    { label: "Deportista", href: "#", icon: Activity },
+    { label: "Usuario_Control", href: "#", icon: MonitorCheck },
+    { label: "Administradores de Espacios Deportivos", href: "#",icon: Building2, },
+    { label: "Encargado", href: "#", icon: ClipboardList },
+    { label: "Disciplina", href: "#", icon: Dumbbell },
+    { label: "Reporte de Incidencia", href: "#", icon: FileWarning },
+    { label: "Reserva", href: "#", icon: CalendarCheck2 },
     { label: "Pago", href: "#", icon: CreditCard },
     { label: "QR Reserva", href: "#", icon: QrCode },
-
-    // === INTERACCIÓN Y EVALUACIÓN ===
     { label: "Comentario", href: "#", icon: MessageSquare },
     { label: "Ponderación", href: "#", icon: Star },
-
-    // === REPORTES ===
-    { label: "Reporte de Incidencia", href: "#", icon: FileText },
   ],
 };
 
