@@ -29,7 +29,7 @@ const navLinksByRole = {
     { label: "Deportista", href: "#", icon: Activity },
     { label: "Usuario_Control", href: "#", icon: MonitorCheck },
     { label: "Administradores de Espacios Deportivos", href: "#",icon: Building2, },
-    { label: "Encargado", href: "#", icon: ClipboardList },
+    { label: "Encargado", href: "/encargados", icon: ClipboardList },
     { label: "Disciplina", href: "/disciplinas", icon: Dumbbell },
     { label: "Reporte de Incidencia", href: "#", icon: FileWarning },
     { label: "Reserva", href: "#", icon: CalendarCheck2 },

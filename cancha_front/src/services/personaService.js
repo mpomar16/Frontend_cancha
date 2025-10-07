@@ -243,3 +243,37 @@ export async function eliminarPersona(id, token) {
     throw new Error("Error de conexión con el servidor");
   }
 }
+
+/**
+ * Listar personas elegibles para ENCARGADO (sin rol ENCARGADO ni ADMINISTRADOR)
+ * Parámetros:
+ * - opts: { limit = 12, offset = 0, q = "" }  // q: búsqueda por nombre/apellido/correo (opcional)
+ * - token: Bearer
+ * Respuesta normalizada:
+ * - { personas: [...], hasMore: boolean, limit: number, offset: number }
+ */
+export async function listarPersonasElegiblesEncargado(
+  opts = {},
+  token
+) {
+  const { limit = 12, offset = 0, q = "" } = opts;
+  try {
+    const res = await axios.get(`${API_URL}/elegibles-encargado`, {
+      params: { limit, offset, q },
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    // el backend devuelve { success, message, data: { personas, limit, offset, hasMore } }
+    const payload = res?.data?.data ?? res?.data ?? {};
+    return {
+      personas: payload.personas ?? [],
+      hasMore: Boolean(payload.hasMore),
+      limit: payload.limit ?? limit,
+      offset: payload.offset ?? offset,
+    };
+  } catch (err) {
+    throw new Error(
+      err?.response?.data?.message || "Error al listar personas elegibles"
+    );
+  }
+}

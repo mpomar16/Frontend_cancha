@@ -5,17 +5,24 @@ const path = require('path');
 const fs = require('fs').promises;
 
 // --- Modelos ---
-async function getAllEncargados() {
+async function getAllEncargados(limit = 12, offset = 0) {
   try {
     const query = `
-      SELECT e.id_encargado, e.responsabilidad, e.fecha_inicio, e.hora_ingreso, e.hora_salida, e.estado, p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
+      SELECT 
+        e.id_encargado, e.responsabilidad, e.fecha_inicio, e.hora_ingreso, e.hora_salida, e.estado,
+        p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
       FROM ENCARGADO e
       JOIN PERSONA p ON e.id_encargado = p.id_persona
+      ORDER BY e.id_encargado
+      LIMIT $1 + 1 OFFSET $2
     `;
-    const result = await pool.query(query);
-    return result.rows;
+    const result = await pool.query(query, [limit, offset]);
+    const rows = result.rows || [];
+    const hasMore = rows.length > limit;
+    const items = hasMore ? rows.slice(0, limit) : rows;
+    return { items, hasMore };
   } catch (error) {
-    throw new Error('Error al listar encargados: ' + error.message);
+    throw new Error('Error al listar encargados (paginado): ' + error.message);
   }
 }
 
@@ -90,6 +97,60 @@ async function getEncargadosByEstado(estado) {
     return result.rows;
   } catch (error) {
     throw new Error('Error al listar encargados por estado: ' + error.message);
+  }
+}
+
+async function getEncargadosByNombre(nombre) {
+  try {
+    const query = `
+      SELECT e.id_encargado, e.responsabilidad, e.fecha_inicio, e.hora_ingreso, e.hora_salida, e.estado,
+             p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
+      FROM ENCARGADO e
+      JOIN PERSONA p ON e.id_encargado = p.id_persona
+      WHERE p.nombre ILIKE $1 OR p.apellido ILIKE $1
+      ORDER BY p.nombre ASC
+      LIMIT 15
+    `;
+    const result = await pool.query(query, [`%${nombre}%`]);
+    return result.rows;
+  } catch (error) {
+    throw new Error("Error al buscar encargados por nombre: " + error.message);
+  }
+}
+
+async function getEncargadosByResponsabilidad(responsabilidad) {
+  try {
+    const query = `
+      SELECT e.id_encargado, e.responsabilidad, e.fecha_inicio, e.hora_ingreso, e.hora_salida, e.estado,
+             p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
+      FROM ENCARGADO e
+      JOIN PERSONA p ON e.id_encargado = p.id_persona
+      WHERE e.responsabilidad ILIKE $1
+      ORDER BY e.responsabilidad ASC
+      LIMIT 15
+    `;
+    const result = await pool.query(query, [`%${responsabilidad}%`]);
+    return result.rows;
+  } catch (error) {
+    throw new Error("Error al buscar encargados por responsabilidad: " + error.message);
+  }
+}
+
+async function getEncargadosByCorreo(correo) {
+  try {
+    const query = `
+      SELECT e.id_encargado, e.responsabilidad, e.fecha_inicio, e.hora_ingreso, e.hora_salida, e.estado,
+             p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
+      FROM ENCARGADO e
+      JOIN PERSONA p ON e.id_encargado = p.id_persona
+      WHERE p.correo ILIKE $1
+      ORDER BY p.correo ASC
+      LIMIT 15
+    `;
+    const result = await pool.query(query, [`%${correo}%`]);
+    return result.rows;
+  } catch (error) {
+    throw new Error("Error al buscar encargados por correo: " + error.message);
   }
 }
 
@@ -168,29 +229,53 @@ const response = (success, message, data = null) => ({
 
 const listarEncargados = async (req, res) => {
   try {
-    const encargados = await getAllEncargados();
+    const limit = parseInt(req.query.limit) || 12;
+    const offset = parseInt(req.query.offset) || 0;
+
+    const { items, hasMore } = await getAllEncargados(limit, offset);
+
     const encargadosConImagenValidada = await Promise.all(
-      encargados.map(async (encargado) => {
+      items.map(async (encargado) => {
         if (encargado.imagen_perfil) {
           try {
-            const filePath = path.join(__dirname, '../Uploads', encargado.imagen_perfil.replace(/^\/*[uU]ploads\//, ''));
+            const filePath = path.join(
+              __dirname,
+              '../Uploads',
+              encargado.imagen_perfil.replace(/^\/*[uU]ploads\//, '')
+            );
             await fs.access(filePath);
             return encargado;
-          } catch (error) {
-            console.warn(`Imagen no encontrada para encargado ${encargado.id_encargado}: ${encargado.imagen_perfil}`);
+          } catch {
             return { ...encargado, imagen_perfil: null };
           }
         }
         return encargado;
       })
     );
-    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
-    res.status(200).json(response(true, 'Lista de encargados obtenida', encargadosConImagenValidada));
+
+    const dataResponse = {
+      encargados: encargadosConImagenValidada,
+      limit,
+      offset,
+      hasMore,
+    };
+
+    let message = 'Lista de encargados obtenida';
+    if (encargadosConImagenValidada.length === 0) {
+      message = offset === 0 ? 'No hay encargados registrados' : 'No hay más encargados para mostrarse';
+    }
+
+    console.log(
+      `Returning ${encargadosConImagenValidada.length} encargados, hasMore=${hasMore}`
+    );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, 'url solicitada:', req.originalUrl);
+    res.status(200).json(response(true, message, dataResponse));
   } catch (error) {
     console.error('Error al listar encargados:', error);
     res.status(500).json(response(false, 'Error interno del servidor'));
   }
 };
+
 
 const obtenerEncargadoPorId = async (req, res) => {
   const { id } = req.params;
@@ -314,6 +399,90 @@ const listarEncargadosPorEstado = async (req, res) => {
   }
 };
 
+const buscarEncargadoPorNombre = async (req, res) => {
+  const { nombre } = req.params;
+  try {
+    const encargados = await getEncargadosByNombre(nombre);
+    if (!encargados.length)
+      return res.status(404).json(response(false, "No se encontraron encargados con ese nombre."));
+
+    const encargadosConImagen = await Promise.all(
+      encargados.map(async (encargado) => {
+        if (encargado.imagen_perfil) {
+          try {
+            const filePath = path.join(__dirname, "../Uploads", encargado.imagen_perfil.replace(/^\/*[uU]ploads\//, ""));
+            await fs.access(filePath);
+          } catch {
+            encargado.imagen_perfil = null;
+          }
+        }
+        return encargado;
+      })
+    );
+
+    res.status(200).json(response(true, "Encargados encontrados por nombre", encargadosConImagen));
+  } catch (error) {
+    console.error("Error al buscar encargados por nombre:", error);
+    res.status(500).json(response(false, "Error interno del servidor"));
+  }
+};
+
+const buscarEncargadoPorResponsabilidad = async (req, res) => {
+  const { responsabilidad } = req.params;
+  try {
+    const encargados = await getEncargadosByResponsabilidad(responsabilidad);
+    if (!encargados.length)
+      return res.status(404).json(response(false, "No se encontraron encargados con esa responsabilidad."));
+
+    const encargadosConImagen = await Promise.all(
+      encargados.map(async (encargado) => {
+        if (encargado.imagen_perfil) {
+          try {
+            const filePath = path.join(__dirname, "../Uploads", encargado.imagen_perfil.replace(/^\/*[uU]ploads\//, ""));
+            await fs.access(filePath);
+          } catch {
+            encargado.imagen_perfil = null;
+          }
+        }
+        return encargado;
+      })
+    );
+
+    res.status(200).json(response(true, "Encargados encontrados por responsabilidad", encargadosConImagen));
+  } catch (error) {
+    console.error("Error al buscar encargados por responsabilidad:", error);
+    res.status(500).json(response(false, "Error interno del servidor"));
+  }
+};
+
+const buscarEncargadoPorCorreo = async (req, res) => {
+  const { correo } = req.params;
+  try {
+    const encargados = await getEncargadosByCorreo(correo);
+    if (!encargados.length)
+      return res.status(404).json(response(false, "No se encontraron encargados con ese correo."));
+
+    const encargadosConImagen = await Promise.all(
+      encargados.map(async (encargado) => {
+        if (encargado.imagen_perfil) {
+          try {
+            const filePath = path.join(__dirname, "../Uploads", encargado.imagen_perfil.replace(/^\/*[uU]ploads\//, ""));
+            await fs.access(filePath);
+          } catch {
+            encargado.imagen_perfil = null;
+          }
+        }
+        return encargado;
+      })
+    );
+
+    res.status(200).json(response(true, "Encargados encontrados por correo", encargadosConImagen));
+  } catch (error) {
+    console.error("Error al buscar encargados por correo:", error);
+    res.status(500).json(response(false, "Error interno del servidor"));
+  }
+};
+
 const crearEncargado = async (req, res) => {
   const { responsabilidad, fecha_inicio, hora_ingreso, hora_salida, estado, id_persona } = req.body;
 
@@ -397,6 +566,9 @@ const router = express.Router();
 router.post('/', verifyToken, checkRole(['ADMINISTRADOR']), crearEncargado);
 
 router.get('/datos-total', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), listarEncargados);
+router.get('/buscar-nombre/:nombre', verifyToken, checkRole(['ADMINISTRADOR']), buscarEncargadoPorNombre);
+router.get('/buscar-responsabilidad/:responsabilidad', verifyToken, checkRole(['ADMINISTRADOR']), buscarEncargadoPorResponsabilidad);
+router.get('/buscar-correo/:correo', verifyToken, checkRole(['ADMINISTRADOR']), buscarEncargadoPorCorreo);
 router.get('/id/:id', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), obtenerEncargadoPorId);
 router.get('/persona/:id_persona', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), obtenerEncargadoPorIdPersona);
 router.get('/:id/persona', verifyToken, checkRole(['ADMINISTRADOR', 'ENCARGADO']), obtenerPersonaPorEncargadoId);

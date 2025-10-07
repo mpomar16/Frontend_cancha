@@ -33,6 +33,11 @@ import DisciplinasList from './pages/DisciplinasList';
 import DisciplinaCreate from './pages/DisciplinaCreate';
 import DisciplinaEdit from './pages/DisciplinaEdit';
 
+//Encargado
+import EncargadosList from './pages/EncargadosList';
+import EncargadoDetalle from './components/EncargadoDetalle';
+import EncargadoCreate from './pages/EncargadoCreate';
+
 function App() {
   return (
     <BrowserRouter>
@@ -69,6 +74,11 @@ function App() {
         <Route path="/disciplinas" element={<DisciplinasList />} />
         <Route path="/disciplina/create" element={<DisciplinaCreate />} />
         <Route path="/disciplina/edit/:id" element={<DisciplinaEdit />} />
+
+        {/* Encargado */}
+        <Route path="/encargados" element={<EncargadosList />} />
+        <Route path="/encargado/:id" element={<EncargadoDetalle />} />
+        <Route path="/encargado/create" element={<EncargadoCreate />} />
 
       </Routes>
     </BrowserRouter>

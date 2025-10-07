@@ -174,8 +174,6 @@ async function loginPersona(correo, contrasena) {
   };
 }
 
-
-
 async function getSexoEnumValues() {
   try {
     const query = `
@@ -191,6 +189,55 @@ async function getSexoEnumValues() {
     throw new Error('Error al obtener valores de sexo_enum: ' + error.message);
   }
 }
+
+// --- Modelo: personas elegibles para Encargado (sin rol ENCARGADO ni ADMINISTRADOR)
+async function getEligiblePersonasForEncargado(q = "", limit = 12, offset = 0) {
+  try {
+    const params = [];
+    let idx = 1;
+
+    // Filtros: no debe existir en ENCARGADO, ni en ADMINISTRADOR
+    const whereParts = [
+      `NOT EXISTS (SELECT 1 FROM ENCARGADO e WHERE e.id_encargado = p.id_persona)`,
+      `NOT EXISTS (SELECT 1 FROM ADMINISTRADOR a WHERE a.id_administrador = p.id_persona)`,
+    ];
+
+    // Búsqueda opcional por nombre, apellido o correo
+    if (q && q.trim()) {
+      whereParts.push(`(
+        p.nombre ILIKE $${idx} OR
+        p.apellido ILIKE $${idx} OR
+        p.correo ILIKE $${idx}
+      )`);
+      params.push(`%${q.trim()}%`);
+      idx++;
+    }
+
+    const whereClause = whereParts.length ? `WHERE ${whereParts.join(" AND ")}` : "";
+
+    const sql = `
+      SELECT 
+        p.id_persona, p.nombre, p.usuario, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
+      FROM PERSONA p
+      ${whereClause}
+      ORDER BY p.nombre, p.apellido
+      LIMIT $${idx} + 1 OFFSET $${idx + 1}
+    `;
+
+    params.push(limit, offset);
+
+    const result = await pool.query(sql, params);
+    const rows = result.rows || [];
+    const hasMore = rows.length > limit;
+    const items = hasMore ? rows.slice(0, limit) : rows;
+
+    return { items, hasMore };
+  } catch (error) {
+    throw new Error("Error al listar personas elegibles: " + error.message);
+  }
+}
+
+
 
 // ----------------------
 // ----------------------
@@ -608,6 +655,57 @@ const actualizarMiPerfil = async (req, res) => {
   }
 }
 
+const listarElegiblesEncargado = async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 12;
+    const offset = parseInt(req.query.offset) || 0;
+    const q = (req.query.q || "").trim();
+
+    const { items, hasMore } = await getEligiblePersonasForEncargado(q, limit, offset);
+
+    // Validar imagen como en el resto de endpoints
+    const personasConImagenValidada = await Promise.all(
+      items.map(async (persona) => {
+        if (persona.imagen_perfil) {
+          try {
+            const filePath = path.join(
+              __dirname,
+              "../Uploads",
+              persona.imagen_perfil.replace(/^\/*[uU]ploads\//, "")
+            );
+            await fs.access(filePath);
+            return persona;
+          } catch {
+            return { ...persona, imagen_perfil: null };
+          }
+        }
+        return persona;
+      })
+    );
+
+    const dataResponse = {
+      personas: personasConImagenValidada,
+      limit,
+      offset,
+      hasMore,
+    };
+
+    let message = "Personas elegibles obtenidas";
+    if (personasConImagenValidada.length === 0) {
+      message = offset === 0 ? "No hay personas elegibles" : "No hay más personas elegibles";
+    }
+
+    console.log(
+      `Returning ${personasConImagenValidada.length} personas elegibles, hasMore=${hasMore}`
+    );
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
+    res.status(200).json(response(true, message, dataResponse));
+  } catch (error) {
+    console.error("Error al listar personas elegibles:", error.message);
+    res.status(500).json(response(false, "Error interno del servidor"));
+  }
+};
+
 // --- Rutas ---
 const router = express.Router();
 
@@ -628,4 +726,5 @@ router.get('/correo/:correo', verifyToken, checkRole(['ADMINISTRADOR']), obtener
 router.patch('/:id', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), handleUpload('persona', 'imagen_perfil'), actualizarPersona);
 router.delete('/:id', verifyToken, checkRole(['ADMINISTRADOR']), eliminarPersona);
 
+router.get( "/elegibles-encargado", verifyToken, checkRole(["ADMINISTRADOR"]), listarElegiblesEncargado);
 module.exports = router;
