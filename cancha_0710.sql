@@ -2,12 +2,12 @@
 -- PostgreSQL database dump
 --
 
-\restrict csWHjFLmhQYTjLSxcfolS4BcaNUwczDYfSWhIggAYA6SPwebbKDANdOzgRVbFp0
+\restrict iJNIUGxPpx4acMhfsAQJmXhaOw1LMSaxiXjyhYURv38WGQKWJT0KmfdcHiZzB3u
 
 -- Dumped from database version 16.10
 -- Dumped by pg_dump version 16.10
 
--- Started on 2025-10-05 17:36:39
+-- Started on 2025-10-07 03:06:09
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -217,7 +217,7 @@ CREATE SEQUENCE public.cancha_id_cancha_seq
 ALTER SEQUENCE public.cancha_id_cancha_seq OWNER TO postgres;
 
 --
--- TOC entry 5095 (class 0 OID 0)
+-- TOC entry 5097 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: cancha_id_cancha_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -276,7 +276,7 @@ CREATE SEQUENCE public.comentario_id_comentario_seq
 ALTER SEQUENCE public.comentario_id_comentario_seq OWNER TO postgres;
 
 --
--- TOC entry 5096 (class 0 OID 0)
+-- TOC entry 5098 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: comentario_id_comentario_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -343,7 +343,7 @@ CREATE SEQUENCE public.disciplina_id_disciplina_seq
 ALTER SEQUENCE public.disciplina_id_disciplina_seq OWNER TO postgres;
 
 --
--- TOC entry 5097 (class 0 OID 0)
+-- TOC entry 5099 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: disciplina_id_disciplina_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -407,7 +407,7 @@ CREATE SEQUENCE public.empresa_id_empresa_seq
 ALTER SEQUENCE public.empresa_id_empresa_seq OWNER TO postgres;
 
 --
--- TOC entry 5098 (class 0 OID 0)
+-- TOC entry 5100 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: empresa_id_empresa_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -474,7 +474,7 @@ CREATE SEQUENCE public.espacio_deportivo_id_espacio_seq
 ALTER SEQUENCE public.espacio_deportivo_id_espacio_seq OWNER TO postgres;
 
 --
--- TOC entry 5099 (class 0 OID 0)
+-- TOC entry 5101 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: espacio_deportivo_id_espacio_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -516,7 +516,7 @@ CREATE SEQUENCE public.pago_id_pago_seq
 ALTER SEQUENCE public.pago_id_pago_seq OWNER TO postgres;
 
 --
--- TOC entry 5100 (class 0 OID 0)
+-- TOC entry 5102 (class 0 OID 0)
 -- Dependencies: 232
 -- Name: pago_id_pago_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -577,7 +577,7 @@ CREATE SEQUENCE public.persona_id_persona_seq
 ALTER SEQUENCE public.persona_id_persona_seq OWNER TO postgres;
 
 --
--- TOC entry 5101 (class 0 OID 0)
+-- TOC entry 5103 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: persona_id_persona_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -618,7 +618,7 @@ CREATE SEQUENCE public.ponderacion_id_ponderacion_seq
 ALTER SEQUENCE public.ponderacion_id_ponderacion_seq OWNER TO postgres;
 
 --
--- TOC entry 5102 (class 0 OID 0)
+-- TOC entry 5104 (class 0 OID 0)
 -- Dependencies: 237
 -- Name: ponderacion_id_ponderacion_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -662,7 +662,7 @@ CREATE SEQUENCE public.qr_reserva_id_qr_seq
 ALTER SEQUENCE public.qr_reserva_id_qr_seq OWNER TO postgres;
 
 --
--- TOC entry 5103 (class 0 OID 0)
+-- TOC entry 5105 (class 0 OID 0)
 -- Dependencies: 239
 -- Name: qr_reserva_id_qr_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -703,7 +703,7 @@ CREATE SEQUENCE public.reporte_incidencia_id_reporte_seq
 ALTER SEQUENCE public.reporte_incidencia_id_reporte_seq OWNER TO postgres;
 
 --
--- TOC entry 5104 (class 0 OID 0)
+-- TOC entry 5106 (class 0 OID 0)
 -- Dependencies: 241
 -- Name: reporte_incidencia_id_reporte_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -746,7 +746,7 @@ CREATE SEQUENCE public.resena_id_resena_seq
 ALTER SEQUENCE public.resena_id_resena_seq OWNER TO postgres;
 
 --
--- TOC entry 5105 (class 0 OID 0)
+-- TOC entry 5107 (class 0 OID 0)
 -- Dependencies: 243
 -- Name: resena_id_resena_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -808,7 +808,7 @@ CREATE SEQUENCE public.reserva_horario_id_horario_seq
 ALTER SEQUENCE public.reserva_horario_id_horario_seq OWNER TO postgres;
 
 --
--- TOC entry 5106 (class 0 OID 0)
+-- TOC entry 5108 (class 0 OID 0)
 -- Dependencies: 246
 -- Name: reserva_horario_id_horario_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -833,7 +833,7 @@ CREATE SEQUENCE public.reserva_id_reserva_seq
 ALTER SEQUENCE public.reserva_id_reserva_seq OWNER TO postgres;
 
 --
--- TOC entry 5107 (class 0 OID 0)
+-- TOC entry 5109 (class 0 OID 0)
 -- Dependencies: 247
 -- Name: reserva_id_reserva_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
@@ -960,7 +960,7 @@ ALTER TABLE ONLY public.reserva_horario ALTER COLUMN id_horario SET DEFAULT next
 
 
 --
--- TOC entry 5056 (class 0 OID 58243)
+-- TOC entry 5058 (class 0 OID 58243)
 -- Dependencies: 215
 -- Data for Name: admin_esp_dep; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -975,7 +975,7 @@ COPY public.admin_esp_dep (id_admin_esp_dep, fecha_ingreso, direccion, estado) F
 
 
 --
--- TOC entry 5057 (class 0 OID 58247)
+-- TOC entry 5059 (class 0 OID 58247)
 -- Dependencies: 216
 -- Data for Name: administrador; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -990,7 +990,7 @@ COPY public.administrador (id_administrador, direccion, estado, ultimo_login, fe
 
 
 --
--- TOC entry 5058 (class 0 OID 58254)
+-- TOC entry 5060 (class 0 OID 58254)
 -- Dependencies: 217
 -- Data for Name: cancha; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -999,16 +999,15 @@ COPY public.cancha (id_cancha, nombre, capacidad, estado, ubicacion, monto_por_h
 1	la cancha del pueblo	99	disponible	Segundo Piso	200.00	/uploads/cancha/la_cancha_del_pueblo-2025-10-01-02_36_08-703.jpeg	1
 3	Cancha Central	20	disponible	Av. Principal 123	50.00	/uploads/cancha/cancha_principal-2025-09-29-11_47_34-405.jpeg	2
 4	Cancha Norte	15	ocupada	Calle Norte 456	40.00	/uploads/cancha/cancha_principal-2025-09-29-11_47_46-134.jpeg	1
-5	Cancha Sur	25	disponible	Calle Sur 789	60.00	/uploads/cancha/cancha_sur-2025-10-01-06_52_12-377.jpeg	1
 2	Cancha Principal 22	20	mantenimiento	Calle Falsa 123	100.00	\N	1
-20	cancha x	20	\N	Calle Falsa 123	100.00	\N	1
+5	Cancha Sur	25	disponible	Calle Sur 789	60.00	/uploads/cancha/cancha_sur-2025-10-01-06_52_12-377.jpeg	1
 6	Cancha Principal 1	20	disponible	Calle Falsa 123	100.00	/uploads/cancha/cancha_principal-2025-09-29-11_48_10-510.jpeg	1
-21	cancha x	20	disponible	Calle Falsa 123	100.00	\N	1
+21	cancha xy	20	disponible	Calle Falsa 123	100.00	\N	1
 \.
 
 
 --
--- TOC entry 5060 (class 0 OID 58260)
+-- TOC entry 5062 (class 0 OID 58260)
 -- Dependencies: 219
 -- Data for Name: cliente; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1020,12 +1019,11 @@ COPY public.cliente (id_cliente, fecha_registro, fecha_nac, carnet_identidad, ci
 14	2025-09-28	2000-01-15	34567890	LP
 15	2025-09-28	1995-07-30	45678901	OR
 6	2025-10-01	2004-02-16	10921097	LP
-38	2025-10-05	\N	\N	\N
 \.
 
 
 --
--- TOC entry 5061 (class 0 OID 58264)
+-- TOC entry 5063 (class 0 OID 58264)
 -- Dependencies: 220
 -- Data for Name: comentario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1035,7 +1033,7 @@ COPY public.comentario (id_comentario, contenido, fecha_comentario, hora_comenta
 
 
 --
--- TOC entry 5063 (class 0 OID 58271)
+-- TOC entry 5065 (class 0 OID 58271)
 -- Dependencies: 222
 -- Data for Name: control; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1050,7 +1048,7 @@ COPY public.control (id_control, fecha_asignacion, estado) FROM stdin;
 
 
 --
--- TOC entry 5064 (class 0 OID 58275)
+-- TOC entry 5066 (class 0 OID 58275)
 -- Dependencies: 223
 -- Data for Name: deportista; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1065,7 +1063,7 @@ COPY public.deportista (id_deportista, nivel, disciplina_principal) FROM stdin;
 
 
 --
--- TOC entry 5065 (class 0 OID 58278)
+-- TOC entry 5067 (class 0 OID 58278)
 -- Dependencies: 224
 -- Data for Name: disciplina; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1078,7 +1076,7 @@ COPY public.disciplina (id_disciplina, nombre, descripcion) FROM stdin;
 
 
 --
--- TOC entry 5067 (class 0 OID 58284)
+-- TOC entry 5069 (class 0 OID 58284)
 -- Dependencies: 226
 -- Data for Name: empresa; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1089,7 +1087,7 @@ COPY public.empresa (id_empresa, fecha_registrado, logo_imagen, nombre_sistema, 
 
 
 --
--- TOC entry 5069 (class 0 OID 58291)
+-- TOC entry 5071 (class 0 OID 58291)
 -- Dependencies: 228
 -- Data for Name: encargado; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1109,7 +1107,7 @@ COPY public.encargado (id_encargado, responsabilidad, fecha_inicio, hora_ingreso
 
 
 --
--- TOC entry 5070 (class 0 OID 58295)
+-- TOC entry 5072 (class 0 OID 58295)
 -- Dependencies: 229
 -- Data for Name: espacio_deportivo; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1130,12 +1128,12 @@ COPY public.espacio_deportivo (id_espacio, nombre, direccion, descripcion, latit
 8	Coliseo 12 de Octubre	12 de Octubre, El Alto	Coliseo de barrio con actividad comunitaria intensa.	-16.491000	-68.170000	09:00:00	18:00:00	6	/Uploads/espacio/coliseo_12_de_octubre-2025-10-01-08_13_36-566.jpeg	/Uploads/espacio/coliseo_12_de_octubre-2025-10-01-08_13_36-948.jpeg	/Uploads/espacio/coliseo_12_de_octubre-2025-10-01-08_13_36-698.jpeg	/Uploads/espacio/coliseo_12_de_octubre-2025-10-01-08_13_36-592.jpeg	/Uploads/espacio/coliseo_12_de_octubre-2025-10-01-08_13_36-545.jpg
 15	Complejo Deportivo Municipal de Bajo San Antonio	Bajo San Antonio, La Paz	Complejo deportivo con canchas sintéticas y gimnasio.	-16.532000	-68.133000	09:00:00	18:00:00	10	/Uploads/espacio/complejo_deportivo_municipal_de_bajo_san_antonio-2025-10-01-09_17_10-515.jpeg	/Uploads/espacio/complejo_deportivo_municipal_de_bajo_san_antonio-2025-10-01-09_17_10-840.jpeg	/Uploads/espacio/complejo_deportivo_municipal_de_bajo_san_antonio-2025-10-01-09_17_10-109.jpeg	/Uploads/espacio/complejo_deportivo_municipal_de_bajo_san_antonio-2025-10-01-09_17_10-151.jpg	/Uploads/espacio/complejo_deportivo_municipal_de_bajo_san_antonio-2025-10-01-09_17_10-653.jpg
 16	Estadio Hernando Siles 3	Av. Saavedra, Miraflores, La Paz	\N	-16.500000	-68.150000	\N	\N	10	\N	\N	\N	\N	\N
-1	Estadio Hernando Siles 24	Av. Saavedra, Miraflores, La Paz	Principal estadio paceño, sede de la selección boliviana.	-16.500000	-68.150000	08:00:00	22:00:00	6	/Uploads/espacio/estadio_hernando_siles-2025-10-01-08_00_14-343.jpeg	/Uploads/espacio/estadio_hernando_siles-2025-10-01-08_00_14-535.jpeg	/Uploads/espacio/estadio_hernando_siles-2025-10-01-08_00_14-856.jpeg	/Uploads/espacio/estadio_hernando_siles-2025-10-01-08_00_14-202.jpeg	/Uploads/espacio/estadio_hernando_siles-2025-10-01-08_00_14-267.jpeg
+1	Estadio Hernando Siles 22	Zona Cementerio, Calle Esperanza #1233	Principal estadio paceño, sede de la selección boliviana.	-16.496483	-68.151125	08:00:00	22:00:00	6	/Uploads/espacio/estadio_hernando_siles_22-2025-10-07-21_44_41-855.jpg	/Uploads/espacio/estadio_hernando_siles-2025-10-01-08_00_14-535.jpeg	/Uploads/espacio/estadio_hernando_siles-2025-10-01-08_00_14-856.jpeg	/Uploads/espacio/estadio_hernando_siles-2025-10-01-08_00_14-202.jpeg	/Uploads/espacio/estadio_hernando_siles-2025-10-01-08_00_14-267.jpeg
 \.
 
 
 --
--- TOC entry 5072 (class 0 OID 58301)
+-- TOC entry 5074 (class 0 OID 58301)
 -- Dependencies: 231
 -- Data for Name: pago; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1147,7 +1145,7 @@ COPY public.pago (id_pago, monto, metodo_pago, fecha_pago, estado_pago, id_reser
 
 
 --
--- TOC entry 5074 (class 0 OID 58305)
+-- TOC entry 5076 (class 0 OID 58305)
 -- Dependencies: 233
 -- Data for Name: participa_en; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1157,7 +1155,7 @@ COPY public.participa_en (id_deportista, id_reserva, fecha_reserva) FROM stdin;
 
 
 --
--- TOC entry 5075 (class 0 OID 58308)
+-- TOC entry 5077 (class 0 OID 58308)
 -- Dependencies: 234
 -- Data for Name: persona; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1195,12 +1193,11 @@ COPY public.persona (id_persona, nombre, apellido, contrasena, telefono, correo,
 6	lucía	Flores	$2b$10$7RcpCNu3Zuy30F8C6vEHrOfo7xOLjkgi/qsm6zHEna7eJTjMfjekG	\N	lucia@example.com	femenino	/Uploads/persona/1758976924369-313717056-woman-profile-mascot-illustration-female-avatar-character-icon-cartoon-girl-head-face-business-user-logo-free-vector.jpg	-16.513056	-68.192222	lucia6
 7	pedro	\N	$2b$10$7RcpCNu3Zuy30F8C6vEHrOfo7xOLjkgi/qsm6zHEna7eJTjMfjekG	\N	pedro@example.com	\N	/Uploads/persona/1758926093298-912862954-ancient.jpg	-16.500000	-68.150000	pedro7
 1	Carlos Renan	VillaReal	$2b$10$vG2/OQvEeHeK1NfFLAeGbOSlAhGOgGqWu4lU6CUDeymapuGQNl0gG	63130742	carlos@example.com	masculino	/Uploads/persona/Carlos_Renan-2025-10-05_04-31-53.png	-16.513056	-68.192222	carlos1
-38	max	\N	$2b$10$WsYBCk8yWz1NDtMuZEJhzOAROHQOWKDxF.D5ernK3/309fefiOCLO	\N	maxi@ejemplo.com	\N	\N	-16.497698	-68.168819	max
 \.
 
 
 --
--- TOC entry 5077 (class 0 OID 58314)
+-- TOC entry 5079 (class 0 OID 58314)
 -- Dependencies: 236
 -- Data for Name: ponderacion; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1210,7 +1207,7 @@ COPY public.ponderacion (id_ponderacion, calificacion, id_cliente, id_cancha) FR
 
 
 --
--- TOC entry 5079 (class 0 OID 58319)
+-- TOC entry 5081 (class 0 OID 58319)
 -- Dependencies: 238
 -- Data for Name: qr_reserva; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1221,7 +1218,7 @@ COPY public.qr_reserva (id_qr, fecha_generado, fecha_expira, qr_url_imagen, codi
 
 
 --
--- TOC entry 5081 (class 0 OID 58325)
+-- TOC entry 5083 (class 0 OID 58325)
 -- Dependencies: 240
 -- Data for Name: reporte_incidencia; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1232,7 +1229,7 @@ COPY public.reporte_incidencia (id_reporte, detalle, sugerencia, id_encargado, i
 
 
 --
--- TOC entry 5083 (class 0 OID 58331)
+-- TOC entry 5085 (class 0 OID 58331)
 -- Dependencies: 242
 -- Data for Name: resena; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1243,7 +1240,7 @@ COPY public.resena (id_resena, id_reserva, estrellas, comentario, fecha_creacion
 
 
 --
--- TOC entry 5085 (class 0 OID 58340)
+-- TOC entry 5087 (class 0 OID 58340)
 -- Dependencies: 244
 -- Data for Name: reserva; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1257,7 +1254,7 @@ COPY public.reserva (id_reserva, fecha_reserva, cupo, monto_total, saldo_pendien
 
 
 --
--- TOC entry 5086 (class 0 OID 58343)
+-- TOC entry 5088 (class 0 OID 58343)
 -- Dependencies: 245
 -- Data for Name: reserva_horario; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1267,7 +1264,7 @@ COPY public.reserva_horario (id_horario, id_reserva, fecha, hora_inicio, hora_fi
 
 
 --
--- TOC entry 5089 (class 0 OID 58348)
+-- TOC entry 5091 (class 0 OID 58348)
 -- Dependencies: 248
 -- Data for Name: se_practica; Type: TABLE DATA; Schema: public; Owner: postgres
 --
@@ -1279,24 +1276,25 @@ COPY public.se_practica (id_cancha, id_disciplina, frecuencia_practica) FROM std
 4	1	Semanal
 4	2	Mensual
 4	3	Diaria
-5	1	Mensual
 5	2	Diaria
-6	2	Semanal
-6	3	Diaria
+5	1	\N
+6	3	\N
+21	1	\N
+21	3	\N
 \.
 
 
 --
--- TOC entry 5108 (class 0 OID 0)
+-- TOC entry 5110 (class 0 OID 0)
 -- Dependencies: 218
 -- Name: cancha_id_cancha_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.cancha_id_cancha_seq', 22, true);
+SELECT pg_catalog.setval('public.cancha_id_cancha_seq', 23, true);
 
 
 --
--- TOC entry 5109 (class 0 OID 0)
+-- TOC entry 5111 (class 0 OID 0)
 -- Dependencies: 221
 -- Name: comentario_id_comentario_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1305,7 +1303,7 @@ SELECT pg_catalog.setval('public.comentario_id_comentario_seq', 1, true);
 
 
 --
--- TOC entry 5110 (class 0 OID 0)
+-- TOC entry 5112 (class 0 OID 0)
 -- Dependencies: 225
 -- Name: disciplina_id_disciplina_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1314,7 +1312,7 @@ SELECT pg_catalog.setval('public.disciplina_id_disciplina_seq', 3, true);
 
 
 --
--- TOC entry 5111 (class 0 OID 0)
+-- TOC entry 5113 (class 0 OID 0)
 -- Dependencies: 227
 -- Name: empresa_id_empresa_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1323,7 +1321,7 @@ SELECT pg_catalog.setval('public.empresa_id_empresa_seq', 2, true);
 
 
 --
--- TOC entry 5112 (class 0 OID 0)
+-- TOC entry 5114 (class 0 OID 0)
 -- Dependencies: 230
 -- Name: espacio_deportivo_id_espacio_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1332,7 +1330,7 @@ SELECT pg_catalog.setval('public.espacio_deportivo_id_espacio_seq', 16, true);
 
 
 --
--- TOC entry 5113 (class 0 OID 0)
+-- TOC entry 5115 (class 0 OID 0)
 -- Dependencies: 232
 -- Name: pago_id_pago_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1341,7 +1339,7 @@ SELECT pg_catalog.setval('public.pago_id_pago_seq', 1, false);
 
 
 --
--- TOC entry 5114 (class 0 OID 0)
+-- TOC entry 5116 (class 0 OID 0)
 -- Dependencies: 235
 -- Name: persona_id_persona_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1350,7 +1348,7 @@ SELECT pg_catalog.setval('public.persona_id_persona_seq', 38, true);
 
 
 --
--- TOC entry 5115 (class 0 OID 0)
+-- TOC entry 5117 (class 0 OID 0)
 -- Dependencies: 237
 -- Name: ponderacion_id_ponderacion_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1359,7 +1357,7 @@ SELECT pg_catalog.setval('public.ponderacion_id_ponderacion_seq', 1, true);
 
 
 --
--- TOC entry 5116 (class 0 OID 0)
+-- TOC entry 5118 (class 0 OID 0)
 -- Dependencies: 239
 -- Name: qr_reserva_id_qr_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1368,7 +1366,7 @@ SELECT pg_catalog.setval('public.qr_reserva_id_qr_seq', 1, true);
 
 
 --
--- TOC entry 5117 (class 0 OID 0)
+-- TOC entry 5119 (class 0 OID 0)
 -- Dependencies: 241
 -- Name: reporte_incidencia_id_reporte_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1377,7 +1375,7 @@ SELECT pg_catalog.setval('public.reporte_incidencia_id_reporte_seq', 1, true);
 
 
 --
--- TOC entry 5118 (class 0 OID 0)
+-- TOC entry 5120 (class 0 OID 0)
 -- Dependencies: 243
 -- Name: resena_id_resena_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1386,7 +1384,7 @@ SELECT pg_catalog.setval('public.resena_id_resena_seq', 1, true);
 
 
 --
--- TOC entry 5119 (class 0 OID 0)
+-- TOC entry 5121 (class 0 OID 0)
 -- Dependencies: 246
 -- Name: reserva_horario_id_horario_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1395,7 +1393,7 @@ SELECT pg_catalog.setval('public.reserva_horario_id_horario_seq', 1, false);
 
 
 --
--- TOC entry 5120 (class 0 OID 0)
+-- TOC entry 5122 (class 0 OID 0)
 -- Dependencies: 247
 -- Name: reserva_id_reserva_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
@@ -1620,6 +1618,15 @@ ALTER TABLE ONLY public.reserva
 
 
 --
+-- TOC entry 4887 (class 2606 OID 66263)
+-- Name: se_practica unique_cancha_disciplina; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.se_practica
+    ADD CONSTRAINT unique_cancha_disciplina UNIQUE (id_cancha, id_disciplina);
+
+
+--
 -- TOC entry 4873 (class 2606 OID 58413)
 -- Name: qr_reserva unq_qr_reserva; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
@@ -1647,7 +1654,7 @@ ALTER TABLE ONLY public.ponderacion
 
 
 --
--- TOC entry 4894 (class 2606 OID 58418)
+-- TOC entry 4896 (class 2606 OID 58418)
 -- Name: empresa fk_admin; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1656,7 +1663,7 @@ ALTER TABLE ONLY public.empresa
 
 
 --
--- TOC entry 4886 (class 2606 OID 58423)
+-- TOC entry 4888 (class 2606 OID 58423)
 -- Name: admin_esp_dep fk_admin_esp_dep_persona; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1665,7 +1672,7 @@ ALTER TABLE ONLY public.admin_esp_dep
 
 
 --
--- TOC entry 4887 (class 2606 OID 58428)
+-- TOC entry 4889 (class 2606 OID 58428)
 -- Name: administrador fk_administrador_persona; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1674,7 +1681,7 @@ ALTER TABLE ONLY public.administrador
 
 
 --
--- TOC entry 4900 (class 2606 OID 58433)
+-- TOC entry 4902 (class 2606 OID 58433)
 -- Name: ponderacion fk_cancha; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1683,7 +1690,7 @@ ALTER TABLE ONLY public.ponderacion
 
 
 --
--- TOC entry 4888 (class 2606 OID 58438)
+-- TOC entry 4890 (class 2606 OID 58438)
 -- Name: cancha fk_cancha_espacio; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1692,7 +1699,7 @@ ALTER TABLE ONLY public.cancha
 
 
 --
--- TOC entry 4901 (class 2606 OID 58443)
+-- TOC entry 4903 (class 2606 OID 58443)
 -- Name: ponderacion fk_cliente; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1701,7 +1708,7 @@ ALTER TABLE ONLY public.ponderacion
 
 
 --
--- TOC entry 4889 (class 2606 OID 58448)
+-- TOC entry 4891 (class 2606 OID 58448)
 -- Name: cliente fk_cliente_persona; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1710,7 +1717,7 @@ ALTER TABLE ONLY public.cliente
 
 
 --
--- TOC entry 4890 (class 2606 OID 58453)
+-- TOC entry 4892 (class 2606 OID 58453)
 -- Name: comentario fk_comentario_cancha; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1719,7 +1726,7 @@ ALTER TABLE ONLY public.comentario
 
 
 --
--- TOC entry 4891 (class 2606 OID 58458)
+-- TOC entry 4893 (class 2606 OID 58458)
 -- Name: comentario fk_comentario_cliente; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1728,7 +1735,7 @@ ALTER TABLE ONLY public.comentario
 
 
 --
--- TOC entry 4892 (class 2606 OID 58463)
+-- TOC entry 4894 (class 2606 OID 58463)
 -- Name: control fk_control_persona; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1737,7 +1744,7 @@ ALTER TABLE ONLY public.control
 
 
 --
--- TOC entry 4893 (class 2606 OID 58468)
+-- TOC entry 4895 (class 2606 OID 58468)
 -- Name: deportista fk_deportista_persona; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1746,7 +1753,7 @@ ALTER TABLE ONLY public.deportista
 
 
 --
--- TOC entry 4895 (class 2606 OID 58473)
+-- TOC entry 4897 (class 2606 OID 58473)
 -- Name: encargado fk_encargado_persona; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1755,7 +1762,7 @@ ALTER TABLE ONLY public.encargado
 
 
 --
--- TOC entry 4896 (class 2606 OID 58478)
+-- TOC entry 4898 (class 2606 OID 58478)
 -- Name: espacio_deportivo fk_espacio_admin; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1764,7 +1771,7 @@ ALTER TABLE ONLY public.espacio_deportivo
 
 
 --
--- TOC entry 4897 (class 2606 OID 58483)
+-- TOC entry 4899 (class 2606 OID 58483)
 -- Name: pago fk_pago_reserva; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1773,7 +1780,7 @@ ALTER TABLE ONLY public.pago
 
 
 --
--- TOC entry 4898 (class 2606 OID 58488)
+-- TOC entry 4900 (class 2606 OID 58488)
 -- Name: participa_en fk_participa_deportista; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1782,7 +1789,7 @@ ALTER TABLE ONLY public.participa_en
 
 
 --
--- TOC entry 4899 (class 2606 OID 58493)
+-- TOC entry 4901 (class 2606 OID 58493)
 -- Name: participa_en fk_participa_reserva; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1791,7 +1798,7 @@ ALTER TABLE ONLY public.participa_en
 
 
 --
--- TOC entry 4902 (class 2606 OID 58498)
+-- TOC entry 4904 (class 2606 OID 58498)
 -- Name: qr_reserva fk_qr_reserva_control; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1800,7 +1807,7 @@ ALTER TABLE ONLY public.qr_reserva
 
 
 --
--- TOC entry 4903 (class 2606 OID 58503)
+-- TOC entry 4905 (class 2606 OID 58503)
 -- Name: qr_reserva fk_qr_reserva_reserva; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1809,7 +1816,7 @@ ALTER TABLE ONLY public.qr_reserva
 
 
 --
--- TOC entry 4904 (class 2606 OID 58508)
+-- TOC entry 4906 (class 2606 OID 58508)
 -- Name: reporte_incidencia fk_reporte_encargado; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1818,7 +1825,7 @@ ALTER TABLE ONLY public.reporte_incidencia
 
 
 --
--- TOC entry 4905 (class 2606 OID 58513)
+-- TOC entry 4907 (class 2606 OID 58513)
 -- Name: reporte_incidencia fk_reporte_reserva; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1827,7 +1834,7 @@ ALTER TABLE ONLY public.reporte_incidencia
 
 
 --
--- TOC entry 4906 (class 2606 OID 58518)
+-- TOC entry 4908 (class 2606 OID 58518)
 -- Name: resena fk_resena_reserva; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1836,7 +1843,7 @@ ALTER TABLE ONLY public.resena
 
 
 --
--- TOC entry 4907 (class 2606 OID 58523)
+-- TOC entry 4909 (class 2606 OID 58523)
 -- Name: reserva fk_reserva_cancha; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1845,7 +1852,7 @@ ALTER TABLE ONLY public.reserva
 
 
 --
--- TOC entry 4908 (class 2606 OID 58528)
+-- TOC entry 4910 (class 2606 OID 58528)
 -- Name: reserva fk_reserva_cliente; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1854,7 +1861,7 @@ ALTER TABLE ONLY public.reserva
 
 
 --
--- TOC entry 4909 (class 2606 OID 58533)
+-- TOC entry 4911 (class 2606 OID 58533)
 -- Name: reserva fk_reserva_disciplina; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1863,7 +1870,7 @@ ALTER TABLE ONLY public.reserva
 
 
 --
--- TOC entry 4910 (class 2606 OID 58538)
+-- TOC entry 4912 (class 2606 OID 58538)
 -- Name: reserva_horario fk_reserva_horario; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1872,7 +1879,7 @@ ALTER TABLE ONLY public.reserva_horario
 
 
 --
--- TOC entry 4911 (class 2606 OID 58543)
+-- TOC entry 4913 (class 2606 OID 58543)
 -- Name: se_practica fk_se_practica_cancha; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1881,7 +1888,7 @@ ALTER TABLE ONLY public.se_practica
 
 
 --
--- TOC entry 4912 (class 2606 OID 58548)
+-- TOC entry 4914 (class 2606 OID 58548)
 -- Name: se_practica fk_se_practica_disciplina; Type: FK CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -1889,11 +1896,11 @@ ALTER TABLE ONLY public.se_practica
     ADD CONSTRAINT fk_se_practica_disciplina FOREIGN KEY (id_disciplina) REFERENCES public.disciplina(id_disciplina) ON DELETE CASCADE;
 
 
--- Completed on 2025-10-05 17:36:39
+-- Completed on 2025-10-07 03:06:10
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict csWHjFLmhQYTjLSxcfolS4BcaNUwczDYfSWhIggAYA6SPwebbKDANdOzgRVbFp0
+\unrestrict iJNIUGxPpx4acMhfsAQJmXhaOw1LMSaxiXjyhYURv38WGQKWJT0KmfdcHiZzB3u
 
