@@ -303,7 +303,6 @@ function PersonaFormEdit({ initialData = {}, onSubmit, token }) {
                           {...inputProps}
                           onChange={(e) => {
                             inputProps.onChange(e);   // hook
-                            // (opcional) mantiene compatibilidad con tu antiguo estado:
                             setImagenPerfil(e.target.files?.[0] || null);
                           }}
                         />

@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import PersonaRegistro from "../components/PersonaRegistroCasual";
+import PersonaFormCreate from "../components/PersonaFormCreate";
 import { crearPersonaCasual } from "../services/personaService";
 
 function PersonaCreate() {
@@ -26,7 +26,7 @@ function PersonaCreate() {
   return (
     <Sidebar>
       <main className="flex-1 p-8">
-        <PersonaRegistro onSubmit={handleSubmit} isSignUp />
+        <PersonaFormCreate onSubmit={handleSubmit} isSignUp />
         {enviando && (
           <p className="mt-3 text-sm text-gray-500">Enviando…</p>
         )}

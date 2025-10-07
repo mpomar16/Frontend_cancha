@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import EspacioForm from '../components/EspacioForm';
+import EspacioFormEdit from '../components/EspacioFormEdit';
 import { crearEspacio } from '../services/espacioService';
 
 function EspacioCreate() {
@@ -14,7 +14,7 @@ function EspacioCreate() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Crear Nuevo Espacio Deportivo</h1>
-      <EspacioForm onSubmit={handleSubmit} token={token} />
+      <EspacioFormEdit onSubmit={handleSubmit} token={token} />
     </div>
   );
 }

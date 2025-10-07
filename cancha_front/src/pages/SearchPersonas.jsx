@@ -1,7 +1,7 @@
 // pages/SearchPersonas.jsx
 import { useState, useMemo } from "react";
 import SearchBar from "../components/SearchBar";
-import PersonaFila from "../components/PersonaFila"; // <- usar la fila
+import PersonaFila from "../components/PersonaFila";
 import { Mail, User } from "lucide-react";
 import {
   buscarPersonaPorNombre,

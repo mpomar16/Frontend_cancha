@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { useState, useEffect } from 'react';
 import { listarEspaciosCercanos } from '../services/espacioService';
-import EspacioCard from '../components/EspacioCard';
+import EspacioCard from '../components/EspacioFila';
 import EmpresaNavbar from '../components/EmpresaNavbar';
 
 function EspaciosCercanos() {

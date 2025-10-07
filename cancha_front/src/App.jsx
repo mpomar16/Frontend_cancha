@@ -8,7 +8,7 @@ import EmpresaEdit from './pages/EmpresaEdit';
 
 // Espacios Deportivos
 import EspaciosList from './pages/EspaciosList';
-import EspacioDetail from './pages/EspacioDetail';
+import EspacioDetail from './components/EspacioDetalle';
 import EspacioCreate from './pages/EspacioCreate';
 import EspacioEdit from './pages/EspacioEdit';
 import EspaciosByAdmin from './pages/EspaciosByAdmin';
@@ -23,6 +23,9 @@ import Profile from './pages/Profile';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import SearchPersonas from './pages/SearchPersonas';
+
+//Cancha
+import CanchaFormCreate from './components/CanchaFormCreate';
 
 function App() {
   return (
@@ -39,10 +42,11 @@ function App() {
         <Route path="/personas" element={<PersonasList />} />
         <Route path="/persona/create" element={<PersonaCreate />} />
         <Route path="/persona/edit/:id" element={<PersonaEdit />} />
+        <Route path="/search" element={<SearchPersonas />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/search" element={<SearchPersonas />} />
+
 
         {/* Espacios Deportivos */}
         <Route path="/espacios" element={<EspaciosList />} />
@@ -51,7 +55,9 @@ function App() {
         <Route path="/espacio/edit/:id" element={<EspacioEdit />} />
         <Route path="/espacios/admin/:id_admin" element={<EspaciosByAdmin />} />
         <Route path="/espacios/cercanos" element={<EspaciosCercanos />} />
+        <Route path="/cancha/create" element={<CanchaFormCreate />} />
         <Route path="/cancha/:id" element={<CanchaDetail />} />
+
       </Routes>
     </BrowserRouter>
   );

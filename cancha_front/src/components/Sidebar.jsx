@@ -10,7 +10,7 @@ const API_BASE = "http://localhost:3000";
 const navLinksByRole = {
   DEFAULT: [
     { label: "Personas", href: "/personas", icon: Users },
-    { label: "Espacios Deportivos", href: "/espacios", icon: Volleyball },
+    { label: "Espacios deportivos y canchas", href: "/espacios", icon: Volleyball },
   ],
 };
 

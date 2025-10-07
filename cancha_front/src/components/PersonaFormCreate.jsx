@@ -1,9 +1,9 @@
-// components/PersonaRegistroCasual.jsx
+// components/PersonaFormCreate.jsx
 import { useState } from "react";
 import { crearPersonaCasual } from "../services/personaService";
 import { Users, Eye, EyeClosed } from "lucide-react";
 
-function PersonaRegistroCasual({ onSubmit }) {
+function PersonaFormCreate({ onSubmit }) {
   const [formData, setFormData] = useState({
     nombre: "",
     usuario: "",
@@ -179,4 +179,4 @@ function PersonaRegistroCasual({ onSubmit }) {
 }
 
 
-export default PersonaRegistroCasual;
+export default PersonaFormCreate;

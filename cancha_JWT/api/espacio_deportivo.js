@@ -292,19 +292,30 @@ async function deleteEspacio(id) {
 async function buscarEspaciosPorNombreODireccion(query) {
   try {
     const sql = `
-      SELECT id_espacio, nombre, direccion,  
-             imagen_principal
+      SELECT 
+        id_espacio,
+        nombre,
+        direccion,
+        descripcion,
+        horario_apertura,
+        horario_cierre,
+        imagen_principal,
+        id_admin_esp_dep
       FROM ESPACIO_DEPORTIVO
-      WHERE LOWER(nombre) LIKE LOWER($1) OR LOWER(direccion) LIKE LOWER($1)
-      ORDER BY nombre
+      WHERE LOWER(nombre) LIKE LOWER($1)
+         OR LOWER(direccion) LIKE LOWER($1)
+      ORDER BY nombre;
     `;
+    
     const values = [`%${query}%`];
     const result = await pool.query(sql, values);
+
     return result.rows;
   } catch (error) {
     throw new Error('Error al buscar espacios deportivos: ' + error.message);
   }
 }
+
 
 // --- New Models ---
 
@@ -340,13 +351,21 @@ async function getDisciplinasUnicas() {
 async function getEspaciosPorDisciplina(disciplina) {
   try {
     const query = `
-      SELECT DISTINCT e.nombre, e.imagen_principal, e.direccion
+      SELECT DISTINCT 
+        e.id_espacio,
+        e.nombre,
+        e.direccion,
+        e.descripcion,
+        e.horario_apertura,
+        e.horario_cierre,
+        e.imagen_principal,
+        e.id_admin_esp_dep
       FROM ESPACIO_DEPORTIVO e
       JOIN CANCHA c ON e.id_espacio = c.id_espacio
-      JOIN se_practica sp ON c.id_cancha = sp.id_cancha
+      JOIN SE_PRACTICA sp ON c.id_cancha = sp.id_cancha
       JOIN DISCIPLINA d ON sp.id_disciplina = d.id_disciplina
       WHERE LOWER(d.nombre) = LOWER($1)
-      ORDER BY e.nombre
+      ORDER BY e.nombre;
     `;
     const result = await pool.query(query, [disciplina]);
     return result.rows;
@@ -354,6 +373,7 @@ async function getEspaciosPorDisciplina(disciplina) {
     throw new Error('Error al buscar espacios por disciplina: ' + error.message);
   }
 }
+
 
 async function getCanchasDisponiblesPorEspacio(id) {
   try {

@@ -3,12 +3,6 @@ import { useMemo, useState } from "react";
 import PropTypes from "prop-types";
 import { Search, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
-/**
- * Tabla de usuarios con búsqueda, filtro por estado y paginación.
- * - Nombres en español (camelCase)
- * - Estilos con Tailwind
- * - Iconos con lucide-react
- */
 export default function TablaUsuarios({
   datos = [],
   tamPaginaOpciones = [5, 10, 20],

@@ -55,10 +55,10 @@ export async function obtenerCanchaPorId(id, token) {
 // - data: objeto con {id_cancha, nombre, capacidad, estado, ubicacion, monto_por_hora, imagen_cancha, id_espacio}
 export async function crearCancha(canchaData, token) {
   try {
-    const res = await axios.post(`${API_URL}/`, canchaData, {
+    const res = await axios.post(`${API_URL}`, canchaData, {
       headers: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data',
+        "Content-Type": "multipart/form-data",
       },
     });
     return res.data;
@@ -69,6 +69,7 @@ export async function crearCancha(canchaData, token) {
     throw new Error("Error de conexión con el servidor");
   }
 }
+
 
 // Actualizar una cancha
 // Parámetros de entrada:
@@ -205,7 +206,7 @@ export async function asignarDisciplinas(id, disciplinas, token) {
 // - data: array de objetos [{id_disciplina, nombre, descripcion, frecuencia_practica}]
 export async function getDisciplinasPorCancha(id, token) {
   try {
-    const res = await axios.get(`${API_URL}/canchas/${id}/disciplinas`, {
+    const res = await axios.get(`${API_URL}/${id}/disciplinas`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { obtenerEspaciosPorAdminId } from '../services/espacioService';
-import EspacioCard from '../components/EspacioCard';
+import EspacioCard from '../components/EspacioFila';
 
 function EspaciosByAdmin() {
   const { id_admin } = useParams();

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import PersonaForm from "../components/PersonaFormEdit";
+import PersonaFormEdit from "../components/PersonaFormEdit";
 import { obtenerPersonaPorId, actualizarPersona } from "../services/personaService";
 
 function PersonaEdit() {
@@ -70,7 +70,7 @@ function PersonaEdit() {
           </div>
         ) : (
           persona && (
-            <PersonaForm
+            <PersonaFormEdit
               initialData={persona}
               onSubmit={handleSubmit}
               token={token}

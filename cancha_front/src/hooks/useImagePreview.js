@@ -13,6 +13,7 @@ export default function useImagePreview({
   initialUrl = null,
   allowed = ["image/jpeg", "image/png", "image/webp"],
   maxMB = 5,
+  inputId = "imagen_perfil", //valor por defecto pero configurable
 } = {}) {
   const [file, setFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(initialUrl || null);
@@ -90,7 +91,7 @@ export default function useImagePreview({
     file,                // el File seleccionado (útil para FormData)
     previewUrl,          // url para <img />
     error, setError,     // error de validación
-    inputProps: { onChange, accept: allowed.join(","), id: "imagen_perfil", type: "file" },
+    inputProps: { onChange, accept: allowed.join(","), id: inputId, type: "file", name: inputId, },
     dropzoneProps: { onDrop, onDragOver },
     clear,
   };

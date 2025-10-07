@@ -371,70 +371,108 @@ const obtenerCanchaPorId = async (req, res) => {
 };
 
 const crearCancha = async (req, res) => {
-  const { nombre, capacidad, estado, ubicacion, monto_por_hora, id_espacio } = req.body;
+  const { nombre, capacidad, estado, ubicacion, monto_por_hora, id_espacio, disciplinas } = req.body;
+
+  // Validaciones básicas
   if (!nombre || !capacidad || !id_espacio) {
     if (req.file) {
       try {
         await fs.unlink(req.file.path);
-        console.log(`Archivo eliminado: ${req.file.path}`);
+        console.log(`🗑️ Archivo eliminado por error de validación: ${req.file.path}`);
       } catch (unlinkError) {
-        console.warn(`No se pudo eliminar el archivo: ${req.file.path}`, unlinkError);
+        console.warn(`⚠️ No se pudo eliminar archivo temporal: ${req.file.path}`, unlinkError);
       }
     }
-    return res.status(400).json(response(false, 'Nombre, capacidad e id_espacio son obligatorios'));
+    return res.status(400).json({
+      success: false,
+      message: "Nombre, capacidad e id_espacio son obligatorios",
+    });
   }
+
+  const imagen_cancha = req.file ? `/uploads/cancha/${req.file.filename}` : null;
+  const disciplinasArray = disciplinas ? JSON.parse(disciplinas) : [];
+
+  const client = await pool.connect();
+
   try {
-    const espacioExistente = await pool.query('SELECT id_espacio FROM ESPACIO_DEPORTIVO WHERE id_espacio = $1', [id_espacio]);
+    await client.query("BEGIN");
+
+    // 1️⃣ Verificar que el espacio deportivo exista
+    const espacioExistente = await client.query(
+      "SELECT id_espacio FROM ESPACIO_DEPORTIVO WHERE id_espacio = $1",
+      [id_espacio]
+    );
+
     if (!espacioExistente.rows[0]) {
-      if (req.file) {
-        try {
-          await fs.unlink(req.file.path);
-          console.log(`Archivo eliminado: ${req.file.path}`);
-        } catch (unlinkError) {
-          console.warn(`No se pudo eliminar el archivo: ${req.file.path}`, unlinkError);
-        }
-      }
-      return res.status(404).json(response(false, 'Espacio deportivo no encontrado'));
+      await client.query("ROLLBACK");
+      if (req.file) await fs.unlink(req.file.path);
+      return res.status(404).json({
+        success: false,
+        message: "Espacio deportivo no encontrado",
+      });
     }
-    if (capacidad <= 0) {
-      if (req.file) {
-        try {
-          await fs.unlink(req.file.path);
-          console.log(`Archivo eliminado: ${req.file.path}`);
-        } catch (unlinkError) {
-          console.warn(`No se pudo eliminar el archivo: ${req.file.path}`, unlinkError);
-        }
+
+    // 2️⃣ Crear la cancha
+    const insertCancha = await client.query(
+      `
+      INSERT INTO CANCHA (nombre, capacidad, estado, ubicacion, monto_por_hora, imagen_cancha, id_espacio)
+      VALUES ($1, $2, $3, $4, $5, $6, $7)
+      RETURNING id_cancha, nombre, capacidad, estado, ubicacion, monto_por_hora, imagen_cancha, id_espacio
+      `,
+      [nombre, capacidad, estado, ubicacion, monto_por_hora, imagen_cancha, id_espacio]
+    );
+
+    const nuevaCancha = insertCancha.rows[0];
+
+    // 3️⃣ Insertar disciplinas si se enviaron
+    if (Array.isArray(disciplinasArray) && disciplinasArray.length > 0) {
+      for (const id_disciplina of disciplinasArray) {
+        await client.query(
+          `
+          INSERT INTO se_practica (id_cancha, id_disciplina)
+          VALUES ($1, $2)
+          ON CONFLICT (id_cancha, id_disciplina) DO NOTHING
+          `,
+          [nuevaCancha.id_cancha, id_disciplina]
+        );
       }
-      return res.status(400).json(response(false, 'La capacidad debe ser mayor que 0'));
     }
-    if (monto_por_hora && monto_por_hora < 0) {
-      if (req.file) {
-        try {
-          await fs.unlink(req.file.path);
-          console.log(`Archivo eliminado: ${req.file.path}`);
-        } catch (unlinkError) {
-          console.warn(`No se pudo eliminar el archivo: ${req.file.path}`, unlinkError);
-        }
-      }
-      return res.status(400).json(response(false, 'El monto por hora no puede ser negativo'));
-    }
-    const imagen_cancha = req.file ? `/uploads/cancha/${req.file.filename}` : null;
-    const nuevaCancha = await createCancha(nombre, capacidad, estado, ubicacion, monto_por_hora, imagen_cancha, id_espacio);
-    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
-    res.status(201).json(response(true, 'Cancha creada exitosamente', nuevaCancha));
+
+    await client.query("COMMIT");
+
+    console.log(`✅ Cancha creada con éxito y ${disciplinasArray.length} disciplinas asignadas.`);
+
+    res.status(201).json({
+      success: true,
+      message: "Cancha creada exitosamente",
+      data: {
+        ...nuevaCancha,
+        disciplinas_asignadas: disciplinasArray,
+      },
+    });
   } catch (error) {
-    console.error('Error al crear cancha:', error);
+    await client.query("ROLLBACK");
+    console.error("❌ Error al crear cancha:", error.message);
+
     if (req.file) {
       try {
         await fs.unlink(req.file.path);
-        console.log(`Archivo eliminado: ${req.file.path}`);
+        console.log(`🗑️ Archivo eliminado por error: ${req.file.path}`);
       } catch (unlinkError) {
-        console.warn(`No se pudo eliminar el archivo: ${req.file.path}`, unlinkError);
+        console.warn(`⚠️ No se pudo eliminar archivo temporal: ${req.file.path}`, unlinkError);
       }
     }
-    res.status(500).json(response(false, 'Error interno del servidor'));
+
+    res.status(500).json({
+      success: false,
+      message: "Error interno del servidor",
+      error: error.message,
+    });
+  } finally {
+    client.release();
   }
 };
+
 
 const actualizarCancha = async (req, res) => {
   const { id } = req.params;
@@ -733,7 +771,7 @@ router.get('/estado-cancha-enum', verifyToken, checkRole(['ADMINISTRADOR', 'ADMI
 router.get('/filtro-deportes', listarDisciplinasUnicas);
 
 router.post('/asignar-disciplina/:id', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), asignarDisciplinasController);
-router.get('/canchas/:id/disciplinas', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']),getDisciplinasPorCanchaController);
+router.get('/:id/disciplinas', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']),getDisciplinasPorCanchaController);
 
 router.get('/disciplinas-cancha/:id_cancha', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), listarDisciplinasPorCancha);
 router.get('/resenas-cancha/:id_cancha', verifyToken, checkRole(['ADMINISTRADOR', 'ADMIN_ESP_DEP', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), listarResenasPorCancha);

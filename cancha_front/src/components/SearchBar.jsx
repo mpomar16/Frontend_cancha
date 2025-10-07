@@ -19,6 +19,7 @@ export default function SearchBar({
   validar,
   deshabilitado = false,
   className = "",
+  renderCampo,
 }) {
   const [tipo, setTipo] = useState(tipoInicial);
   const [termino, setTermino] = useState(terminoInicial);
@@ -92,28 +93,42 @@ export default function SearchBar({
         />
 
         {/* Input */}
-        <div className="relative">
-          <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <Search className="w-5 h-5 text-azul-950" />
-          </span>
-          <input
-            type="text"
-            value={termino}
-            onChange={(e) => setTermino(e.target.value)}
-            placeholder={placeholderActual}
-            disabled={deshabilitado || cargando}
-            className="w-full h-[44px] pl-10 pr-10 rounded-lg border border-gris-200 text-gray-900 focus:outline-none focus:ring-1 focus:ring-verde-600 placeholder-gray-400 disabled:opacity-50"
-          />
-          {termino && !cargando && (
-            <button
-              type="button"
-              onClick={() => setTermino("")}
-              className="absolute inset-y-0 right-3 flex items-center"
-              title="Limpiar texto"
-            >
-              <X className="w-5 h-5 text-gray-500 hover:text-gray-700" />
-            </button>
-          )}
+<div className="relative">
+          {typeof renderCampo === "function"
+            ? renderCampo({
+                modo: tipo,
+                value: termino,
+                setValue: setTermino,
+                disabled: deshabilitado || cargando,
+                cargando,
+                placeholder: placeholderActual,
+              })
+            : (
+              <>
+                <span className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                  <Search className="w-5 h-5 text-azul-950" />
+                </span>
+                <input
+                  type="text"
+                  value={termino}
+                  onChange={(e) => setTermino(e.target.value)}
+                  placeholder={placeholderActual}
+                  disabled={deshabilitado || cargando}
+                  className="w-full h-[44px] pl-10 pr-10 rounded-lg border border-gris-200 text-gray-900 focus:outline-none focus:ring-1 focus:ring-verde-600 placeholder-gray-400 disabled:opacity-50"
+                />
+                {termino && !cargando && (
+                  <button
+                    type="button"
+                    onClick={() => setTermino("")}
+                    className="absolute inset-y-0 right-3 flex items-center"
+                    title="Limpiar texto"
+                  >
+                    <X className="w-5 h-5 text-gray-500 hover:text-gray-700" />
+                  </button>
+                )}
+              </>
+            )
+          }
         </div>
 
         {/* Botón Buscar */}
@@ -122,14 +137,7 @@ export default function SearchBar({
           disabled={deshabilitado || cargando}
           className="text-sm h-[44px] px-5 rounded-lg bg-verde-600 text-white font-medium transition disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          {cargando ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Buscando…
-            </>
-          ) : (
-            botonTexto
-          )}
+          {cargando ? (<><Loader2 className="w-5 h-5 animate-spin" />Buscando…</>) : botonTexto}
         </button>
 
         {/* Botón Limpiar (junto a Buscar) */}
