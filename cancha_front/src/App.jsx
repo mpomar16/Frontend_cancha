@@ -28,6 +28,11 @@ import SearchPersonas from './pages/SearchPersonas';
 import CanchaFormCreate from './components/CanchaFormCreate';
 import CanchaEdit from './pages/CanchaEdit';
 
+//disciplinas
+import DisciplinasList from './pages/DisciplinasList';
+import DisciplinaCreate from './pages/DisciplinaCreate';
+import DisciplinaEdit from './pages/DisciplinaEdit';
+
 function App() {
   return (
     <BrowserRouter>
@@ -59,6 +64,11 @@ function App() {
         <Route path="/cancha/create" element={<CanchaFormCreate />} />
         <Route path="/cancha/edit/:id" element={<CanchaEdit />} />
         <Route path="/cancha/:id" element={<CanchaDetail />} />
+
+        {/* Disciplinas */}
+        <Route path="/disciplinas" element={<DisciplinasList />} />
+        <Route path="/disciplina/create" element={<DisciplinaCreate />} />
+        <Route path="/disciplina/edit/:id" element={<DisciplinaEdit />} />
 
       </Routes>
     </BrowserRouter>

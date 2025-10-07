@@ -30,6 +30,21 @@ async function getDisciplinaById(id) {
   }
 }
 
+async function searchDisciplinasByName(nombre) {
+  try {
+    const query = `
+      SELECT id_disciplina, nombre, descripcion
+      FROM DISCIPLINA
+      WHERE LOWER(nombre) LIKE LOWER($1)
+      ORDER BY nombre;
+    `;
+    const result = await pool.query(query, [`%${nombre}%`]);
+    return result.rows;
+  } catch (error) {
+    throw new Error('Error al buscar disciplinas por nombre: ' + error.message);
+  }
+}
+
 async function getCanchasByDisciplinaId(id) {
   try {
     const query = `
@@ -155,6 +170,28 @@ const listarDisciplinas = async (req, res) => {
     res.status(500).json(response(false, 'Error interno del servidor'));
   }
 };
+
+const buscarDisciplinasPorNombre = async (req, res) => {
+  const { nombre } = req.params;
+
+  if (!nombre || !nombre.trim()) {
+    return res.status(400).json(response(false, 'Debe proporcionar un nombre para la búsqueda'));
+  }
+
+  try {
+    const disciplinas = await searchDisciplinasByName(nombre.trim());
+    if (disciplinas.length === 0) {
+      return res.status(404).json(response(false, 'No se encontraron disciplinas con ese nombre'));
+    }
+
+    console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
+    res.status(200).json(response(true, 'Disciplinas encontradas', disciplinas));
+  } catch (error) {
+    console.error('Error al buscar disciplinas por nombre:', error);
+    res.status(500).json(response(false, 'Error interno del servidor'));
+  }
+};
+
 
 const obtenerDisciplinaPorId = async (req, res) => {
   const { id } = req.params;
@@ -286,6 +323,7 @@ const router = express.Router();
 router.post('/', verifyToken, checkRole(['ADMINISTRADOR']), crearDisciplina);
 
 router.get('/datos-total', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), listarDisciplinas);
+router.get('/buscar/:nombre', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), buscarDisciplinasPorNombre);
 router.get('/id/:id', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), obtenerDisciplinaPorId);
 router.get('/:id/canchas', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), obtenerCanchasPorDisciplinaId);
 router.get('/:id/reservas', verifyToken, checkRole(['ADMINISTRADOR', 'CLIENTE', 'DEPORTISTA', 'ENCARGADO']), obtenerReservasPorDisciplinaId);
