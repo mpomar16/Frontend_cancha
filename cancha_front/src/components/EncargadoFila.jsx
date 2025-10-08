@@ -7,7 +7,6 @@ const API_BASE = "http://localhost:3000";
 
 function formatFechaDDMMYYYY(fecha) {
   if (!fecha) return "—";
-  // Soporta "YYYY-MM-DD" o ISO
   try {
     let d;
     if (/^\d{4}-\d{2}-\d{2}/.test(fecha)) {
@@ -29,10 +28,34 @@ function formatFechaDDMMYYYY(fecha) {
 
 function normalizeHora(h) {
   if (!h) return null;
-  // Acepta "HH:mm" o "HH:mm:ss"
   const match = /^(\d{2}):(\d{2})(?::\d{2})?$/.exec(h);
   if (!match) return null;
   return `${match[1]}:${match[2]}`;
+}
+
+// Normaliza el estado recibido (boolean o string) y devuelve label + clases
+function getEstadoInfo(raw) {
+  let isActive;
+  if (typeof raw === "boolean") {
+    isActive = raw;
+  } else if (typeof raw === "string") {
+    const v = raw.toLowerCase();
+    isActive = v === "activo" || v === "true";
+  } else {
+    isActive = false; // default seguro
+  }
+
+  return isActive
+    ? {
+        label: "Activo",
+        classes:
+          "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 ring-1 ring-green-200",
+      }
+    : {
+        label: "Inactivo",
+        classes:
+          "inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 ring-1 ring-red-200",
+      };
 }
 
 export default function EncargadoFila({
@@ -50,16 +73,18 @@ export default function EncargadoFila({
     hora_ingreso,
     hora_salida,
     imagen_perfil,
+    estado, // <- nuevo
   } = encargado || {};
 
   const nombreCompleto = `${nombre ?? ""} ${apellido ?? ""}`.trim() || "—";
   const srcImg = imagen_perfil ? `${API_BASE}${imagen_perfil}` : placeholder;
 
   const fechaMostrar = formatFechaDDMMYYYY(fecha_inicio);
-
   const hi = normalizeHora(hora_ingreso);
   const hs = normalizeHora(hora_salida);
   const horarioMostrar = hi && hs ? `${hi}–${hs}` : "—";
+
+  const estadoInfo = getEstadoInfo(estado);
 
   return (
     <tr>
@@ -91,14 +116,19 @@ export default function EncargadoFila({
         </span>
       </td>
 
-      {/* Fecha de inicio (dd/mm/yyyy) */}
+      {/* Fecha de inicio */}
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm whitespace-nowrap text-azul-950">
         {fechaMostrar}
       </td>
 
-      {/* Horario trabajo (00:00–00:00) */}
+      {/* Horario */}
       <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm whitespace-nowrap text-azul-950">
         {horarioMostrar}
+      </td>
+
+      {/* Estado (chip) */}
+      <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+        <span className={estadoInfo.classes}>{estadoInfo.label}</span>
       </td>
 
       {/* Detalles */}

@@ -29,7 +29,8 @@ async function getAllEncargados(limit = 12, offset = 0) {
 async function getEncargadoById(id) {
   try {
     const query = `
-      SELECT e.id_encargado, e.responsabilidad, e.fecha_inicio, e.hora_ingreso, e.hora_salida, e.estado, p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
+      SELECT e.id_encargado, e.responsabilidad, e.fecha_inicio, e.hora_ingreso, e.hora_salida, e.estado, 
+             p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
       FROM ENCARGADO e
       JOIN PERSONA p ON e.id_encargado = p.id_persona
       WHERE e.id_encargado = $1
@@ -44,7 +45,8 @@ async function getEncargadoById(id) {
 async function getEncargadoByIdPersona(id_persona) {
   try {
     const query = `
-      SELECT e.id_encargado, e.responsabilidad, e.fecha_inicio, e.hora_ingreso, e.hora_salida, e.estado, p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
+      SELECT e.id_encargado, e.responsabilidad, e.fecha_inicio, e.hora_ingreso, e.hora_salida, e.estado, 
+             p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
       FROM ENCARGADO e
       JOIN PERSONA p ON e.id_encargado = p.id_persona
       WHERE p.id_persona = $1
@@ -88,7 +90,8 @@ async function getReportesByEncargadoId(id) {
 async function getEncargadosByEstado(estado) {
   try {
     const query = `
-      SELECT e.id_encargado, e.responsabilidad, e.fecha_inicio, e.hora_ingreso, e.hora_salida, e.estado, p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
+      SELECT e.id_encargado, e.responsabilidad, e.fecha_inicio, e.hora_ingreso, e.hora_salida, e.estado, 
+             p.id_persona, p.nombre, p.apellido, p.telefono, p.correo, p.sexo, p.imagen_perfil
       FROM ENCARGADO e
       JOIN PERSONA p ON e.id_encargado = p.id_persona
       WHERE e.estado = $1
@@ -114,7 +117,7 @@ async function getEncargadosByNombre(nombre) {
     const result = await pool.query(query, [`%${nombre}%`]);
     return result.rows;
   } catch (error) {
-    throw new Error("Error al buscar encargados por nombre: " + error.message);
+    throw new Error('Error al buscar encargados por nombre: ' + error.message);
   }
 }
 
@@ -132,7 +135,7 @@ async function getEncargadosByResponsabilidad(responsabilidad) {
     const result = await pool.query(query, [`%${responsabilidad}%`]);
     return result.rows;
   } catch (error) {
-    throw new Error("Error al buscar encargados por responsabilidad: " + error.message);
+    throw new Error('Error al buscar encargados por responsabilidad: ' + error.message);
   }
 }
 
@@ -150,7 +153,7 @@ async function getEncargadosByCorreo(correo) {
     const result = await pool.query(query, [`%${correo}%`]);
     return result.rows;
   } catch (error) {
-    throw new Error("Error al buscar encargados por correo: " + error.message);
+    throw new Error('Error al buscar encargados por correo: ' + error.message);
   }
 }
 
@@ -203,24 +206,7 @@ async function deleteEncargado(id) {
   }
 }
 
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
-// ----------------------
 // --- Controladores ---
-
 const response = (success, message, data = null) => ({
   success,
   message,
@@ -265,9 +251,7 @@ const listarEncargados = async (req, res) => {
       message = offset === 0 ? 'No hay encargados registrados' : 'No hay más encargados para mostrarse';
     }
 
-    console.log(
-      `Returning ${encargadosConImagenValidada.length} encargados, hasMore=${hasMore}`
-    );
+    console.log(`Returning ${encargadosConImagenValidada.length} encargados, hasMore=${hasMore}`);
     console.log(`✅ [${req.method}] ejecutada con éxito.`, 'url solicitada:', req.originalUrl);
     res.status(200).json(response(true, message, dataResponse));
   } catch (error) {
@@ -275,7 +259,6 @@ const listarEncargados = async (req, res) => {
     res.status(500).json(response(false, 'Error interno del servidor'));
   }
 };
-
 
 const obtenerEncargadoPorId = async (req, res) => {
   const { id } = req.params;
@@ -486,7 +469,7 @@ const buscarEncargadoPorCorreo = async (req, res) => {
 const crearEncargado = async (req, res) => {
   const { responsabilidad, fecha_inicio, hora_ingreso, hora_salida, estado, id_persona } = req.body;
 
-  if (!responsabilidad || !fecha_inicio || !hora_ingreso || !hora_salida || !estado || !id_persona) {
+  if (!responsabilidad || !fecha_inicio || !hora_ingreso || !hora_salida || estado === undefined || !id_persona) {
     return res.status(400).json(response(false, 'Todos los campos son obligatorios'));
   }
 
@@ -497,13 +480,27 @@ const crearEncargado = async (req, res) => {
       return res.status(404).json(response(false, 'Persona no encontrada'));
     }
 
-    // Validar estado contra el tipo enumerado
-    const validEstados = ['activo', 'inactivo'];
-    if (!validEstados.includes(estado)) {
-      return res.status(400).json(response(false, 'Estado inválido. Debe ser: activo o inactivo'));
+    // Normalizar estado a boolean para la BD
+    let estadoBool;
+    if (typeof estado === 'boolean') {
+      estadoBool = estado;
+    } else if (typeof estado === 'string') {
+      const v = estado.toLowerCase();
+      if (v === 'activo') estadoBool = true;
+      else if (v === 'inactivo') estadoBool = false;
+      else return res.status(400).json(response(false, 'Estado inválido. Use true/false o "activo"/"inactivo"'));
+    } else {
+      return res.status(400).json(response(false, 'Estado inválido'));
     }
 
-    const nuevoEncargado = await createEncargado(responsabilidad, fecha_inicio, hora_ingreso, hora_salida, estado, id_persona);
+    const nuevoEncargado = await createEncargado(
+      responsabilidad,
+      fecha_inicio,
+      hora_ingreso,
+      hora_salida,
+      estadoBool, // boolean a la BD
+      id_persona
+    );
 
     console.log(`✅ [${req.method}] ejecutada con éxito.`, "url solicitada:", req.originalUrl);
     res.status(201).json(response(true, 'Encargado creado exitosamente', nuevoEncargado));
@@ -521,15 +518,30 @@ const actualizarEncargado = async (req, res) => {
   const { responsabilidad, fecha_inicio, hora_ingreso, hora_salida, estado } = req.body;
 
   try {
-    // Validar estado si se proporciona
-    if (estado) {
-      const validEstados = ['activo', 'inactivo'];
-      if (!validEstados.includes(estado)) {
-        return res.status(400).json(response(false, 'Estado inválido. Debe ser: activo o inactivo'));
+    // Normalizar estado si vino en el body
+    let estadoBoolOrNull = null;
+    if (estado !== undefined) {
+      if (typeof estado === 'boolean') {
+        estadoBoolOrNull = estado;
+      } else if (typeof estado === 'string') {
+        const v = estado.toLowerCase();
+        if (v === 'activo') estadoBoolOrNull = true;
+        else if (v === 'inactivo') estadoBoolOrNull = false;
+        else return res.status(400).json(response(false, 'Estado inválido. Use true/false o "activo"/"inactivo"'));
+      } else {
+        return res.status(400).json(response(false, 'Estado inválido'));
       }
     }
 
-    const encargadoActualizado = await updateEncargado(id, responsabilidad, fecha_inicio, hora_ingreso, hora_salida, estado);
+    const encargadoActualizado = await updateEncargado(
+      id,
+      responsabilidad,
+      fecha_inicio,
+      hora_ingreso,
+      hora_salida,
+      estadoBoolOrNull // boolean o null (no actualizar)
+    );
+
     if (!encargadoActualizado) {
       return res.status(404).json(response(false, 'Encargado no encontrado'));
     }
@@ -557,10 +569,7 @@ const eliminarEncargado = async (req, res) => {
   }
 };
 
-//-------- Rutas --------- 
-//------------------------
-//------------------------
-
+//-------- Rutas ---------
 const router = express.Router();
 
 router.post('/', verifyToken, checkRole(['ADMINISTRADOR']), crearEncargado);

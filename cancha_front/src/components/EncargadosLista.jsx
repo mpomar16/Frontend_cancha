@@ -177,6 +177,7 @@ function EncargadosLista() {
                     <Th>Responsabilidad</Th>
                     <Th>Fecha Inicio</Th>
                     <Th>Horario</Th>
+                    <Th>Estado</Th>
                     <Th>Detalles</Th>
                     <Th>Acciones</Th>
                   </tr>

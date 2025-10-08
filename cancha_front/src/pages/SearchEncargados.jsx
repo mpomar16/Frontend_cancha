@@ -82,12 +82,12 @@ export default function SearchEncargados({ onHayBusquedaChange = () => {} }) {
             <table className="min-w-full leading-normal">
               <thead>
                 <tr>
-                  <Th>Encargado</Th>
-                  <Th>Correo</Th>
-                  <Th>Teléfono</Th>
+                  <Th>Foto</Th>
+                  <Th>Nombre Completo</Th>
                   <Th>Responsabilidad</Th>
-                  <Th>Horario</Th>
                   <Th>Fecha Inicio</Th>
+                  <Th>Horario</Th>
+                  <Th>Estado</Th>
                   <Th>Detalles</Th>
                   {isAdmin && <Th>Acciones</Th>}
                 </tr>

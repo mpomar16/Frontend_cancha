@@ -37,6 +37,7 @@ import DisciplinaEdit from './pages/DisciplinaEdit';
 import EncargadosList from './pages/EncargadosList';
 import EncargadoDetalle from './components/EncargadoDetalle';
 import EncargadoCreate from './pages/EncargadoCreate';
+import EncargadoEdit from './pages/EncargadoEdit';
 
 function App() {
   return (
@@ -79,6 +80,7 @@ function App() {
         <Route path="/encargados" element={<EncargadosList />} />
         <Route path="/encargado/:id" element={<EncargadoDetalle />} />
         <Route path="/encargado/create" element={<EncargadoCreate />} />
+        <Route path="/encargado/edit/:id" element={<EncargadoEdit />} />
 
       </Routes>
     </BrowserRouter>
