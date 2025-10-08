@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
-// components/PersonaElegibleFila.jsx
+// components/EncargadoSelectPersona.jsx
 import { User } from "lucide-react";
 import placeholder from "../assets/placeholder.jpeg";
 
 const API_BASE = "http://localhost:3000";
 
-export default function PersonaElegibleFila({
+export default function EncargadoSelectPersona({
   persona,
   selected = false,
   onSelect, // () => void

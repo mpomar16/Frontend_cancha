@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { UserCog, ArrowLeft, Loader2, Search } from "lucide-react";
 import Alerta from "./Alerta";
 import Paginacion from "./Paginacion";
-import PersonaElegibleFila from "./PersonaElegibleFila";
+import EncargadoSelectPersona from "./EncargadoSelectPersona";
 import { listarPersonasElegiblesEncargado } from "../services/personaService";
 
 function Th({ children }) {
@@ -319,7 +319,7 @@ export default function EncargadoFormCreate({ token, onSubmit }) {
                       </tr>
                     ) : (
                       personas.map((p) => (
-                        <PersonaElegibleFila
+                        <EncargadoSelectPersona
                           key={p.id_persona}
                           persona={p}
                           selected={Number(form.id_persona) === p.id_persona}
