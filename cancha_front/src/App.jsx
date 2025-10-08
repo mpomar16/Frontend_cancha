@@ -33,17 +33,16 @@ import DisciplinasList from "./pages/DisciplinasList";
 import DisciplinaCreate from "./pages/DisciplinaCreate";
 import DisciplinaEdit from "./pages/DisciplinaEdit";
 
-//Encargado
-import EncargadosList from "./pages/EncargadosList";
-import EncargadoDetalle from "./components/EncargadoDetalle";
-import EncargadoCreate from "./pages/EncargadoCreate";
-
-//Clientes
 // Clientes
 import ClientesList from "./pages/ClientesList";
 import ClientesDetalle from "./components/ClientesDetalle"; // <--- IMPORTAR
 import ClientesCreate from "./pages/ClientesCreate"; // si existe
 import ClientesEdit from "./pages/ClientesEdit"; // si existe
+
+import EncargadosList from "./pages/EncargadosList";
+import EncargadoDetalle from "./components/EncargadoDetalle";
+import EncargadoCreate from "./pages/EncargadoCreate";
+import EncargadoEdit from "./pages/EncargadoEdit";
 
 function App() {
   return (
@@ -85,6 +84,7 @@ function App() {
         <Route path="/encargados" element={<EncargadosList />} />
         <Route path="/encargado/:id" element={<EncargadoDetalle />} />
         <Route path="/encargado/create" element={<EncargadoCreate />} />
+        <Route path="/encargado/edit/:id" element={<EncargadoEdit />} />
 
         {/* Clientes */}
         <Route path="/clientes" element={<ClientesList />} />

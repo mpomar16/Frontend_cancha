@@ -50,6 +50,32 @@ function normalizeHora(h) {
   return m ? `${m[1]}:${m[2]}` : null;
 }
 
+// Normaliza el estado recibido (boolean o string) y devuelve label + clases
+function getEstadoInfo(raw) {
+  // normalización
+  let isActive;
+  if (typeof raw === "boolean") {
+    isActive = raw;
+  } else if (typeof raw === "string") {
+    const v = raw.toLowerCase();
+    isActive = v === "activo" || v === "true";
+  } else {
+    isActive = false; // default seguro
+  }
+
+  return isActive
+    ? {
+        label: "Activo",
+        classes:
+          "bg-green-100 text-green-700 ring-1 ring-green-200",
+      }
+    : {
+        label: "Inactivo",
+        classes:
+          "bg-red-100 text-red-700 ring-1 ring-red-200",
+      };
+}
+
 export default function EncargadoDetalle() {
   const { id } = useParams();
   const encId = Number(id);
@@ -78,7 +104,6 @@ export default function EncargadoDetalle() {
           if (e?.message?.toLowerCase().includes("no se encontraron reportes")) {
             setReportes([]);
           } else {
-            // otros errores reales
             throw e;
           }
         }
@@ -108,6 +133,9 @@ export default function EncargadoDetalle() {
   const hs = normalizeHora(encargado?.hora_salida);
   const horario = hi && hs ? `${hi}–${hs}` : "—";
 
+  // info del chip de estado
+  const estadoInfo = getEstadoInfo(encargado?.estado);
+
   return (
     <SideBar>
       <main className="flex-1 p-6 sm:p-8 space-y-8">
@@ -120,10 +148,21 @@ export default function EncargadoDetalle() {
             >
               <ArrowLeft size={16} /> Volver
             </button>
-            <h1 className="flex items-center text-2xl font-poppins font-bold text-azul-950">
-              <UserCog className="mr-2" />
-              {nombreCompleto || "Encargado"}
-            </h1>
+
+            <div className="flex items-center gap-2">
+              <h1 className="flex items-center text-2xl font-poppins font-bold text-azul-950">
+                <UserCog className="mr-2" />
+                {nombreCompleto || "Encargado"}
+              </h1>
+
+              {/* Chip de Estado */}
+              <span
+                className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${estadoInfo.classes}`}
+                title={`Estado: ${estadoInfo.label}`}
+              >
+                {estadoInfo.label}
+              </span>
+            </div>
           </div>
         </header>
 
