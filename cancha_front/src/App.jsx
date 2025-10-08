@@ -1,42 +1,49 @@
 // src/App.jsx
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // Empresa
-import EmpresaHome from './pages/EmpresaHome';
-import EmpresaDetail from './pages/EmpresaDetail';
-import EmpresaEdit from './pages/EmpresaEdit';
+import EmpresaHome from "./pages/EmpresaHome";
+import EmpresaDetail from "./pages/EmpresaDetail";
+import EmpresaEdit from "./pages/EmpresaEdit";
 
 // Espacios Deportivos
-import EspaciosList from './pages/EspaciosList';
-import EspacioDetail from './components/EspacioDetalle';
-import EspacioCreate from './pages/EspacioCreate';
-import EspacioEdit from './pages/EspacioEdit';
-import EspaciosByAdmin from './pages/EspaciosByAdmin';
-import EspaciosCercanos from './pages/EspaciosCercanos';
-import CanchaDetail from './pages/CanchaDetail';
+import EspaciosList from "./pages/EspaciosList";
+import EspacioDetail from "./components/EspacioDetalle";
+import EspacioCreate from "./pages/EspacioCreate";
+import EspacioEdit from "./pages/EspacioEdit";
+import EspaciosByAdmin from "./pages/EspaciosByAdmin";
+import EspaciosCercanos from "./pages/EspaciosCercanos";
+import CanchaDetail from "./pages/CanchaDetail";
 
 // Personas
-import PersonasList from './pages/PersonasList';
-import PersonaCreate from './pages/PersonaCreate';
-import PersonaEdit from './pages/PersonaEdit';
-import Profile from './pages/Profile';
-import Login from './pages/Login';
-import Register from './pages/Register';
-import SearchPersonas from './pages/SearchPersonas';
+import PersonasList from "./pages/PersonasList";
+import PersonaCreate from "./pages/PersonaCreate";
+import PersonaEdit from "./pages/PersonaEdit";
+import Profile from "./pages/Profile";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import SearchPersonas from "./pages/SearchPersonas";
 
 //Cancha
-import CanchaFormCreate from './components/CanchaFormCreate';
-import CanchaEdit from './pages/CanchaEdit';
+import CanchaFormCreate from "./components/CanchaFormCreate";
+import CanchaEdit from "./pages/CanchaEdit";
 
 //disciplinas
-import DisciplinasList from './pages/DisciplinasList';
-import DisciplinaCreate from './pages/DisciplinaCreate';
-import DisciplinaEdit from './pages/DisciplinaEdit';
+import DisciplinasList from "./pages/DisciplinasList";
+import DisciplinaCreate from "./pages/DisciplinaCreate";
+import DisciplinaEdit from "./pages/DisciplinaEdit";
 
 //Encargado
-import EncargadosList from './pages/EncargadosList';
-import EncargadoDetalle from './components/EncargadoDetalle';
-import EncargadoCreate from './pages/EncargadoCreate';
+import EncargadosList from "./pages/EncargadosList";
+import EncargadoDetalle from "./components/EncargadoDetalle";
+import EncargadoCreate from "./pages/EncargadoCreate";
+
+//Clientes
+// Clientes
+import ClientesList from "./pages/ClientesList";
+import ClientesDetalle from "./components/ClientesDetalle"; // <--- IMPORTAR
+import ClientesCreate from "./pages/ClientesCreate"; // si existe
+import ClientesEdit from "./pages/ClientesEdit"; // si existe
 
 function App() {
   return (
@@ -57,7 +64,6 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-
 
         {/* Espacios Deportivos */}
         <Route path="/espacios" element={<EspaciosList />} />
@@ -80,6 +86,11 @@ function App() {
         <Route path="/encargado/:id" element={<EncargadoDetalle />} />
         <Route path="/encargado/create" element={<EncargadoCreate />} />
 
+        {/* Clientes */}
+        <Route path="/clientes" element={<ClientesList />} />
+        <Route path="/clientes/:id" element={<ClientesDetalle />} />
+        <Route path="/clientes/create" element={<ClientesCreate />} />
+        <Route path="/clientes/edit/:id" element={<ClientesEdit />} />
       </Routes>
     </BrowserRouter>
   );

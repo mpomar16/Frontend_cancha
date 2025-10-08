@@ -1,23 +1,23 @@
 // src/App.jsx
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import MainNavbar from './MainNavbar';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import MainNavbar from "./MainNavbar";
 
 // Espacios Deportivos
-import EspaciosList from './pages/EspaciosList';
-import EspacioDetail from './pages/EspacioDetail';
-import EspacioCreate from './pages/EspacioCreate';
-import EspacioEdit from './pages/EspacioEdit';
-import EspaciosByAdmin from './pages/EspaciosByAdmin';
-import EspaciosCercanos from './pages/EspaciosCercanos';
+import EspaciosList from "./pages/EspaciosList";
+import EspacioDetail from "./pages/EspacioDetail";
+import EspacioCreate from "./pages/EspacioCreate";
+import EspacioEdit from "./pages/EspacioEdit";
+import EspaciosByAdmin from "./pages/EspaciosByAdmin";
+import EspaciosCercanos from "./pages/EspaciosCercanos";
 
 // Personas
-import PersonasList from './pages/PersonasList';
-import PersonaDetail from './pages/PersonaDetail';
-import PersonaCreate from './pages/PersonaCreate';
-import PersonaEdit from './pages/PersonaEdit';
-import Profile from './pages/Profile';
-import Login from './pages/Login';
-import SearchPersonas from './pages/SearchPersonas';
+import PersonasList from "./pages/PersonasList";
+import PersonaDetail from "./pages/PersonaDetail";
+import PersonaCreate from "./pages/PersonaCreate";
+import PersonaEdit from "./pages/PersonaEdit";
+import Profile from "./pages/Profile";
+import Login from "./pages/Login";
+import SearchPersonas from "./pages/SearchPersonas";
 
 function App() {
   return (
@@ -40,7 +40,10 @@ function App() {
             <Route path="/espacio/:id" element={<EspacioDetail />} />
             <Route path="/espacio/create" element={<EspacioCreate />} />
             <Route path="/espacio/edit/:id" element={<EspacioEdit />} />
-            <Route path="/espacios/admin/:id_admin" element={<EspaciosByAdmin />} />
+            <Route
+              path="/espacios/admin/:id_admin"
+              element={<EspaciosByAdmin />}
+            />
             <Route path="/espacios/cercanos" element={<EspaciosCercanos />} />
           </Routes>
         </div>
